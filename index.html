@@ -151,35 +151,7 @@
       transition: filter .16s ease;
     }
 
-    /* ====== Data Tools Section ====== */
-    .tools-section { margin-top: 48px; }
-    .tools-divider {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 20px; color: #b0b8c1;
-      font-size: 13px; font-weight: 700;
-    }
-    .tools-divider::before,
-    .tools-divider::after {
-      content: ''; flex: 1; height: 1px; background: #dde2ea;
-    }
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .tool-entry {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; background: #fff; border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-      text-decoration: none; color: var(--text);
-      font-size: 13px; line-height: 1.4;
-      transition: box-shadow .18s ease;
-    }
-    .tool-entry:hover { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10); }
-    .tool-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    }
-    .tool-entry span { flex: 1; }
+
 
     /* Footer */
     .footer {
@@ -257,10 +229,15 @@
       <div class="card-grid" id="gridModule2"></div>
     </div>
 
-    <!-- ======== 数据工具开发（子入口） ======== -->
-    <div class="tools-section">
-      <div class="tools-divider">数据工具开发</div>
-      <div class="tools-grid" id="gridTools"></div>
+    <!-- ======== 模块三：数据工具开发 ======== -->
+    <div class="module-section">
+      <div class="module-header">
+        <div class="module-icon" style="background:#E8F5E9;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M12 18v-4"/><path d="M9 15l3-3 3 3"/></svg>
+        </div>
+        <span class="module-title">数据工具开发</span>
+      </div>
+      <div class="card-grid" id="gridModule3"></div>
     </div>
 
   </section>
@@ -405,33 +382,39 @@
       return makeSysCard(c.icon, c.title, c.desc, c.link, c.gradient, c.users);
     }).join('');
 
-    /* ====== 数据工具开发 (15 tools, 子入口) ====== */
-    function makeToolEntry(title, file, color) {
-      return '<a class="tool-entry" href="' + file + '">'
-        + '<span class="tool-dot" style="background:' + color + ';"></span>'
-        + '<span>' + title + '</span>'
-        + '</a>';
-    }
-
-    var tools = [
-      { title:'数据采集工具', file:'数据采集工具（确认）.html', color:'#165dff' },
-      { title:'高拍仪图像采集', file:'高拍仪图像采集.html', color:'#00b42a' },
-      { title:'病历录入', file:'病历录入.html', color:'#722ed1' },
-      { title:'病历随访', file:'病历随访.html', color:'#0fc6c2' },
-      { title:'历史数据录入', file:'历史数据录入.html', color:'#ff7d00' },
-      { title:'医学影像对象存储', file:'医学影像对象存储.html', color:'#165dff' },
-      { title:'医学影像转码服务', file:'医学影像转码服务.html', color:'#00b42a' },
-      { title:'专家审核', file:'专家审核.html', color:'#f53f3f' },
-      { title:'数据脱敏工具', file:'数据脱敏工具.html', color:'#722ed1' },
-      { title:'眼病/慢病影像标注工具', file:'眼病_慢病影像标注工具.html', color:'#165dff' },
-      { title:'统计分析', file:'统计分析.html', color:'#0fc6c2' },
-      { title:'数据质量管理', file:'数据质量管理.html', color:'#00b42a' },
-      { title:'数据集成调度', file:'数据集成调度.html', color:'#ff7d00' },
-      { title:'数据备份恢复', file:'数据备份恢复.html', color:'#f53f3f' },
-      { title:'数据接口管理', file:'数据接口管理.html', color:'#722ed1' }
+    /* ====== Module 3: 数据工具开发 (4 systems) ====== */
+    var module3 = [
+      {
+        icon: 'upload', title: '眼病/慢病数据采集工具',
+        desc: '支持多源数据采集、高拍仪图像采集、表单模板配置，实现临床数据标准化采集与统一管理',
+        link: '眼病/慢病数据采集工具.html',
+        gradient: 'linear-gradient(to right, #43E97B, #38F9D7)',
+        users: '256'
+      },
+      {
+        icon: 'file', title: '眼病/慢病数据录入工具',
+        desc: '支持病历数据录入、历史数据导入、影像上传与转码服务，高效实现临床数据数字化管理',
+        link: '眼病/慢病数据录入工具.html',
+        gradient: 'linear-gradient(to right, #FA709A, #FEE140)',
+        users: '189'
+      },
+      {
+        icon: 'refresh', title: '眼病/慢病影像脱敏工具',
+        desc: '支持DICOM影像自动脱敏、敏感信息检测与擦除，保障患者隐私数据安全合规',
+        link: '眼病/慢病影像脱敏工具.html',
+        gradient: 'linear-gradient(to right, #667eea, #764ba2)',
+        users: '142'
+      },
+      {
+        icon: 'image', title: '眼病/慢病影像标注工具',
+        desc: '提供专业级医学影像标注平台，支持多边形、矩形、画笔等多种标注方式与AI辅助标注',
+        link: '眼病/慢病影像标注工具.html',
+        gradient: 'linear-gradient(to right, #f093fb, #f5576c)',
+        users: '178'
+      }
     ];
-    document.getElementById('gridTools').innerHTML = tools.map(function(t) {
-      return makeToolEntry(t.title, t.file, t.color);
+    document.getElementById('gridModule3').innerHTML = module3.map(function(c) {
+      return makeSysCard(c.icon, c.title, c.desc, c.link, c.gradient, c.users);
     }).join('');
   </script>
 </body>

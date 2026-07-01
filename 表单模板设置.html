@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>表单模板设置</title><style>
+:root {
+    --primary: #1a73e8; --primary-dark: #1557b0; --primary-light: #e8f0fe; --success: #34a853; --warning: #fbbc04; --danger: #ea4335;
+    --gray-50: #f8f9fa; --gray-100: #f5f7fa; --gray-200: #e8ecf0; --gray-300: #dadce0; --gray-400: #bdc1c6; --gray-500: #9aa0a6;
+    --gray-600: #80868b; --gray-700: #5f6368; --gray-800: #3c4043; --gray-900: #202124; --text: #333333; --text-secondary: #999999;
+    --bg: #ffffff; --sidebar-width: 220px; --header-height: 56px; --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); --shadow-lg: 0 4px 12px rgba(0,0,0,0.12); --transition: all 0.2s ease;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-size: 14px; color: var(--text); background: var(--gray-50); min-height: 100vh; line-height: 1.6; }
+.header { height: var(--header-height); background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%); color: #fff; display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.header .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; color: #fff; text-decoration: none; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 40px; }
+.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; transition: var(--transition); }
+.header .header-nav a:hover, .header .header-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
+.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: var(--transition); color: #fff; }
+.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
+.header .header-right .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: var(--transition); }
+.header .header-right .btn-logout:hover { background: rgba(255,255,255,0.35); }
+.sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--gray-200); overflow-y: auto; z-index: 999; padding: 8px 0; }
+.sidebar .menu-group { margin-bottom: 4px; }
+.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.sidebar .menu-item { display: flex; align-items: center; padding: 10px 20px; color: var(--gray-700); text-decoration: none; font-size: 13px; transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+.sidebar .menu-item:hover { background: var(--gray-50); color: var(--primary); }
+.sidebar .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.sidebar .menu-item .menu-icon { width: 20px; margin-right: 10px; text-align: center; font-size: 14px; }
+.main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 24px; min-height: calc(100vh - var(--header-height)); }
+.breadcrumb { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.breadcrumb a { color: var(--primary); text-decoration: none; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; }
+.card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; transition: var(--transition); gap: 6px; white-space: nowrap; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
+.btn-outline:hover { background: var(--gray-50); }
+.form-designer { display: grid; grid-template-columns: 240px 1fr 260px; gap: 16px; height: calc(100vh - var(--header-height) - 120px); }
+.designer-panel { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+.panel-header { padding: 14px 16px; border-bottom: 1px solid var(--gray-200); font-weight: 600; font-size: 14px; color: var(--gray-800); background: var(--gray-50); display: flex; align-items: center; justify-content: space-between; }
+.panel-body { flex: 1; overflow-y: auto; padding: 12px; }
+.component-list { display: flex; flex-direction: column; gap: 6px; }
+.comp-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #fff; border: 1px solid var(--gray-200); border-radius: 6px; cursor: grab; font-size: 13px; color: var(--gray-700); transition: var(--transition); }
+.comp-item:hover { border-color: var(--primary); background: var(--primary-light); }
+.comp-item .comp-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.comp-item .comp-info { flex: 1; }
+.comp-item .comp-name { font-weight: 500; font-size: 13px; }
+.comp-item .comp-desc { font-size: 11px; color: var(--gray-500); }
+.form-preview { padding: 20px; background: #fafcff; }
+.form-preview .form-title { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; padding-bottom: 12px; border-bottom: 2px solid var(--primary); }
+.form-field { margin-bottom: 16px; padding: 12px; background: #fff; border: 1px dashed var(--gray-300); border-radius: 6px; cursor: pointer; transition: var(--transition); position: relative; }
+.form-field:hover { border-color: var(--primary); }
+.form-field.selected { border-color: var(--primary); border-style: solid; background: var(--primary-light); }
+.form-field .field-label { font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+.form-field .field-input { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; background: var(--gray-50); color: var(--gray-400); pointer-events: none; }
+.form-field .field-select { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; background: var(--gray-50); color: var(--gray-400); pointer-events: none; }
+.form-field .field-radio { display: flex; gap: 16px; }
+.form-field .field-radio label { font-size: 13px; color: var(--gray-400); display: flex; align-items: center; gap: 4px; }
+.form-field .field-delete { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: var(--danger); color: #fff; border: none; cursor: pointer; font-size: 12px; display: none; align-items: center; justify-content: center; }
+.form-field:hover .field-delete { display: flex; }
+.prop-group { margin-bottom: 16px; }
+.prop-group label { display: block; font-size: 12px; font-weight: 500; color: var(--gray-600); margin-bottom: 6px; }
+.prop-group input, .prop-group select, .prop-group textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.prop-group input:focus, .prop-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.prop-group textarea { resize: vertical; min-height: 60px; }
+.action-bar { display: flex; gap: 10px; padding: 12px 0; }
+</style></head><body>
+<div class="header">
+  <a href="index.html" class="logo">生命医学智能平台</a>
+  <div class="header-nav">
+    <a href="眼病/慢病数据采集工具.html" class="active">眼病/慢病数据采集工具</a>
+    <a href="眼病/慢病数据录入工具.html">眼病/慢病数据录入工具</a>
+    <a href="眼病/慢病影像脱敏工具.html">眼病/慢病影像脱敏工具</a>
+    <a href="眼病/慢病影像标注工具.html">眼病/慢病影像标注工具</a>
+  </div>
+  <div class="header-right">
+    <span class="user-info" id="headerUserName">张教授</span>
+    <button class="btn-logout" onclick="logout()">退出登录</button>
+  </div>
+</div>
+<div class="sidebar">
+  <div class="menu-group">
+    <div class="menu-group-title">数据采集功能</div>
+    <a class="menu-item active" href="表单模板设置.html">
+      <span class="menu-icon">&#x1F4CB;</span><span>表单模板设置</span>
+    </a>
+    <a class="menu-item" href="数据录入填写.html">
+      <span class="menu-icon">&#x1F4DD;</span><span>数据录入填写</span>
+    </a>
+    <a class="menu-item" href="病历随访.html">
+      <span class="menu-icon">&#x1F3E5;</span><span>病历随访</span>
+    </a>
+    <a class="menu-item" href="历史数据导入.html">
+      <span class="menu-icon">&#x1F4E4;</span><span>历史数据导入</span>
+    </a>
+    <a class="menu-item" href="医学影像存储与转码.html">
+      <span class="menu-icon">&#x1F4CA;</span><span>医学影像存储与转码</span>
+    </a>
+    <a class="menu-item" href="专家审核与统计分析.html">
+      <span class="menu-icon">&#x1F50D;</span><span>专家审核与统计分析</span>
+    </a>
+  </div>
+</div>
+<div class="main-content">
+  <div class="breadcrumb"><a href="index.html">首页</a><span>&gt;</span><a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a><span>&gt;</span><span>表单模板设置</span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <h1 class="page-title" style="margin-bottom:0;">表单模板设置</h1>
+    <div class="action-bar" style="padding:0;">
+      <button class="btn btn-outline" onclick="previewTemplate()">预览</button>
+      <button class="btn btn-primary" onclick="publishTemplate()">发布模板</button>
+    </div>
+  </div>
+  <div class="form-designer">
+    <!-- 左侧组件库 -->
+    <div class="designer-panel">
+      <div class="panel-header">组件库</div>
+      <div class="panel-body">
+        <div class="component-list">
+          <div class="comp-item" draggable="true" data-type="text">
+            <div class="comp-icon" style="background:#e8f0fe;">Aa</div>
+            <div class="comp-info"><div class="comp-name">文本输入</div><div class="comp-desc">单行文本</div></div>
+          </div>
+          <div class="comp-item" draggable="true" data-type="textarea">
+            <div class="comp-icon" style="background:#e6f4ea;">T</div>
+            <div class="comp-info"><div class="comp-name">多行文本</div><div class="comp-desc">长文本输入</div></div>
+          </div>
+          <div class="comp-item" draggable="true" data-type="select">
+            <div class="comp-icon" style="background:#fef7e0;">&#x25BC;</div>
+            <div class="comp-info"><div class="comp-name">下拉选择</div><div class="comp-desc">单选/多选</div></div>
+          </div>
+          <div class="comp-item" draggable="true" data-type="radio">
+            <div class="comp-icon" style="background:#fce8e6;">&#x25C9;</div>
+            <div class="comp-info"><div class="comp-name">单选按钮</div><div class="comp-desc">单项选择</div></div>
+          </div>
+          <div class="comp-item" draggable="true" data-type="checkbox">
+            <div class="comp-icon" style="background:#f3e8fd;">&#x2611;</div>
+            <div class="comp-info"><div class="comp-name">复选框</div><div class="comp-desc">多项选择</div></div>
+          </div>
+          <div class="comp-item" draggable="true" data-type="date">
+            <div class="comp-icon" style="background:#e8f5e9;">&#x1F4C5;</div>
+            <div class="comp-info"><div class="comp-name">日期选择</div><div class="comp-desc">日期控件</div></div>
+          </div>
+          <div class="comp-item" draggable="true" data-type="number">
+            <div class="comp-icon" style="background:#e3f2fd;">#</div>
+            <div class="comp-info"><div class="comp-name">数字输入</div><div class="comp-desc">数值范围</div></div>
+          </div>
+          <div class="comp-item" draggable="true" data-type="upload">
+            <div class="comp-icon" style="background:#fff3e0;">&#x1F4C1;</div>
+            <div class="comp-info"><div class="comp-name">文件上传</div><div class="comp-desc">附件上传</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 中间表单编辑区 -->
+    <div class="designer-panel">
+      <div class="panel-header">表单编辑区 &mdash; 青光眼初诊评估表</div>
+      <div class="panel-body form-preview" id="formPreview">
+        <div class="form-title">青光眼初诊评估表</div>
+        <div class="form-field" data-field-id="1" data-type="text" onclick="selectField(this)">
+          <div class="field-label">患者姓名</div>
+          <input class="field-input" value="请输入姓名" readonly>
+          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+        </div>
+        <div class="form-field" data-field-id="2" data-type="select" onclick="selectField(this)">
+          <div class="field-label">性别</div>
+          <select class="field-select"><option>请选择性别</option></select>
+          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+        </div>
+        <div class="form-field" data-field-id="3" data-type="date" onclick="selectField(this)">
+          <div class="field-label">就诊日期</div>
+          <input class="field-input" value="yyyy-MM-dd" readonly>
+          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+        </div>
+        <div class="form-field" data-field-id="4" data-type="radio" onclick="selectField(this)">
+          <div class="field-label">眼别</div>
+          <div class="field-radio"><label><input type="radio" disabled>左眼</label><label><input type="radio" disabled>右眼</label><label><input type="radio" disabled>双眼</label></div>
+          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+        </div>
+        <div class="form-field" data-field-id="5" data-type="textarea" onclick="selectField(this)">
+          <div class="field-label">主诉</div>
+          <textarea class="field-input" style="resize:none;height:50px;" readonly>请输入主诉内容</textarea>
+          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+        </div>
+      </div>
+    </div>
+    <!-- 右侧属性配置 -->
+    <div class="designer-panel">
+      <div class="panel-header">字段属性</div>
+      <div class="panel-body" id="propPanel">
+        <p style="color:var(--gray-500);font-size:13px;text-align:center;padding:40px 0;">请选择一个字段以编辑其属性</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+function selectField(el) {
+  document.querySelectorAll('.form-field').forEach(function(f){ f.classList.remove('selected'); });
+  el.classList.add('selected');
+  var type = el.getAttribute('data-type');
+  var label = el.querySelector('.field-label').textContent;
+  document.getElementById('propPanel').innerHTML =
+    '<div class="prop-group"><label>字段标签</label><input value="' + label + '" onchange="updateFieldLabel(this.value)"></div>' +
+    '<div class="prop-group"><label>字段类型</label><select><option selected>' + type + '</option><option>text</option><option>textarea</option><option>select</option><option>radio</option><option>checkbox</option><option>date</option><option>number</option></select></div>' +
+    '<div class="prop-group"><label>是否必填</label><select><option>否</option><option>是</option></select></div>' +
+    '<div class="prop-group"><label>占位提示</label><input value="请输入' + label + '"></div>' +
+    '<div class="prop-group"><label>字段标识</label><input value="field_' + (new Date()).getTime() + '" readonly style="background:var(--gray-50);"></div>';
+}
+function updateFieldLabel(val) {
+  var sel = document.querySelector('.form-field.selected');
+  if (sel) sel.querySelector('.field-label').textContent = val;
+}
+function deleteField(el) {
+  var field = el.closest('.form-field');
+  if (field) { if (field.classList.contains('selected')) { document.getElementById('propPanel').innerHTML = '<p style="color:var(--gray-500);font-size:13px;text-align:center;padding:40px 0;">请选择一个字段以编辑其属性</p>'; } field.remove(); }
+}
+function previewTemplate() { alert('预览模板功能'); }
+function publishTemplate() { alert('模板发布成功！'); }
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var user = JSON.parse(localStorage.getItem('life_med_user'));
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('headerUserName').textContent = user.name || '用户';
+  } catch(e) { window.location.href = 'login.html'; }
+  document.querySelectorAll('.comp-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var type = this.getAttribute('data-type');
+      var name = this.querySelector('.comp-name').textContent;
+      var preview = document.getElementById('formPreview');
+      var div = document.createElement('div');
+      div.className = 'form-field';
+      div.setAttribute('data-field-id', Date.now());
+      div.setAttribute('data-type', type);
+      div.setAttribute('onclick', 'selectField(this)');
+      var inputHtml;
+      if (type === 'textarea') inputHtml = '<textarea class="field-input" style="resize:none;height:50px;" readonly>请输入' + name + '内容</textarea>';
+      else if (type === 'select') inputHtml = '<select class="field-select"><option>请选择</option></select>';
+      else if (type === 'radio') inputHtml = '<div class="field-radio"><label><input type="radio" disabled>选项1</label><label><input type="radio" disabled>选项2</label></div>';
+      else if (type === 'date') inputHtml = '<input class="field-input" value="yyyy-MM-dd" readonly>';
+      else if (type === 'number') inputHtml = '<input class="field-input" value="请输入数字" readonly>';
+      else inputHtml = '<input class="field-input" value="请输入' + name + '" readonly>';
+      div.innerHTML = '<div class="field-label">' + name + '</div>' + inputHtml + '<button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>';
+      preview.insertBefore(div, null);
+    });
+  });
+});
+</script></body></html>
