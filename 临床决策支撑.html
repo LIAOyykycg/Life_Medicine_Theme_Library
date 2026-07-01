@@ -52,111 +52,655 @@ body { font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-ser
 .breadcrumb a { color: var(--primary); text-decoration: none; }
 .breadcrumb span.sep { color: var(--gray-400); }
 .page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
+
+/* ===== 三栏布局 ===== */
+.three-col { display: flex; gap: 20px; align-items: flex-start; }
+.left-panel { width: 280px; flex-shrink: 0; }
+.center-panel { flex: 1; min-width: 0; }
+.right-panel { width: 320px; flex-shrink: 0; }
+
+/* ===== 卡片通用 ===== */
 .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
 .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
 .card-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
-.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
-.stat-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
-.stat-card .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.stat-card .stat-info .stat-value { font-size: 26px; font-weight: 700; color: var(--gray-900); }
-.stat-card .stat-info .stat-label { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
-.stat-card.blue .stat-icon { background: #e8f0fe; }
-.stat-card.green .stat-icon { background: #e6f4ea; }
-.stat-card.orange .stat-icon { background: #fef7e0; }
-.stat-card.red .stat-icon { background: #fce8e6; }
-.stat-card.purple .stat-icon { background: #f3e8fd; }
-.filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px 18px; background: var(--gray-50); border-radius: var(--radius); margin-bottom: 16px; }
-.filter-bar label { font-size: 13px; color: var(--gray-700); white-space: nowrap; }
-.filter-bar input, .filter-bar select { padding: 7px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
-.filter-bar input:focus, .filter-bar select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-.filter-bar input { min-width: 180px; }
+
+/* ===== 左栏：会话管理 ===== */
+.btn-new-consult { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 0; background: var(--primary); color: #fff; border: none; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: var(--transition); }
+.btn-new-consult:hover { background: var(--primary-dark); }
+.btn-new-consult .plus-icon { font-size: 18px; font-weight: 300; line-height: 1; }
+
+.session-list { margin-top: 16px; }
+.section-title { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.section-title .icon-eye { color: var(--primary); font-size: 15px; }
+.section-title .icon-warn { color: #f5a623; font-size: 15px; }
+
+.session-item { padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: var(--transition); margin-bottom: 2px; }
+.session-item:hover { background: var(--gray-50); }
+.session-item.active { background: var(--primary-light); }
+.session-item .session-title { font-size: 13px; font-weight: 500; color: var(--gray-800); margin-bottom: 3px; }
+.session-item.active .session-title { color: var(--primary); font-weight: 600; }
+.session-item .session-meta { font-size: 11px; color: var(--gray-500); display: flex; align-items: center; gap: 8px; }
+.session-item .session-dept { background: var(--gray-100); padding: 1px 8px; border-radius: 10px; }
+
+/* 系统能力卡片 */
+.skill-list { list-style: none; }
+.skill-list li { padding: 6px 0; font-size: 13px; color: var(--gray-700); border-bottom: 1px solid var(--gray-50); display: flex; align-items: center; gap: 6px; }
+.skill-list li:last-child { border-bottom: none; }
+.skill-list li::before { content: '✓'; color: var(--success); font-weight: 700; font-size: 12px; }
+
+/* 使用提示 */
+.alert-warning-card { background: #fffbe6; border: 1px solid #feefc3; border-radius: var(--radius); padding: 14px; font-size: 12px; color: #8a6d14; line-height: 1.7; }
+.alert-warning-card .section-title { color: #8a6d14; }
+
+/* ===== 中间栏：对话区 ===== */
+.center-panel .card { display: flex; flex-direction: column; height: calc(100vh - var(--header-height) - 140px); min-height: 550px; }
+
+.patient-info-bar { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--gray-100); margin-bottom: 14px; }
+.patient-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; flex-shrink: 0; }
+.patient-info-text { flex: 1; }
+.patient-info-text .patient-name { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.patient-info-text .patient-meta { font-size: 12px; color: var(--gray-500); }
+
+.chat-area { flex: 1; overflow-y: auto; padding: 4px 0; }
+.chat-msg { margin-bottom: 16px; display: flex; flex-direction: column; }
+.chat-msg.user { align-items: flex-end; }
+.chat-msg.ai { align-items: flex-start; }
+.chat-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.6; word-break: break-word; }
+.chat-msg.user .chat-bubble { background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+.chat-msg.ai .chat-bubble { background: var(--gray-100); color: var(--gray-900); border-bottom-left-radius: 4px; }
+.chat-msg .chat-time { font-size: 10px; color: var(--gray-400); margin-top: 4px; }
+
+.chat-input-area { display: flex; gap: 10px; align-items: flex-end; padding-top: 12px; border-top: 1px solid var(--gray-100); margin-top: 12px; }
+.chat-input-area textarea { flex: 1; padding: 10px 14px; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; resize: none; min-height: 44px; max-height: 100px; transition: var(--transition); }
+.chat-input-area textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.btn-send { padding: 10px 20px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: var(--transition); white-space: nowrap; }
+.btn-send:hover { background: var(--primary-dark); }
+.btn-send:disabled { background: var(--gray-300); cursor: not-allowed; }
+
+/* ===== 右栏：信息与推荐 ===== */
+.right-panel .card { padding: 16px; }
+
+.patient-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.patient-card-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
+
+.info-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; border-bottom: 1px solid var(--gray-50); }
+.info-row:last-child { border-bottom: none; }
+.info-row .info-label { color: var(--gray-500); }
+.info-row .info-value { color: var(--gray-800); font-weight: 500; }
+
+.history-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.history-tags .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+
+.record-item { padding: 10px 0; border-bottom: 1px solid var(--gray-50); }
+.record-item:last-child { border-bottom: none; }
+.record-item .record-title { font-size: 13px; font-weight: 500; color: var(--gray-800); margin-bottom: 2px; }
+.record-item .record-meta { font-size: 11px; color: var(--gray-500); display: flex; align-items: center; gap: 8px; }
+.record-item .record-match { color: var(--success); font-weight: 600; }
+
+.treatment-item { padding: 8px 0; border-bottom: 1px solid var(--gray-50); }
+.treatment-item:last-child { border-bottom: none; }
+.treatment-item .drug-name { font-size: 13px; font-weight: 500; color: var(--gray-800); }
+.treatment-item .drug-meta { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.compliance-bar { height: 4px; background: var(--gray-200); border-radius: 2px; margin-top: 4px; }
+.compliance-fill { height: 100%; border-radius: 2px; }
+.compliance-high { background: var(--success); }
+.compliance-mid { background: var(--warning); }
+.compliance-low { background: var(--danger); }
+
+.quality-alert { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; background: #fff3cd; border-radius: 6px; font-size: 12px; color: #856404; margin-top: 8px; }
+.quality-alert .qa-icon { font-size: 16px; flex-shrink: 0; }
+
+.btn-block { width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; }
+
+/* ===== 基础组件保留 ===== */
 .btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; transition: var(--transition); text-decoration: none; gap: 6px; white-space: nowrap; }
 .btn-primary { background: var(--primary); color: #fff; }
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-success { background: var(--success); color: #fff; }
 .btn-success:hover { background: #2d9249; }
-.btn-warning { background: var(--warning); color: #202124; }
-.btn-warning:hover { background: #e5ac00; }
-.btn-danger { background: var(--danger); color: #fff; }
-.btn-danger:hover { background: #d33426; }
 .btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
 .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
-.btn-lg { padding: 10px 24px; font-size: 15px; }
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-table th { background: var(--gray-100); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--gray-700); border-bottom: 2px solid var(--gray-200); white-space: nowrap; }
-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-800); }
-table tbody tr:hover { background: var(--gray-50); }
-table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
-table tbody tr:nth-child(even):hover { background: var(--gray-50); }
+/* ===== 核心能力说明卡片 ===== */
+.capability-card .card-subtitle { font-size: 12px; color: var(--gray-500); margin-bottom: 14px; }
+.capability-item { background: #F8F8F8; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.capability-item:last-child { margin-bottom: 0; }
+.capability-item .ci-title { font-size: 16px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+.capability-item .ci-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+/* ===== 对话气泡模块竖线 ===== */
+.chat-msg.ai .chat-bubble { background: #fff; border: 1px solid var(--gray-200); padding: 16px 18px; }
+.chat-bubble .welcome-intro { font-size: 13px; color: var(--gray-800); margin-bottom: 12px; }
+.chat-module { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+.chat-module:last-child { margin-bottom: 0; }
+.module-bar { width: 4px; min-height: 100%; border-radius: 2px; flex-shrink: 0; align-self: stretch; }
+.module-bar.blue { background: #1a73e8; }
+.module-bar.green { background: #34a853; }
+.module-bar.purple { background: #7c3aed; }
+.module-bar.orange { background: #f59e0b; }
+.module-bar.red { background: #ea4335; }
+.module-text { flex: 1; font-size: 13px; color: var(--gray-700); line-height: 1.6; white-space: pre-line; }
+.module-text strong { color: var(--gray-900); }
+/* ===== 快速发送按钮 ===== */
+.quick-send-bar { display: flex; gap: 8px; flex-wrap: wrap; padding: 8px 0 10px; }
+.quick-send-btn { background: #fff; border: 1px solid var(--gray-300); border-radius: 20px; padding: 6px 16px; font-size: 12px; color: var(--gray-800); cursor: pointer; font-family: inherit; transition: var(--transition); white-space: nowrap; }
+.quick-send-btn:hover { background: var(--gray-50); border-color: var(--gray-400); }
+/* ===== 输入区工具栏 ===== */
+.input-toolbar { display: flex; gap: 16px; padding: 6px 0 8px; }
+.input-toolbar .tool-btn { font-size: 13px; color: var(--gray-600); cursor: pointer; background: none; border: none; font-family: inherit; transition: var(--transition); }
+.input-toolbar .tool-btn:hover { color: var(--primary); }
+.input-wrapper { display: flex; gap: 10px; align-items: flex-end; }
+.input-wrapper textarea { flex: 1; padding: 10px 14px; border: 1px solid var(--gray-300); border-radius: 12px; font-size: 13px; font-family: inherit; outline: none; resize: none; min-height: 56px; max-height: 120px; background: #F8F9FA; transition: var(--transition); }
+.input-wrapper textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); background: #fff; }
+.disclaimer-text { font-size: 11px; color: var(--gray-400); text-align: center; padding-top: 8px; }
 .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
 .tag-blue { background: #e8f0fe; color: #1a73e8; }
 .tag-green { background: #e6f4ea; color: #137333; }
 .tag-orange { background: #fef7e0; color: #b06000; }
 .tag-red { background: #fce8e6; color: #c5221f; }
 .tag-gray { background: #f1f3f4; color: #5f6368; }
-.pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 16px; padding: 12px 0; }
-.pagination button { padding: 6px 12px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: var(--transition); }
-.pagination button:hover:not(:disabled) { background: var(--gray-50); }
-.pagination button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-.pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-.tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; gap: 0; }
-.tab-btn { padding: 10px 20px; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-size: 14px; font-family: inherit; color: var(--gray-600); transition: var(--transition); font-weight: 500; }
-.tab-btn:hover { color: var(--primary); }
-.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s; }
-.modal { background: #fff; border-radius: 12px; box-shadow: var(--shadow-lg); width: 90%; max-width: 640px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.25s; }
-.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--gray-200); }
-.modal-header h3 { font-size: 17px; color: var(--gray-900); font-weight: 600; }
-.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-500); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
-.modal-close:hover { background: var(--gray-50); color: var(--gray-700); }
-.modal-body { padding: 24px; }
-.modal-footer { padding: 14px 24px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
-.form-group label .required { color: var(--danger); margin-left: 2px; }
-.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px 13px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-.form-group textarea { resize: vertical; min-height: 80px; }
-.form-row { display: flex; gap: 16px; }
-.form-row .form-group { flex: 1; }
 .progress-bar { height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
 .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.4s ease; }
-.upload-zone { border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 40px; text-align: center; cursor: pointer; transition: var(--transition); background: var(--gray-50); }
-.upload-zone:hover { border-color: var(--primary); background: var(--primary-light); }
-.upload-zone .upload-icon { font-size: 36px; margin-bottom: 10px; }
-.upload-zone p { color: var(--gray-600); font-size: 13px; }
-.upload-zone .upload-hint { color: var(--gray-400); font-size: 11px; margin-top: 6px; }
-.alert { padding: 12px 16px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
-.alert-info { background: #e8f0fe; color: #1a56db; border: 1px solid #d2e3fc; }
-.alert-success { background: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
-.alert-warning { background: #fef7e0; color: #b06000; border: 1px solid #feefc3; }
-.alert-danger { background: #fce8e6; color: #c5221f; border: 1px solid #f5c6c2; }
-.steps { display: flex; margin-bottom: 24px; }
-.step { flex: 1; text-align: center; position: relative; font-size: 12px; color: var(--gray-500); }
-.step::before { content: ''; position: absolute; top: 14px; left: 50%; right: -50%; height: 2px; background: var(--gray-200); z-index: 0; }
-.step:last-child::before { display: none; }
-.step .step-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--gray-200); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; position: relative; z-index: 1; }
-.step.active .step-circle { background: var(--primary); color: #fff; }
-.step.active { color: var(--primary); font-weight: 600; }
-.step.done .step-circle { background: var(--success); color: #fff; }
-.step.done { color: var(--success); }
-.step.done::before { background: var(--success); }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@media (max-width: 1024px) { .sidebar { width: 60px; } .sidebar .menu-item span { display: none; } .sidebar .menu-group-title { display: none; } .main-content { margin-left: 60px; } }
-</style></head><body><div class="header"><a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a><div class="header-nav"><a href="眼底图像输入.html">AI筛查</a><a href="临床数据开放共享.html">数据平台</a><a href="基础课程.html">AI教育</a><a href="临床决策支撑.html">专家系统</a><a href="数据采集工具（确认）.html">数据工具</a></div><div class="header-right"><span class="user-info" id="headerUserName">管理员</span><button class="btn-logout" onclick="logout()">退出</button></div></div><div class="sidebar" id="sidebar">
+
+@media (max-width: 1400px) {
+    .three-col { flex-wrap: wrap; }
+    .right-panel { width: 100%; }
+}
+@media (max-width: 1024px) {
+    .sidebar { width: 60px; }
+    .sidebar .menu-item span { display: none; }
+    .sidebar .menu-group-title { display: none; }
+    .main-content { margin-left: 60px; }
+    .three-col { flex-direction: column; }
+    .left-panel, .right-panel { width: 100%; }
+}
+</style></head><body>
+
+<div class="header">
+    <a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a>
+    <div class="header-nav">
+        <a href="眼底图像输入.html">AI筛查</a><a href="临床数据开放共享.html">数据平台</a><a href="基础课程.html">AI教育</a><a href="临床决策支撑.html">专家系统</a><a href="数据采集工具（确认）.html">数据工具</a>
+    </div>
+    <div class="header-right">
+        <span class="user-info" id="headerUserName">管理员</span><button class="btn-logout" onclick="logout()">退出</button>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar">
     <div class="menu-group">
         <div class="menu-group-title">专家系统</div>
         <a class="menu-item active" href="临床决策支撑.html">临床决策支撑</a>
         <a class="menu-item" href="患者咨询_导诊机器人.html">导诊机器人</a>
     </div>
 </div>
-<div class="main-content"><div class="breadcrumb"><a href="临床决策支撑.html">专家系统</a><span class="sep">></span><span>临床决策支撑</span></div><h1 class="page-title">临床决策支撑</h1><div class="card"><div class="card-header"><span class="card-title">临床决策辅助</span></div><div class="filter-bar"><label>疾病类型</label><select><option>全部</option><option>糖尿病视网膜病变</option><option>青光眼</option><option>AMD</option></select><label>患者信息</label><input placeholder="输入患者症状/体征/检查结果..."><button class="btn btn-primary btn-sm">搜索</button><button class="btn btn-outline btn-sm">重置</button></div><div class="alert alert-info">输入患者临床信息，系统基于知识图谱和AI模型提供辅助决策建议</div></div><div class="card"><div class="card-header"><span class="card-title">决策案例记录</span></div><div class="table-wrap"><table><thead><tr><th>案例ID</th><th>疾病</th><th>决策类型</th><th>建议方案</th><th>置信度</th><th>时间</th><th>操作</th></tr></thead><tbody><tr><td>DC001</td><td>DR中度NPDR</td><td>治疗方案</td><td>抗VEGF治疗+血糖控制</td><td><span class='tag tag-green'>92%</span></td><td>2024-06-20</td><td><a class='btn btn-sm btn-outline'>详情</a></td></tr><tr><td>DC002</td><td>疑似青光眼</td><td>检查建议</td><td>OCT+视野+24h眼压</td><td><span class='tag tag-green'>88%</span></td><td>2024-06-18</td><td><a class='btn btn-sm btn-outline'>详情</a></td></tr><tr><td>DC003</td><td>AMD湿性</td><td>治疗方案</td><td>抗VEGF注射+随访</td><td><span class='tag tag-green'>95%</span></td><td>2024-06-15</td><td><a class='btn btn-sm btn-outline'>详情</a></td></tr><tr><td>DC004</td><td>高血压视网膜病变</td><td>转诊建议</td><td>心内科+内分泌科</td><td><span class='tag tag-orange'>85%</span></td><td>2024-06-12</td><td><a class='btn btn-sm btn-outline'>详情</a></td></tr></tbody></table></div><div class="pagination"><button disabled>上一页</button><button class="active">1</button><button>2</button><button>3</button><button>下一页</button></div></div></div><script>
-// Common JavaScript for all pages
+
+<div class="main-content">
+    <div class="breadcrumb"><a href="临床决策支撑.html">专家系统</a><span class="sep">></span><span>临床决策支撑</span></div>
+    <h1 class="page-title">临床决策支撑</h1>
+
+    <!-- ===== 三栏布局 ===== -->
+    <div class="three-col">
+
+        <!-- 第一栏：会话管理 -->
+        <div class="left-panel">
+            <button class="btn-new-consult" onclick="newConsult()"><span class="plus-icon">+</span> 新建问诊</button>
+
+            <div class="card" style="padding:14px;">
+                <div class="section-title">历史会话</div>
+                <div class="session-list" id="sessionList">
+                    <div class="session-item active" data-session="0" onclick="switchSession(this,0)">
+                        <div class="session-title">高血压头痛诊疗</div>
+                        <div class="session-meta"><span>今天 11:02</span><span class="session-dept">内科</span></div>
+                    </div>
+                    <div class="session-item" data-session="1" onclick="switchSession(this,1)">
+                        <div class="session-title">糖尿病视网膜病变</div>
+                        <div class="session-meta"><span>今天 10:45</span><span class="session-dept">眼科</span></div>
+                    </div>
+                    <div class="session-item" data-session="2" onclick="switchSession(this,2)">
+                        <div class="session-title">冠心病术后随访</div>
+                        <div class="session-meta"><span>昨天 15:20</span><span class="session-dept">心内科</span></div>
+                    </div>
+                    <div class="session-item" data-session="3" onclick="switchSession(this,3)">
+                        <div class="session-title">过敏性鼻炎诊疗</div>
+                        <div class="session-meta"><span>2026-06-19</span><span class="session-dept">内科</span></div>
+                    </div>
+                    <div class="session-item" data-session="4" onclick="switchSession(this,4)">
+                        <div class="session-title">青光眼排查诊疗</div>
+                        <div class="session-meta"><span>2026-06-18</span><span class="session-dept">眼科</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card capability-card" style="padding:14px;">
+                <div class="card-title">核心能力说明</div>
+                <div class="card-subtitle">基于千万级临床诊疗数据训练，覆盖80%常见疾病</div>
+                <div class="capability-item">
+                    <div class="ci-title">辅助临床诊断</div>
+                    <div class="ci-desc">基于主诉、慢病史等，推断潜在疾病可能性，辅助医生决策。</div>
+                </div>
+                <div class="capability-item">
+                    <div class="ci-title">相似病历推荐</div>
+                    <div class="ci-desc">基于病历文书、表单实时分析，精准推荐高度相似病历供医生参考。</div>
+                </div>
+                <div class="capability-item">
+                    <div class="ci-title">治疗方案推荐</div>
+                    <div class="ci-desc">根据病人信息，推荐合理的检查检验、用药及手术治疗方案。</div>
+                </div>
+                <div class="capability-item">
+                    <div class="ci-title">报告自动化生成</div>
+                    <div class="ci-desc">利用多模态深度人工智能模型，自动生成结构化诊疗评估报告。</div>
+                </div>
+                <div class="capability-item">
+                    <div class="ci-title">医嘱质控</div>
+                    <div class="ci-desc">综合判断患者用药、检查等医嘱的合理性与安全性，降低医疗风险。</div>
+                </div>
+            </div>
+
+            <div class="alert-warning-card">
+                <div class="section-title"><span class="icon-warn">&#9888;</span> 使用提示</div>
+                本系统提供的诊疗建议仅供参考，最终诊疗方案与医疗处置应以医生面诊为准。所有诊疗决策请严格遵循临床诊疗规范指南。
+            </div>
+        </div>
+
+        <!-- 第二栏：智能问答对话区 -->
+        <div class="center-panel">
+            <div class="card" id="chatCard">
+                <div class="patient-info-bar" id="patientInfoBar">
+                    <div class="patient-avatar">王</div>
+                    <div class="patient-info-text">
+                        <div class="patient-name" id="chatPatientName">王某某 男 58岁</div>
+                        <div class="patient-meta">ID:202506200017 · <span id="chatDept">口腔科</span></div>
+                    </div>
+                </div>
+
+                <div class="chat-area" id="chatArea">
+                    <div class="chat-msg ai">
+                        <div class="chat-bubble">
+                            <div class="welcome-intro">您好，我是临床决策支持助手。基于患者病情信息，我可以为您提供以下服务：</div>
+                            <div class="chat-module">
+                                <div class="module-bar blue"></div>
+                                <div class="module-text">🔵 <strong>辅助临床诊断</strong> — 基于症状、病史推断潜在疾病及诊断置信度</div>
+                            </div>
+                            <div class="chat-module">
+                                <div class="module-bar green"></div>
+                                <div class="module-text">🟢 <strong>相似病历推荐</strong> — 匹配高度相似病历，提供诊疗参考</div>
+                            </div>
+                            <div class="chat-module">
+                                <div class="module-bar purple"></div>
+                                <div class="module-text">🟣 <strong>治疗方案推荐</strong> — 推荐检查检验、用药及随访方案</div>
+                            </div>
+                            <div class="chat-module">
+                                <div class="module-bar orange"></div>
+                                <div class="module-text">🟠 <strong>报告自动化生成</strong> — 自动生成结构化诊疗评估报告</div>
+                            </div>
+                            <div class="chat-module">
+                                <div class="module-bar red"></div>
+                                <div class="module-text">🔴 <strong>医嘱质控提醒</strong> — 校验医嘱合理性与安全性</div>
+                            </div>
+                        </div>
+                        <div class="chat-time">11:02</div>
+                    </div>
+                </div>
+
+                <div class="quick-send-bar">
+                    <button class="quick-send-btn" onclick="quickSendDiagnosis()">辅助临床诊断</button>
+                    <button class="quick-send-btn" onclick="quickSend('查看更多相似病历')">查看更多相似病历</button>
+                    <button class="quick-send-btn" onclick="quickSend('调整用药方案')">调整用药方案</button>
+                    <button class="quick-send-btn" onclick="quickSend('查询药品说明书')">查询药品说明书</button>
+                    <button class="quick-send-btn" onclick="quickSend('生成诊疗医嘱')">生成诊疗医嘱</button>
+                </div>
+
+                <div class="input-toolbar">
+                    <button class="tool-btn" onclick="triggerFileUpload()">📎 上传病历</button>
+                    <button class="tool-btn" onclick="triggerVoiceInput()">🎤 语音输入</button>
+                </div>
+                <div class="input-wrapper">
+                    <textarea id="chatInput" rows="2" placeholder="请输入患者病情信息，例如：&#10;患者65岁，糖尿病史15年，近期视物模糊..." onkeydown="handleKeyDown(event)"></textarea>
+                    <button class="btn-send" onclick="sendMessage()">发送</button>
+                </div>
+                <div class="disclaimer-text">* 所有辅助建议仅供参考，最终诊疗决策请结合临床实际情况判断</div>
+            </div>
+        </div>
+
+        <!-- 第三栏：信息与推荐 -->
+        <div class="right-panel">
+            <div class="card">
+                <div class="patient-card-header">
+                    <div class="patient-card-avatar" id="rightAvatar">王</div>
+                    <div>
+                        <div style="font-size:15px;font-weight:600;color:var(--gray-900);" id="rightName">王某某</div>
+                        <div style="font-size:12px;color:var(--gray-500);" id="rightGenderAge">男 58岁</div>
+                    </div>
+                </div>
+                <div class="info-row"><span class="info-label">患者ID</span><span class="info-value" id="rightPatientId">202506200017</span></div>
+                <div class="info-row"><span class="info-label">科室</span><span class="info-value" id="rightDept">内科</span></div>
+                <div class="info-row"><span class="info-label">就诊日期</span><span class="info-value" id="rightVisitDate">2026-07-01</span></div>
+
+                <div style="margin-top:12px;">
+                    <div class="section-title" style="font-size:12px;">既往病史</div>
+                    <div class="history-tags" id="rightHistoryTags">
+                        <span class="tag tag-orange">高血压</span>
+                        <span class="tag tag-blue">糖尿病</span>
+                        <span class="tag tag-red">青霉素过敏</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title" style="font-size:13px;">相似病历推荐</div>
+                <div class="record-item">
+                    <div class="record-title">高血压伴头痛临床诊疗案例</div>
+                    <div class="record-meta"><span>内科 · 2026-06-28</span><span class="record-match">匹配度 96%</span></div>
+                </div>
+                <div class="record-item">
+                    <div class="record-title">糖尿病合并高血压综合管理</div>
+                    <div class="record-meta"><span>内科 · 2026-06-25</span><span class="record-match">匹配度 89%</span></div>
+                </div>
+                <div class="record-item">
+                    <div class="record-title">口腔颌面术后疼痛管理方案</div>
+                    <div class="record-meta"><span>口腔科 · 2026-06-22</span><span class="record-match">匹配度 82%</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title" style="font-size:13px;">治疗方案推荐</div>
+                <div class="treatment-item">
+                    <div class="drug-name">硝苯地平控释片 30mg qd</div>
+                    <div class="drug-meta">降压治疗 · 患者依从性</div>
+                    <div class="compliance-bar"><div class="compliance-fill compliance-high" style="width:88%;"></div></div>
+                </div>
+                <div class="treatment-item">
+                    <div class="drug-name">二甲双胍 0.5g tid</div>
+                    <div class="drug-meta">血糖控制 · 患者依从性</div>
+                    <div class="compliance-bar"><div class="compliance-fill compliance-mid" style="width:65%;"></div></div>
+                </div>
+                <div class="treatment-item">
+                    <div class="drug-name">布洛芬 0.3g prn</div>
+                    <div class="drug-meta">术后镇痛 · 患者依从性</div>
+                    <div class="compliance-bar"><div class="compliance-fill compliance-high" style="width:92%;"></div></div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" style="margin-bottom:16px;">
+                &#128196; 生成诊疗报告
+            </button>
+
+            <div class="quality-alert">
+                <span class="qa-icon">&#9888;</span>
+                <span><strong>医嘱质控提醒：</strong>患者青霉素过敏，请避免使用青霉素类及头孢类药物。二甲双胍使用需监测肾功能。</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// ===== 会话数据 =====
+var sessionData = [
+    { 
+        name: '高血压头痛诊疗', 
+        patientName: '王某某', 
+        gender: '男', 
+        age: 58,
+        dept: '内科', 
+        patientId: '202506200017', 
+        visitDate: '2026-07-01',
+        history: '高血压10年、糖尿病5年、青霉素过敏',
+        historyTags: [
+            {text: '高血压', cls: 'tag-orange'},
+            {text: '糖尿病', cls: 'tag-blue'},
+            {text: '青霉素过敏', cls: 'tag-red'}
+        ],
+        conditionText: '患者男性，58岁，有10年高血压病史，血压控制不佳，近一周频繁出现搏动性头痛，早晨加重，无恶心呕吐，视物正常，请给出诊疗建议。'
+    },
+    { 
+        name: '糖尿病视网膜病变', 
+        patientName: '张某某', 
+        gender: '女', 
+        age: 62,
+        dept: '眼科', 
+        patientId: '202506180025', 
+        visitDate: '2026-06-30',
+        history: '糖尿病15年、高血压8年',
+        historyTags: [
+            {text: '糖尿病', cls: 'tag-blue'},
+            {text: '高血压', cls: 'tag-orange'}
+        ],
+        conditionText: '患者女性，62岁，糖尿病史15年，血糖控制不佳，近2月出现视物模糊、眼前黑影飘动，无眼痛眼胀，请给出诊疗建议。'
+    },
+    { 
+        name: '冠心病术后随访', 
+        patientName: '李某某', 
+        gender: '男', 
+        age: 65,
+        dept: '心内科', 
+        patientId: '202506150033', 
+        visitDate: '2026-06-29',
+        history: '冠心病术后3月、高血脂',
+        historyTags: [
+            {text: '冠心病', cls: 'tag-red'},
+            {text: '高血脂', cls: 'tag-orange'}
+        ],
+        conditionText: '患者男性，65岁，冠心病PCI术后3月，近一周出现活动后胸闷气短，休息后可缓解，服用阿司匹林+氯吡格雷双抗治疗中，请给出诊疗建议。'
+    },
+    { 
+        name: '过敏性鼻炎诊疗', 
+        patientName: '赵某某', 
+        gender: '女', 
+        age: 35,
+        dept: '内科', 
+        patientId: '202506120041', 
+        visitDate: '2026-06-19',
+        history: '过敏性鼻炎5年',
+        historyTags: [
+            {text: '过敏性鼻炎', cls: 'tag-blue'}
+        ],
+        conditionText: '患者女性，35岁，过敏性鼻炎5年，近一周因季节变化出现鼻塞、打喷嚏、流清涕加重，影响睡眠，自行使用氯雷他定效果不佳，请给出诊疗建议。'
+    },
+    { 
+        name: '青光眼排查诊疗', 
+        patientName: '陈某某', 
+        gender: '男', 
+        age: 52,
+        dept: '眼科', 
+        patientId: '202506100012', 
+        visitDate: '2026-06-18',
+        history: '眼压偏高、高度近视',
+        historyTags: [
+            {text: '眼压偏高', cls: 'tag-orange'},
+            {text: '高度近视', cls: 'tag-blue'}
+        ],
+        conditionText: '患者男性，52岁，有高度近视史20年，近期体检发现眼压偏高（右眼24mmHg，左眼22mmHg），偶有眼胀感，无视力下降，请给出诊疗建议。'
+    }
+];
+
+var currentSessionIndex = 0;
+
+// ===== 会话切换 =====
+function switchSession(el, index) {
+    var items = document.querySelectorAll('.session-item');
+    items.forEach(function(item) { item.classList.remove('active'); });
+    el.classList.add('active');
+    currentSessionIndex = index;
+    updateChatHeader(index);
+    updateRightPanel(index);
+}
+
+function updateChatHeader(index) {
+    var d = sessionData[index];
+    document.getElementById('chatPatientName').textContent = d.patientName;
+    document.getElementById('chatDept').textContent = d.dept;
+}
+
+// ===== 发送消息 =====
+function sendMessage() {
+    var input = document.getElementById('chatInput');
+    var text = input.value.trim();
+    if (!text) return;
+
+    var chatArea = document.getElementById('chatArea');
+    var now = new Date();
+    var timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+    // 用户消息
+    var userMsg = document.createElement('div');
+    userMsg.className = 'chat-msg user';
+    userMsg.innerHTML = '<div class="chat-bubble">' + escapeHtml(text) + '</div><div class="chat-time">' + timeStr + '</div>';
+    chatArea.appendChild(userMsg);
+
+    input.value = '';
+    input.style.height = 'auto';
+
+    // AI 回复（模拟）
+    setTimeout(function() {
+        var aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-msg ai';
+        var reply = generateAIReply(text);
+        aiMsg.innerHTML = '<div class="chat-bubble">' + reply + '</div><div class="chat-time">' + timeStr + '</div>';
+        chatArea.appendChild(aiMsg);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }, 600);
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+// ===== 快速发送 =====
+function quickSend(text) {
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+}
+
+function quickSendDiagnosis() {
+    var d = sessionData[currentSessionIndex];
+    var text = d.conditionText;
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+}
+
+// ===== 上传病历 / 语音输入（占位） =====
+function triggerFileUpload() {
+    alert('上传病历功能');
+}
+function triggerVoiceInput() {
+    alert('语音输入功能');
+}
+
+function generateAIReply(userText) {
+    // 结构化病情输入 → 返回完整5模块结构化回复
+    if (userText.indexOf('高血压') !== -1 && userText.indexOf('头痛') !== -1) {
+        return '<div class="chat-module">' +
+            '<div class="module-bar blue"></div>' +
+            '<div class="module-text"><strong>辅助临床诊断</strong>\n结合患者高血压病史及搏动性头痛症状，高度怀疑为高血压脑病/高血压急症先兆，不排除合并颅内血管病变风险。\n\n🔍 综合分析结果：\n1. 高血压急症可能性大，需警惕靶器官损害\n2. 搏动性头痛与血压波动相关，晨起加重提示血压晨峰现象\n3. 需鉴别：颅内出血、蛛网膜下腔出血、高血压脑病\n4. 结合糖尿病史，心脑血管综合风险评估增高\n\n诊断置信度：87%  |  风险等级：中危\n\n建议：立即监测血压，完善头颅CT及眼底检查，心内科紧急会诊。</div>' +
+        '</div>';
+    }
+    if (userText.indexOf('糖尿病') !== -1 && userText.indexOf('视物模糊') !== -1) {
+        return '<div class="chat-module">' +
+            '<div class="module-bar blue"></div>' +
+            '<div class="module-text"><strong>辅助临床诊断</strong>\n结合患者15年糖尿病史及视物模糊症状，高度怀疑为糖尿病视网膜病变（DR），需进一步分级评估。\n\n🔍 综合分析结果：\n1. 糖尿病病程15年，DR发生风险显著增高\n2. 视物模糊+眼前黑影提示可能为增殖期改变\n3. 需鉴别：糖尿病性黄斑水肿、玻璃体积血\n4. 合并高血压可加速DR进展\n\n诊断置信度：91%  |  风险等级：中危\n\n建议：立即行眼底照相+OCT检查，必要时眼底荧光血管造影，严格控制血糖血压。</div>' +
+        '</div>';
+    }
+    if (userText.indexOf('冠心病') !== -1 && userText.indexOf('胸闷') !== -1) {
+        return '<div class="chat-module">' +
+            '<div class="module-bar blue"></div>' +
+            '<div class="module-text"><strong>辅助临床诊断</strong>\n结合冠心病PCI术后3月及活动后胸闷症状，需警惕支架内再狭窄或不稳定心绞痛。\n\n🔍 综合分析结果：\n1. 术后3月为支架内再狭窄高发期\n2. 活动后胸闷+休息缓解符合劳力性心绞痛特征\n3. 双抗治疗中仍出现症状，需评估抗血小板药物抵抗可能\n4. 需鉴别：支架内血栓形成、新发冠脉病变\n\n诊断置信度：83%  |  风险等级：中高危\n\n建议：立即行心电图+心肌酶谱，必要时冠脉CTA或造影复查，心内科紧急评估。</div>' +
+        '</div>';
+    }
+    if (userText.indexOf('过敏') !== -1 && userText.indexOf('鼻塞') !== -1 && userText.indexOf('打喷嚏') !== -1) {
+        return '<div class="chat-module">' +
+            '<div class="module-bar blue"></div>' +
+            '<div class="module-text"><strong>辅助临床诊断</strong>\n结合5年过敏性鼻炎史及季节性加重特点，诊断为季节性过敏性鼻炎（中-重度持续性），常规抗组胺药效果不佳提示需升级治疗方案。\n\n🔍 综合分析结果：\n1. 季节变化诱发，符合季节性过敏性鼻炎特征\n2. 影响睡眠提示为中-重度\n3. 氯雷他定效果不佳可能原因：剂量不足、需联合治疗\n4. 需鉴别：非变应性鼻炎、鼻窦炎\n\n诊断置信度：93%  |  风险等级：低危\n\n建议：鼻用糖皮质激素+口服抗组胺药联合治疗，过敏原检测明确致敏原，必要时免疫治疗。</div>' +
+        '</div>';
+    }
+    if (userText.indexOf('眼压') !== -1 && userText.indexOf('近视') !== -1) {
+        return '<div class="chat-module">' +
+            '<div class="module-bar blue"></div>' +
+            '<div class="module-text"><strong>辅助临床诊断</strong>\n结合眼压偏高及高度近视史，需警惕原发性开角型青光眼（POAG）早期，高度近视为独立危险因素。\n\n🔍 综合分析结果：\n1. 双眼眼压>21mmHg，超过正常范围\n2. 高度近视者青光眼风险增加3-5倍\n3. 目前无视力下降提示可能为早期阶段\n4. 需鉴别：高眼压症、正常眼压性青光眼\n\n诊断置信度：72%  |  风险等级：中危\n\n建议：完善中央角膜厚度测量、视野检查、OCT视神经纤维层分析，定期随访监测眼压及视神经变化。</div>' +
+        '</div>';
+    }
+
+    // 快速发送按钮的回复
+    if (userText === '辅助临床诊断') {
+        return '<div class="chat-module"><div class="module-bar blue"></div><div class="module-text"><strong>辅助临床诊断</strong>\n正在基于您提供的患者信息进行综合分析...\n\n🔍 初步诊断分析：\n1. 症状匹配度评估中\n2. 鉴别诊断推理中\n3. 辅助检查建议生成中\n\n请补充更多患者信息（病史、体格检查、辅助检查结果等），以便给出更准确的诊断建议。</div></div>';
+    }
+    if (userText === '查看更多相似病历') {
+        return '<div class="chat-module"><div class="module-bar green"></div><div class="module-text"><strong>相似病历推荐</strong>\n正在为您扩展检索相似病历库，请稍候...\n\n已匹配到 23 例相关病历，其中：\n- 高血压合并头痛：12例（匹配度 85%-96%）\n- 高血压急症管理：7例（匹配度 78%-91%）\n- 慢性高血压随访：4例（匹配度 72%-85%）\n\n是否需要查看某类病历详情？</div></div>';
+    }
+    if (userText === '调整用药方案') {
+        return '<div class="chat-module"><div class="module-bar purple"></div><div class="module-text"><strong>用药方案调整建议</strong>\n当前方案：氨氯地平 5mg qd + 缬沙坦 80mg qd\n\n可调整方向：\n1. 若血压控制仍不达标（>140/90mmHg），可考虑氨氯地平增至10mg qd\n2. 若出现踝部水肿，可换用左旋氨氯地平 2.5mg qd\n3. 缬沙坦可换用厄贝沙坦 150mg qd（肾保护更优）\n\n请在医生指导下调整用药方案。</div></div>';
+    }
+    if (userText === '查询药品说明书') {
+        return '<div class="chat-module"><div class="module-bar blue"></div><div class="module-text"><strong>药品说明书查询</strong>\n请提供需要查询的药品名称，我将为您展示完整的药品说明书信息，包括：\n- 适应症与用法用量\n- 禁忌症与注意事项\n- 不良反应与药物相互作用\n- 特殊人群用药指导</div></div>';
+    }
+    if (userText === '生成诊疗医嘱') {
+        return '<div class="chat-module"><div class="module-bar orange"></div><div class="module-text"><strong>诊疗医嘱生成</strong>\n正在基于当前患者信息生成结构化诊疗医嘱...\n\n📋 临时医嘱：\n1. 头颅CT平扫 st.\n2. 24小时动态血压监测\n3. 血常规+肝肾功+电解质+血糖+血脂\n\n💊 长期医嘱：\n1. 苯磺酸氨氯地平片 5mg po qd\n2. 缬沙坦胶囊 80mg po qd\n\n📅 随访：3天后门诊复诊\n\n医嘱已生成，请审核后确认执行。</div></div>';
+    }
+    return '<div class="chat-module"><div class="module-bar blue"></div><div class="module-text">已收到您的咨询。请提供更多患者病情信息（症状、体征、检查结果等），我将为您提供结构化的辅助诊疗建议。</div></div>';
+}
+
+function handleKeyDown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+}
+
+// ===== 新建问诊 =====
+function newConsult() {
+    var now = new Date();
+    var dateStr = now.getFullYear() + '-' + (now.getMonth()+1).toString().padStart(2,'0') + '-' + now.getDate().toString().padStart(2,'0');
+    var timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+    var newName = '新问诊 ' + timeStr;
+    var newSession = {
+        name: newName,
+        patientName: '请输入',
+        gender: '',
+        age: '',
+        dept: '待选择',
+        patientId: '',
+        visitDate: dateStr,
+        history: '',
+        historyTags: [],
+        conditionText: ''
+    };
+
+    sessionData.unshift(newSession);
+
+    // 重新排序已有项的 data-session
+    var sessionList = document.getElementById('sessionList');
+    var items = sessionList.querySelectorAll('.session-item');
+    items.forEach(function(item) { item.classList.remove('active'); });
+
+    var newItem = document.createElement('div');
+    newItem.className = 'session-item active';
+    newItem.setAttribute('data-session', '0');
+    newItem.innerHTML = '<div class="session-title">' + newName + '</div><div class="session-meta"><span>今天 ' + timeStr + '</span><span class="session-dept">新问诊</span></div>';
+    newItem.onclick = function() { switchSession(this, 0); };
+
+    sessionList.insertBefore(newItem, sessionList.firstChild);
+
+    // 更新其他项的 data-session
+    var allItems = sessionList.querySelectorAll('.session-item');
+    allItems.forEach(function(item, i) {
+        item.setAttribute('data-session', i);
+        item.onclick = function() { switchSession(item, i); };
+    });
+
+    currentSessionIndex = 0;
+    updateChatHeader(0);
+
+    // 清空对话区
+    var chatArea = document.getElementById('chatArea');
+    chatArea.innerHTML = '<div class="chat-msg ai"><div class="chat-bubble"><div class="welcome-intro">您好，我是临床决策支持助手。基于患者病情信息，我可以为您提供以下服务：</div><div class="chat-module"><div class="module-bar blue"></div><div class="module-text">🔵 <strong>辅助临床诊断</strong> — 基于症状、病史推断潜在疾病及诊断置信度</div></div><div class="chat-module"><div class="module-bar green"></div><div class="module-text">🟢 <strong>相似病历推荐</strong> — 匹配高度相似病历，提供诊疗参考</div></div><div class="chat-module"><div class="module-bar purple"></div><div class="module-text">🟣 <strong>治疗方案推荐</strong> — 推荐检查检验、用药及随访方案</div></div><div class="chat-module"><div class="module-bar orange"></div><div class="module-text">🟠 <strong>报告自动化生成</strong> — 自动生成结构化诊疗评估报告</div></div><div class="chat-module"><div class="module-bar red"></div><div class="module-text">🔴 <strong>医嘱质控提醒</strong> — 校验医嘱合理性与安全性</div></div></div><div class="chat-time">' + timeStr + '</div></div>';
+    updateRightPanel(0);
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ===== 通用基础方法 =====
 function navigateTo(url) { window.location.href = url; }
 function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
 function openModal(id) { var el = document.getElementById(id); if(el) el.style.display = 'flex'; }
@@ -171,6 +715,7 @@ function switchTab(group, name) {
     if (btn) btn.classList.add('active');
     if (content) content.classList.add('active');
 }
+
 document.addEventListener('DOMContentLoaded', function() {
     try {
         var user = JSON.parse(localStorage.getItem('life_med_user'));
@@ -188,5 +733,14 @@ document.addEventListener('DOMContentLoaded', function() {
             item.classList.add('active');
         }
     });
+
+    // 初始化 textarea 自适应高度
+    var chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+    }
 });
 </script></body></html>
