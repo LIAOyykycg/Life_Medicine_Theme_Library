@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>患者咨询/导诊机器人</title>
+<style>
+/* ===== 生命医学主题库 - 通用样式 ===== */
+:root {
+    --primary: #1a73e8;
+    --primary-dark: #1557b0;
+    --primary-light: #e8f0fe;
+    --success: #34a853;
+    --warning: #fbbc04;
+    --danger: #ea4335;
+    --gray-50: #f8f9fa;
+    --gray-100: #f5f7fa;
+    --gray-200: #e8ecf0;
+    --gray-300: #dadce0;
+    --gray-400: #bdc1c6;
+    --gray-500: #9aa0a6;
+    --gray-600: #80868b;
+    --gray-700: #5f6368;
+    --gray-800: #3c4043;
+    --gray-900: #202124;
+    --text: #333333;
+    --text-secondary: #999999;
+    --bg: #ffffff;
+    --sidebar-width: 220px;
+    --header-height: 56px;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+    --transition: all 0.2s ease;
+
+    /* Chat specific */
+    --chat-bg: #F5F7FA;
+    --chat-bot-bubble: #FFFFFF;
+    --chat-user-bubble: #1677FF;
+    --chat-user-text: #FFFFFF;
+    --chat-bot-text: #1D2129;
+    --chat-time: #999999;
+    --chat-border: #EBEEF5;
+    --chat-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    --chat-panel-width: 280px;
+    --chat-orange-bg: #FFF7E6;
+    --chat-orange-icon: #FAAD14;
+    --chat-red-bg: #FFF1F0;
+    --chat-red-icon: #FF4D4F;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-size: 14px; color: var(--text); background: var(--gray-50); min-height: 100vh; line-height: 1.6; }
+.header { height: var(--header-height); background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%); color: #fff; display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.header .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 40px; }
+.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; transition: var(--transition); }
+.header .header-nav a:hover, .header .header-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
+.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: var(--transition); }
+.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
+.header .header-right .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: var(--transition); }
+.header .header-right .btn-logout:hover { background: rgba(255,255,255,0.35); }
+.sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--gray-200); overflow-y: auto; z-index: 999; padding: 8px 0; }
+.sidebar .menu-group { margin-bottom: 4px; }
+.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.sidebar .menu-item { display: flex; align-items: center; padding: 10px 20px; color: var(--gray-700); text-decoration: none; font-size: 13px; transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+.sidebar .menu-item:hover { background: var(--gray-50); color: var(--primary); }
+.sidebar .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.sidebar .menu-item .menu-icon { width: 20px; margin-right: 10px; text-align: center; font-size: 14px; }
+.main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); height: calc(100vh - var(--header-height)); display: flex; overflow: hidden; }
+
+/* ===== Chat Layout ===== */
+.chat-wrapper { display: flex; flex: 1; height: 100%; overflow: hidden; }
+
+/* Left Panel */
+.chat-panel { width: var(--chat-panel-width); background: #fff; border-right: 1px solid var(--chat-border); display: flex; flex-direction: column; flex-shrink: 0; }
+.chat-panel-header { padding: 16px; border-bottom: 1px solid var(--chat-border); }
+.chat-panel-header .btn-new-session { display: block; width: 100%; padding: 10px 0; background: var(--chat-user-bubble); color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: var(--transition); letter-spacing: 1px; }
+.chat-panel-header .btn-new-session:hover { background: #1565d1; }
+.chat-panel-sessions { flex: 1; overflow-y: auto; padding: 8px 0; }
+.chat-panel-sessions .session-title { padding: 12px 16px 6px; font-size: 12px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.chat-panel-sessions .session-item { padding: 10px 16px; cursor: pointer; font-size: 13px; color: var(--gray-700); transition: var(--transition); border-left: 3px solid transparent; display: flex; align-items: center; gap: 8px; }
+.chat-panel-sessions .session-item:hover { background: var(--gray-50); }
+.chat-panel-sessions .session-item.active { background: #e8f4fd; color: var(--chat-user-bubble); border-left-color: var(--chat-user-bubble); font-weight: 500; }
+.chat-panel-sessions .session-item .session-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-400); flex-shrink: 0; }
+
+/* Main Chat Area */
+.chat-main { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); overflow: hidden; }
+
+/* Chat Header */
+.chat-header { padding: 14px 24px; background: #fff; border-bottom: 1px solid var(--chat-border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.chat-header .chat-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--chat-user-bubble); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; flex-shrink: 0; }
+.chat-header .chat-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+.chat-header .chat-status { font-size: 12px; color: var(--success); display: flex; align-items: center; gap: 4px; }
+.chat-header .chat-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
+.chat-header .chat-actions { margin-left: auto; display: flex; gap: 12px; }
+.chat-header .chat-actions .chat-action-btn { width: 32px; height: 32px; border-radius: 6px; border: none; background: transparent; cursor: pointer; color: var(--gray-600); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+.chat-header .chat-actions .chat-action-btn:hover { background: var(--gray-100); color: var(--gray-800); }
+
+/* Chat Messages */
+.chat-messages { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.chat-messages::-webkit-scrollbar { width: 5px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+
+.message-row { display: flex; gap: 10px; max-width: 85%; }
+.message-row.bot { align-self: flex-start; }
+.message-row.user { align-self: flex-end; flex-direction: row-reverse; }
+
+.message-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #fff; }
+.message-row.bot .message-avatar { background: var(--chat-user-bubble); }
+.message-row.user .message-avatar { background: var(--gray-500); }
+
+.message-body { display: flex; flex-direction: column; gap: 4px; }
+.message-bubble { padding: 12px 16px; border-radius: 10px; font-size: 14px; line-height: 1.7; word-break: break-word; }
+.message-row.bot .message-bubble { background: var(--chat-bot-bubble); color: var(--chat-bot-text); box-shadow: var(--chat-shadow); border-top-left-radius: 2px; }
+.message-row.user .message-bubble { background: var(--chat-user-bubble); color: var(--chat-user-text); border-top-right-radius: 2px; }
+
+.message-time { font-size: 11px; color: var(--chat-time); padding: 0 4px; }
+.message-row.bot .message-time { text-align: left; }
+.message-row.user .message-time { text-align: right; }
+
+/* Inline cards within messages */
+.inline-card { background: #fff; border: 1px solid var(--chat-border); border-radius: 8px; padding: 12px 14px; margin-top: 8px; box-shadow: var(--chat-shadow); }
+.inline-card .inline-card-title { font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+.inline-card .inline-card-subtitle { font-size: 12px; color: var(--gray-500); margin-bottom: 6px; }
+.inline-card .inline-card-body { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
+.inline-card .inline-card-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.inline-card .inline-btn { padding: 6px 16px; border-radius: 16px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; transition: var(--transition); }
+.inline-card .inline-btn-primary { background: var(--chat-user-bubble); color: #fff; }
+.inline-card .inline-btn-primary:hover { background: #1565d1; }
+.inline-card .inline-btn-outline { background: #fff; color: var(--chat-user-bubble); border: 1px solid var(--chat-user-bubble); }
+.inline-card .inline-btn-outline:hover { background: #e8f4fd; }
+
+/* Steps card */
+.steps-card { margin-top: 8px; }
+.steps-card .steps-title { font-weight: 600; font-size: 14px; color: var(--gray-800); margin-bottom: 10px; }
+.steps-list { display: flex; align-items: flex-start; gap: 0; overflow-x: auto; }
+.step-item { flex: 1; text-align: center; position: relative; min-width: 80px; padding: 0 4px; }
+.step-item::after { content: ''; position: absolute; top: 16px; left: 55%; width: 90%; height: 2px; background: var(--gray-200); z-index: 0; }
+.step-item:last-child::after { display: none; }
+.step-dot { width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; position: relative; z-index: 1; }
+.step-dot.blue { background: var(--chat-user-bubble); }
+.step-dot.green { background: var(--success); }
+.step-dot.purple { background: #722ED1; }
+.step-dot.orange { background: #FA8C16; }
+.step-dot.teal { background: #13C2C2; }
+.step-label { font-size: 11px; color: var(--gray-600); line-height: 1.3; }
+.step-desc { font-size: 10px; color: var(--gray-500); line-height: 1.2; margin-top: 2px; }
+
+/* Detailed steps list */
+.detail-steps { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.detail-step { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; background: #f9fafb; border-radius: 6px; }
+.detail-step-num { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.detail-step-num.c1 { background: var(--chat-user-bubble); }
+.detail-step-num.c2 { background: var(--success); }
+.detail-step-num.c3 { background: #722ED1; }
+.detail-step-num.c4 { background: #FA8C16; }
+.detail-step-num.c5 { background: #13C2C2; }
+.detail-step-info { flex: 1; min-width: 0; }
+.detail-step-title { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+.detail-step-desc { font-size: 11px; color: var(--gray-600); line-height: 1.4; }
+
+/* File card */
+.file-card { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--chat-border); border-radius: 8px; padding: 10px 14px; margin-top: 8px; }
+.file-card .file-icon { width: 36px; height: 36px; border-radius: 6px; background: #FFF7E6; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #D48806; flex-shrink: 0; font-weight: 600; }
+.file-card .file-info { flex: 1; min-width: 0; }
+.file-card .file-name { font-size: 13px; font-weight: 500; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-card .file-size { font-size: 11px; color: var(--gray-500); }
+.file-card .file-download { width: 28px; height: 28px; border-radius: 50%; background: var(--chat-user-bubble); border: none; cursor: pointer; color: #fff; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* Prescription card */
+.rx-card { background: #fff; border: 1px solid var(--chat-border); border-radius: 8px; padding: 14px; margin-top: 8px; }
+.rx-card .rx-title { font-size: 15px; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+.rx-card .rx-usage { font-size: 12px; color: var(--gray-500); margin-bottom: 10px; }
+.rx-card .rx-items { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.rx-card .rx-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700); }
+.rx-card .rx-check { width: 16px; height: 16px; border: 2px solid var(--chat-user-bubble); border-radius: 3px; flex-shrink: 0; }
+.rx-card .rx-notes { font-size: 12px; color: var(--gray-500); border-top: 1px solid var(--chat-border); padding-top: 8px; margin-top: 4px; }
+.rx-card .rx-notes p { margin-bottom: 2px; }
+.rx-card .rx-warning { color: var(--chat-red-icon); font-size: 12px; margin-top: 4px; }
+
+/* Link text in messages */
+.message-link { color: var(--chat-user-bubble); text-decoration: none; cursor: pointer; border-bottom: 1px dashed var(--chat-user-bubble); }
+.message-link:hover { color: #1565d1; }
+
+/* Doctor card */
+.doctor-card { background: #fff; border: 1px solid var(--chat-border); border-radius: 8px; padding: 14px; margin-top: 10px; box-shadow: var(--chat-shadow); }
+.doctor-card .doctor-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.doctor-card .doctor-avatar { width: 48px; height: 48px; border-radius: 8px; background: #e8f4fd; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.doctor-card .doctor-name { font-size: 15px; font-weight: 700; color: var(--gray-800); }
+.doctor-card .doctor-title { display: inline-block; background: #FFF7E6; color: #D48806; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
+.doctor-card .doctor-specialty { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+.doctor-card .doctor-rating { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-600); margin-bottom: 10px; }
+.doctor-card .doctor-stars { color: #FAAD14; }
+.doctor-card .doctor-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.doctor-card .doctor-btn { padding: 8px 18px; border-radius: 16px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; transition: var(--transition); }
+.doctor-card .doctor-btn-primary { background: var(--chat-user-bubble); color: #fff; }
+.doctor-card .doctor-btn-primary:hover { background: #1565d1; }
+.doctor-card .doctor-btn-secondary { background: #e8f4fd; color: var(--chat-user-bubble); border: 1px solid var(--chat-user-bubble); }
+.doctor-card .doctor-btn-secondary:hover { background: #d4e8fc; }
+.doctor-card .doctor-btn-gray { background: #f5f5f5; color: var(--gray-600); border: 1px solid var(--gray-300); }
+.doctor-card .doctor-btn-gray:hover { background: #e8e8e8; }
+
+/* Input Area */
+.chat-input-area { padding: 16px 24px; background: #fff; border-top: 1px solid var(--chat-border); flex-shrink: 0; }
+.chat-input-row { display: flex; gap: 10px; align-items: flex-end; }
+.chat-input-actions { display: flex; gap: 6px; margin-bottom: 6px; }
+.chat-input-actions button { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--gray-300); background: #fff; cursor: pointer; font-size: 14px; color: var(--gray-600); display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+.chat-input-actions button:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.chat-input-textarea { flex: 1; border: 1px solid var(--gray-300); border-radius: 8px; padding: 10px 14px; font-size: 14px; font-family: inherit; resize: none; outline: none; min-height: 44px; max-height: 120px; line-height: 1.5; transition: var(--transition); }
+.chat-input-textarea:focus { border-color: var(--chat-user-bubble); box-shadow: 0 0 0 3px rgba(22,119,255,0.1); }
+.chat-send-btn { padding: 10px 24px; background: var(--chat-user-bubble); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: var(--transition); white-space: nowrap; align-self: flex-end; }
+.chat-send-btn:hover { background: #1565d1; }
+.chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.chat-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chat-suggestions .suggest-tag { padding: 6px 14px; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 14px; font-size: 12px; color: var(--gray-600); cursor: pointer; transition: var(--transition); white-space: nowrap; }
+.chat-suggestions .suggest-tag:hover { background: #e8f4fd; border-color: var(--chat-user-bubble); color: var(--chat-user-bubble); }
+
+/* Scrollbar for panel */
+.chat-panel-sessions::-webkit-scrollbar { width: 4px; }
+.chat-panel-sessions::-webkit-scrollbar-track { background: transparent; }
+.chat-panel-sessions::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+@media (max-width: 1024px) {
+    .sidebar { width: 60px; }
+    .sidebar .menu-item span { display: none; }
+    .sidebar .menu-group-title { display: none; }
+    .main-content { margin-left: 60px; }
+    .chat-panel { width: 200px; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+    <a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a>
+    <div class="header-nav">
+        <a href="眼底图像输入.html">AI筛查</a>
+        <a href="临床数据开放共享.html">数据平台</a>
+        <a href="基础课程.html">AI教育</a>
+        <a href="临床决策支撑.html">专家系统</a>
+        <a href="数据采集工具（确认）.html">数据工具</a>
+    </div>
+    <div class="header-right">
+        <span class="user-info" id="headerUserName">管理员</span>
+        <button class="btn-logout" onclick="logout()">退出</button>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <div class="menu-group">
+        <div class="menu-group-title">专家系统</div>
+        <a class="menu-item" href="临床决策支撑.html">临床决策支撑</a>
+        <a class="menu-item active" href="患者咨询_导诊机器人.html">导诊机器人</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="chat-wrapper">
+        <!-- Left Panel -->
+        <div class="chat-panel">
+            <div class="chat-panel-header">
+                <button class="btn-new-session" onclick="startNewSession()">新建会话</button>
+            </div>
+            <div class="chat-panel-sessions">
+                <div class="session-title">会话记录</div>
+                <div class="session-item active" onclick="switchSession(this, 'headache')">
+                    <span class="session-dot"></span> 头痛问诊
+                </div>
+                <div class="session-item" onclick="switchSession(this, 'eyeache')">
+                    <span class="session-dot"></span> 眼痛问诊
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="chat-avatar">&#10010;</div>
+                <div>
+                    <div class="chat-title">AI导诊助手</div>
+                    <div class="chat-status">在线</div>
+                </div>
+                <div class="chat-actions">
+                    <button class="chat-action-btn" title="搜索">&#128269;</button>
+                    <button class="chat-action-btn" title="设置">&#9881;</button>
+                    <button class="chat-action-btn" title="帮助">&#63;</button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- 默认对话：头痛问诊 -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-area">
+                <div class="chat-input-row">
+                    <div style="display:flex;flex-direction:column;flex:1;gap:8px;">
+                        <div class="chat-input-actions">
+                            <button title="上传图片" onclick="triggerUpload()">&#128247;</button>
+                            <button title="发送文件" onclick="triggerUpload()">&#128206;</button>
+                        </div>
+                        <textarea class="chat-input-textarea" id="chatInput" placeholder="请详细描述您的症状问题……" rows="1" onkeydown="handleKeyDown(event)"></textarea>
+                    </div>
+                    <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()">发送</button>
+                </div>
+                <div class="chat-suggestions">
+                    <span class="suggest-tag" onclick="renderScene('guide')">就诊流程指引</span>
+                    <span class="suggest-tag" onclick="renderScene('triage')">智能导诊</span>
+                    <span class="suggest-tag" onclick="renderScene('health')">健康咨询</span>
+                    <span class="suggest-tag" onclick="renderScene('doctor')">快速找医生</span>
+                    <span class="suggest-tag" onclick="renderScene('consult')">病情咨询</span>
+                    <span class="suggest-tag" onclick="renderScene('medication')">用药指导</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="file" id="fileInput" style="display:none;" onchange="handleFileSelect(event)" multiple>
+
+<script>
+// ===== Common JavaScript =====
+function navigateTo(url) { window.location.href = url; }
+function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+
+// ===== Chat JavaScript =====
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        var user = JSON.parse(localStorage.getItem('life_med_user'));
+        if (user && user.name) {
+            document.getElementById('headerUserName').textContent = user.name;
+        }
+    } catch(e) {}
+
+    var path = window.location.pathname.replace(/\\/g, '/');
+    var currentPage = path.split('/').pop();
+    var menuItems = document.querySelectorAll('.sidebar .menu-item');
+    menuItems.forEach(function(item) {
+        var href = item.getAttribute('href');
+        if (href && (href === currentPage || href.endsWith('/' + currentPage))) {
+            item.classList.add('active');
+        }
+    });
+
+    // 加载默认会话（头痛问诊）
+    renderSession('headache');
+});
+
+function getCurrentTime() {
+    var now = new Date();
+    return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+}
+
+function clearMessages() {
+    document.getElementById('chatMessages').innerHTML = '';
+}
+
+function addMessage(type, html, time) {
+    var container = document.getElementById('chatMessages');
+    var row = document.createElement('div');
+    row.className = 'message-row ' + type;
+
+    var avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.innerHTML = type === 'bot' ? '&#10010;' : '&#128100;';
+
+    var body = document.createElement('div');
+    body.className = 'message-body';
+
+    var bubble = document.createElement('div');
+    bubble.className = 'message-bubble';
+    bubble.innerHTML = html;
+
+    var timeDiv = document.createElement('div');
+    timeDiv.className = 'message-time';
+    timeDiv.textContent = time || getCurrentTime();
+
+    body.appendChild(bubble);
+    body.appendChild(timeDiv);
+    row.appendChild(avatar);
+    row.appendChild(body);
+    container.appendChild(row);
+
+    container.scrollTop = container.scrollHeight;
+}
+
+function addBotMessage(html, time) {
+    addMessage('bot', html, time);
+}
+
+function addUserMessage(html, time) {
+    addMessage('user', html, time);
+}
+
+function sendMessage() {
+    var input = document.getElementById('chatInput');
+    var text = input.value.trim();
+    if (!text) return;
+
+    addUserMessage(text);
+    input.value = '';
+    input.style.height = 'auto';
+
+    // Simulate bot response
+    setTimeout(function() {
+        var responses = [
+            '收到您的消息，我正在为您分析中。请稍候……',
+            '感谢您的描述。建议您到相应科室进一步检查，需要我帮您预约挂号吗？',
+            '根据您的症状，初步判断可能与常见疾病有关。建议：<br>1. 保持良好作息<br>2. 避免过度用眼<br>3. 定期复查<br><br>需要更详细的建议吗？',
+            '我已记录您的症状信息。如需进一步帮助，可以点击下方快捷入口或输入更多细节。'
+        ];
+        var resp = responses[Math.floor(Math.random() * responses.length)];
+        addBotMessage(resp);
+    }, 800);
+}
+
+function handleKeyDown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+function triggerUpload() {
+    document.getElementById('fileInput').click();
+}
+
+function handleFileSelect(event) {
+    var files = event.target.files;
+    if (!files.length) return;
+    for (var i = 0; i < files.length; i++) {
+        var f = files[i];
+        var sizeStr = f.size < 1024 ? f.size + 'B' : f.size < 1048576 ? (f.size / 1024).toFixed(1) + 'KB' : (f.size / 1048576).toFixed(1) + 'MB';
+        var fileCard = '<div class="file-card">' +
+            '<div class="file-icon">' + f.name.split('.').pop().toUpperCase() + '</div>' +
+            '<div class="file-info"><div class="file-name">' + f.name + '</div><div class="file-size">' + sizeStr + '</div></div>' +
+            '</div>';
+        addUserMessage('我发送了一个文件' + fileCard);
+    }
+    event.target.value = '';
+}
+
+function switchSession(el, sessionId) {
+    var items = document.querySelectorAll('.chat-panel-sessions .session-item');
+    items.forEach(function(i) { i.classList.remove('active'); });
+    el.classList.add('active');
+    renderSession(sessionId);
+}
+
+function startNewSession() {
+    clearMessages();
+    document.getElementById('chatInput').value = '';
+    document.getElementById('chatInput').focus();
+    // 取消会话选中状态
+    var items = document.querySelectorAll('.chat-panel-sessions .session-item');
+    items.forEach(function(i) { i.classList.remove('active'); });
+}
+
+// ===== 对话内容渲染 =====
+
+function renderSession(sessionId) {
+    clearMessages();
+    if (sessionId === 'headache') {
+        renderHeadacheSession();
+    } else if (sessionId === 'eyeache') {
+        renderEyeacheSession();
+    }
+}
+
+// 头痛问诊（默认）
+function renderHeadacheSession() {
+    addBotMessage('您好，我是AI导诊助手。请描述您的症状，我将为您推荐合适的科室和医生。', '10:20');
+    addUserMessage('我最近经常头痛，有时候会持续半天，位置在太阳穴附近。', '10:21');
+    addBotMessage(
+        '根据您的描述，可能与紧张性头痛或偏头痛有关。为了更准确地判断，请问：<br><br>' +
+        '1. 头痛频率如何？每周发作几次？<br>' +
+        '2. 是否伴有恶心、畏光等症状？<br>' +
+        '3. 是否有高血压病史？', '10:21');
+    addUserMessage('大概每周三四次，有时候会恶心，没有高血压。', '10:22');
+    addBotMessage(
+        '感谢您的补充。根据您的症状，初步判断可能为<strong>偏头痛</strong>，建议您到<strong>神经内科</strong>就诊。<br><br>' +
+        '日常建议：<br>' +
+        '1. 保持规律作息，避免熬夜和过度疲劳<br>' +
+        '2. 记录头痛日记，跟踪发作频率和诱因<br>' +
+        '3. 避免已知的触发因素（如特定食物、强光、噪音）<br>' +
+        '4. 如疼痛剧烈，可暂行休息并在医生指导下用药<br><br>' +
+        '需要帮您预约神经内科专家门诊吗？', '10:22');
+}
+
+// 眼痛问诊
+function renderEyeacheSession() {
+    addBotMessage('您好，我是AI导诊助手。请描述您的症状，我将为您推荐合适的科室和医生。', '09:15');
+    addUserMessage('我右眼疼痛，伴有畏光和流泪，已经两天了。', '09:16');
+    addBotMessage(
+        '了解您的症状。请问：<br><br>' +
+        '1. 有没有外伤史？<br>' +
+        '2. 视力是否下降？<br>' +
+        '3. 是否有异物感？', '09:16');
+    addUserMessage('没有外伤，视力稍微有点模糊，有异物感。', '09:17');
+    addBotMessage(
+        '根据您的描述，可能是<strong>角膜炎或急性结膜炎</strong>，建议您挂<strong>眼科</strong>就诊。<br><br>' +
+        '就诊前注意：<br>' +
+        '1. 不要用手揉眼睛，避免加重感染<br>' +
+        '2. 暂停佩戴隐形眼镜<br>' +
+        '3. 可用清洁的湿毛巾冷敷缓解不适<br>' +
+        '4. 避免与他人共用毛巾等个人物品<br><br>' +
+        '需要帮您预约眼科门诊吗？', '09:17');
+}
+
+// 场景1：就诊流程指引（图2原型）
+function renderGuideScene() {
+    addUserMessage('请给我提供挂号、候诊、检查、缴费、取药等过程的就诊指引。', '10:36');
+    addBotMessage(
+        '建议按 <strong>"挂号 → 候诊 → 检查 → 缴费 → 取药"</strong> 的顺序办理：', '10:36');
+    addBotMessage(
+        '<div class="steps-card">' +
+        '<div class="steps-title">就诊流程指引</div>' +
+        '<div class="steps-list">' +
+        '<div class="step-item">' +
+        '<div class="step-dot blue">1</div>' +
+        '<div class="step-label">预约挂号</div>' +
+        '</div>' +
+        '<div class="step-item">' +
+        '<div class="step-dot green">2</div>' +
+        '<div class="step-label">候诊等待</div>' +
+        '</div>' +
+        '<div class="step-item">' +
+        '<div class="step-dot purple">3</div>' +
+        '<div class="step-label">检查检验</div>' +
+        '</div>' +
+        '<div class="step-item">' +
+        '<div class="step-dot orange">4</div>' +
+        '<div class="step-label">费用缴纳</div>' +
+        '</div>' +
+        '<div class="step-item">' +
+        '<div class="step-dot teal">5</div>' +
+        '<div class="step-label">取药服务</div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="detail-steps" style="margin-top:12px;">' +
+        '<div class="detail-step"><div class="detail-step-num c1">1</div><div class="detail-step-info"><div class="detail-step-title">预约挂号</div><div class="detail-step-desc">在线选择科室、医生及就诊时间，支持医保/自费多种方式</div></div></div>' +
+        '<div class="detail-step"><div class="detail-step-num c2">2</div><div class="detail-step-info"><div class="detail-step-title">候诊等待</div><div class="detail-step-desc">实时查看叫号进度，支持消息提醒，避免错过就诊时间</div></div></div>' +
+        '<div class="detail-step"><div class="detail-step-num c3">3</div><div class="detail-step-info"><div class="detail-step-title">检查检验</div><div class="detail-step-desc">在线预约检查项目，结果推送提醒，支持报告解读服务</div></div></div>' +
+        '<div class="detail-step"><div class="detail-step-num c4">4</div><div class="detail-step-info"><div class="detail-step-title">费用缴纳</div><div class="detail-step-desc">一站式缴纳挂号费、检查费、药费等，支持医保实时结算</div></div></div>' +
+        '<div class="detail-step"><div class="detail-step-num c5">5</div><div class="detail-step-info"><div class="detail-step-title">取药服务</div><div class="detail-step-desc">查看取药窗口与等待时间，支持药品配送到家服务</div></div></div>' +
+        '</div>' +
+        '</div>', '10:36');
+}
+
+// 场景2：智能导诊（图3原型）
+function renderTriageScene() {
+    addUserMessage('我最近眼睛干涩，还有点痒，应该挂什么科？', '10:32');
+    addBotMessage('根据您描述的症状，可能是<strong>干眼症或过敏性结膜炎</strong>，建议您挂<strong>眼科</strong>就诊。', '10:32');
+}
+
+// 场景3：健康咨询（图4原型）
+function renderHealthScene() {
+    addUserMessage('我最近经常熬夜，眼睛干涩有红血丝，平时要注意什么？', '10:48');
+    addBotMessage(
+        '根据您的情况，这是典型的视疲劳和干眼症表现，日常需要注意：<br><br>' +
+        '1. 减少熬夜，保持规律作息，每天睡眠时间建议7-8小时；<br>' +
+        '2. 每用眼40分钟休息5-10分钟，远眺放松眼部；<br>' +
+        '3. 可以使用不含防腐剂的人工泪液缓解干涩，避免用手揉眼睛；<br>' +
+        '4. 饮食上多吃富含维生素A、C的食物，如胡萝卜、蓝莓、菠菜等；<br>' +
+        '5. 如果症状持续超过一周或伴有视力下降，建议到眼科进行详细检查。', '10:48');
+}
+
+// 场景4：快速找医生（图5原型）
+function renderDoctorScene() {
+    addUserMessage('根据我的主诉，帮我推荐医生', '10:45');
+    addBotMessage(
+        '根据您描述的症状，为您推荐以下眼科医生：' +
+        '<div class="doctor-card">' +
+        '<div class="doctor-header">' +
+        '<div class="doctor-avatar">&#127973;</div>' +
+        '<div>' +
+        '<div class="doctor-name">李医生<span class="doctor-title">主任医师</span></div>' +
+        '<div class="doctor-specialty">擅长：干眼症、角膜病、过敏性结膜炎</div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="doctor-rating"><span class="doctor-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span> 4.8分 (3285人评价)</div>' +
+        '<div class="doctor-actions">' +
+        '<button class="doctor-btn doctor-btn-primary">预约</button>' +
+        '<button class="doctor-btn doctor-btn-secondary">立即挂号</button>' +
+        '<button class="doctor-btn doctor-btn-gray">了解更多眼科医生</button>' +
+        '</div>' +
+        '</div>', '10:45');
+}
+
+// 场景5：病情咨询（图6原型）
+function renderConsultScene() {
+    addUserMessage(
+        '这是我的验光报告，能帮我分析一下吗？' +
+        '<div class="file-card">' +
+        '<div class="file-icon">PDF</div>' +
+        '<div class="file-info"><div class="file-name">验光报告_20250620.pdf</div><div class="file-size">2.4MB · 已上传完成</div></div>' +
+        '<button class="file-download">&#8595;</button>' +
+        '</div>', '10:51');
+    addBotMessage(
+        '从您的报告分析结果如下：<br><br>' +
+        '您双眼近视度数：<strong>左眼325度，右眼350度</strong>，伴有50度散光，属于中度近视，矫正视力可以达到1.0，情况稳定。<br><br>' +
+        '<strong>建议：</strong><br>' +
+        '1. 日常需要正确佩戴眼镜，避免长时间近距离用眼导致度数加深；<br>' +
+        '2. 每年定期复查视力和眼轴，观察度数变化；<br>' +
+        '3. 如果有视物模糊、眼痛、头痛等症状，及时到眼科就诊；<br>' +
+        '4. 可以考虑使用低浓度阿托品滴眼液控制近视进展，需在医生指导下使用。', '10:51');
+}
+
+// 场景6：用药指导（图7原型）
+function renderMedicationScene() {
+    addUserMessage('我有过敏性结膜炎，用什么药比较好？', '10:55');
+    addBotMessage(
+        '针对过敏性结膜炎，常用的治疗药物有：<br><br>' +
+        '1. <strong>抗组胺药：</strong>如盐酸奥洛他定滴眼液，每天2次，每次1滴，可以有效缓解痒感、红肿症状；<br><br>' +
+        '2. <strong>肥大细胞稳定剂：</strong>如色甘酸钠滴眼液，适合在过敏季来临前使用预防发作；<br><br>' +
+        '3. <strong>人工泪液：</strong>可以稀释过敏原、缓解眼部干涩不适，建议选不含防腐剂的剂型；<br><br>' +
+        '4. <strong>严重时</strong>可在医生指导下使用激素类滴眼液，不要自行长期使用。<br><br>' +
+        '<strong>注意事项：</strong>避免接触已知过敏原，不要用手揉眼，用药前先清洁双手。如果用药3天症状无缓解或加重，请及时到眼科就医。', '10:55');
+}
+
+// 场景路由
+function renderScene(sceneId) {
+    clearMessages();
+    switch(sceneId) {
+        case 'guide':
+            renderGuideScene();
+            break;
+        case 'triage':
+            renderTriageScene();
+            break;
+        case 'health':
+            renderHealthScene();
+            break;
+        case 'doctor':
+            renderDoctorScene();
+            break;
+        case 'consult':
+            renderConsultScene();
+            break;
+        case 'medication':
+            renderMedicationScene();
+            break;
+        default:
+            break;
+    }
+}
+
+// Auto-resize textarea
+document.addEventListener('DOMContentLoaded', function() {
+    var textarea = document.getElementById('chatInput');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+    }
+});
+</script>
+</body>
+</html>

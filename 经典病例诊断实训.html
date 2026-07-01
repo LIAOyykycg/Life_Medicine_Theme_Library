@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>经典病例诊断实训</title>
+<style>
+:root {
+    --primary: #1a73e8;
+    --primary-dark: #1557b0;
+    --primary-light: #e8f0fe;
+    --primary-lighter: #f0f5ff;
+    --success: #34a853;
+    --success-light: #e6f4ea;
+    --warning: #fbbc04;
+    --warning-light: #fef7e0;
+    --danger: #ea4335;
+    --danger-light: #fce8e6;
+    --orange: #e37400;
+    --orange-light: #fef3e0;
+    --gray-50: #f8f9fa;
+    --gray-100: #f5f7fa;
+    --gray-150: #f0f2f5;
+    --gray-200: #e8ecf0;
+    --gray-300: #dadce0;
+    --gray-400: #bdc1c6;
+    --gray-500: #9aa0a6;
+    --gray-600: #80868b;
+    --gray-700: #5f6368;
+    --gray-800: #3c4043;
+    --gray-900: #202124;
+    --text: #333;
+    --text-secondary: #999;
+    --sidebar-width: 220px;
+    --header-height: 56px;
+    --radius: 8px;
+    --radius-sm: 4px;
+    --radius-lg: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.10);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+    --transition: all 0.2s ease;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter','PingFang SC','Microsoft YaHei','Arial',sans-serif; font-size:14px; color:var(--text); background:var(--gray-150); min-height:100vh; line-height:1.6; }
+
+.header { height:var(--header-height); background:linear-gradient(135deg,#1a56db 0%,#2563eb 50%,#1d4ed8 100%); color:#fff; display:flex; align-items:center; padding:0 24px; position:fixed; top:0; left:0; right:0; z-index:1000; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
+.header .logo { font-size:18px; font-weight:700; letter-spacing:1px; }
+.header .header-nav { display:flex; gap:4px; margin-left:40px; }
+.header .header-nav a { color:rgba(255,255,255,0.85); text-decoration:none; padding:6px 14px; border-radius:6px; font-size:13px; transition:var(--transition); }
+.header .header-nav a:hover { background:rgba(255,255,255,0.15); color:#fff; }
+.header .header-right { margin-left:auto; display:flex; align-items:center; gap:16px; font-size:13px; }
+.header .header-right .btn-logout { background:rgba(255,255,255,0.2); color:#fff; border:none; padding:6px 16px; border-radius:6px; cursor:pointer; font-size:12px; }
+.header .header-right .btn-logout:hover { background:rgba(255,255,255,0.35); }
+
+.sidebar { position:fixed; top:var(--header-height); left:0; width:var(--sidebar-width); height:calc(100vh - var(--header-height)); background:#fff; border-right:1px solid var(--gray-200); overflow-y:auto; z-index:999; padding:8px 0; }
+.sidebar .menu-group-title { padding:12px 20px 6px; font-size:11px; color:var(--gray-500); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+.sidebar .menu-item { display:flex; align-items:center; padding:10px 20px; color:var(--gray-700); text-decoration:none; font-size:13px; transition:var(--transition); border-left:3px solid transparent; cursor:pointer; }
+.sidebar .menu-item:hover { background:var(--gray-50); color:var(--primary); }
+.sidebar .menu-item.active { background:var(--primary-light); color:var(--primary); border-left-color:var(--primary); font-weight:600; }
+.sidebar .menu-icon { width:20px; margin-right:10px; text-align:center; font-size:14px; }
+.menu-item.has-submenu { position:relative; cursor:pointer; }
+.menu-item .arrow { margin-left:auto; font-size:10px; transition:transform 0.2s; }
+.menu-item.expanded .arrow { transform:rotate(90deg); }
+.submenu { max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
+.submenu.open { max-height:280px; }
+.submenu .menu-item { padding-left:50px; font-size:12px; }
+.submenu .menu-item.active { background:var(--primary-light); color:var(--primary); border-left-color:var(--primary); font-weight:600; }
+
+.main-content { margin-left:var(--sidebar-width); margin-top:var(--header-height); padding:20px 24px; min-height:calc(100vh - var(--header-height)); }
+.breadcrumb { font-size:13px; color:var(--gray-600); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.breadcrumb a { color:var(--primary); text-decoration:none; }
+.breadcrumb span.sep { color:var(--gray-400); }
+.page-title { font-size:22px; font-weight:700; color:var(--gray-900); margin-bottom:16px; }
+
+.filter-bar { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:14px 20px; margin-bottom:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+.filter-bar .filter-group { display:flex; align-items:center; gap:6px; }
+.filter-bar .filter-label { font-size:13px; font-weight:500; color:var(--gray-700); white-space:nowrap; }
+.filter-bar select { padding:7px 32px 7px 12px; border:1px solid var(--gray-300); border-radius:6px; font-size:13px; font-family:inherit; outline:none; background:#fff; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa0a6' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; }
+.filter-bar select:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(26,115,232,0.1); }
+.filter-bar .search-box { position:relative; flex:1; min-width:180px; max-width:280px; }
+.filter-bar .search-box input { width:100%; padding:7px 12px 7px 34px; border:1px solid var(--gray-300); border-radius:6px; font-size:13px; font-family:inherit; outline:none; }
+.filter-bar .search-box input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(26,115,232,0.1); }
+.filter-bar .search-box .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--gray-500); font-size:14px; pointer-events:none; }
+.filter-bar .result-count { margin-left:auto; font-size:12px; color:var(--gray-600); white-space:nowrap; }
+
+.content-split { display:flex; gap:16px; align-items:flex-start; }
+.case-list-panel { width:340px; flex-shrink:0; background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; max-height:calc(100vh - var(--header-height) - 180px); display:flex; flex-direction:column; }
+.case-list-panel .panel-header { padding:14px 20px; border-bottom:1px solid var(--gray-200); font-size:14px; font-weight:600; color:var(--gray-800); display:flex; align-items:center; justify-content:space-between; }
+.case-list-panel .panel-header .count-badge { font-size:12px; color:var(--gray-500); font-weight:400; }
+.case-list-body { flex:1; overflow-y:auto; padding:4px 0; }
+
+.case-item { padding:14px 20px; cursor:pointer; border-left:3px solid transparent; border-bottom:1px solid var(--gray-100); transition:var(--transition); }
+.case-item:hover { background:var(--gray-50); }
+.case-item.selected { background:var(--primary-lighter); border-left-color:var(--primary); }
+.case-item .ci-header { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.case-item .ci-name { font-size:14px; font-weight:600; color:var(--gray-800); flex:1; }
+.case-item .ci-tags { display:flex; gap:6px; }
+.case-item .ci-brief { font-size:12px; color:var(--gray-600); margin-bottom:8px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.case-item .ci-meta { display:flex; align-items:center; gap:12px; font-size:11px; color:var(--gray-500); }
+.case-item .ci-meta .imaging-type { display:inline-flex; align-items:center; gap:3px; background:var(--gray-100); padding:2px 8px; border-radius:4px; font-size:11px; }
+.case-item .ci-difficulty { display:flex; align-items:center; gap:2px; }
+
+.tag { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:500; white-space:nowrap; }
+.tag-green { background:#e6f4ea; color:#137333; }
+.tag-blue { background:#e8f0fe; color:#1a73e8; }
+.tag-orange { background:var(--orange-light); color:#b06000; }
+.tag-red { background:#fce8e6; color:#c5221f; }
+.tag-purple { background:#f3e8fd; color:#7b1fa2; }
+.stars { color:#fbbc04; font-size:12px; letter-spacing:1px; }
+.stars .star-empty { color:var(--gray-300); }
+
+.case-detail-panel { flex:1; min-width:0; display:flex; flex-direction:column; gap:16px; }
+.case-detail-empty { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:60px 40px; text-align:center; color:var(--gray-500); }
+.case-detail-empty .empty-icon { font-size:48px; margin-bottom:12px; opacity:0.5; }
+.case-detail-empty p { font-size:14px; }
+
+.card { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+.card-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--gray-200); }
+.card-title { font-size:15px; font-weight:600; color:var(--gray-800); }
+.card-body { padding:20px; }
+
+.imaging-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
+.imaging-thumb { border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:var(--transition); position:relative; }
+.imaging-thumb:hover { border-color:var(--primary); box-shadow:0 2px 8px rgba(26,115,232,0.15); transform:translateY(-1px); }
+.imaging-thumb .thumb-img { width:100%; height:120px; object-fit:cover; display:block; }
+.imaging-thumb .thumb-placeholder { width:100%; height:120px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; font-weight:600; }
+.imaging-thumb .thumb-label { padding:6px 10px; font-size:11px; color:var(--gray-500); background:var(--gray-50); text-align:center; border-top:1px solid var(--gray-100); }
+.imaging-type-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+.imaging-type-tab { padding:5px 14px; border:1px solid var(--gray-300); border-radius:20px; font-size:12px; cursor:pointer; transition:var(--transition); white-space:nowrap; background:#fff; color:var(--gray-700); font-family:inherit; }
+.imaging-type-tab:hover { border-color:var(--primary); color:var(--primary); }
+.imaging-type-tab.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+.lightbox-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.88); z-index:3000; display:none; align-items:center; justify-content:center; }
+.lightbox-overlay.show { display:flex; }
+.lightbox-content { position:relative; max-width:90vw; max-height:90vh; }
+.lightbox-content img { max-width:85vw; max-height:80vh; border-radius:8px; display:block; margin:0 auto; }
+.lightbox-content .lb-placeholder { width:600px; height:450px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; font-size:18px; }
+.lightbox-info { text-align:center; color:rgba(255,255,255,0.8); margin-top:12px; font-size:13px; }
+.lightbox-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.15); border:none; color:#fff; width:44px; height:44px; border-radius:50%; font-size:20px; cursor:pointer; transition:var(--transition); display:flex; align-items:center; justify-content:center; }
+.lightbox-nav:hover { background:rgba(255,255,255,0.3); }
+.lightbox-nav.prev { left:-60px; }
+.lightbox-nav.next { right:-60px; }
+.lightbox-close { position:absolute; top:-44px; right:0; background:none; border:none; color:#fff; font-size:28px; cursor:pointer; opacity:0.8; }
+.lightbox-close:hover { opacity:1; }
+.lightbox-zoom-controls { position:absolute; bottom:-44px; left:50%; transform:translateX(-50%); display:flex; gap:8px; }
+.lightbox-zoom-btn { background:rgba(255,255,255,0.15); border:none; color:#fff; width:36px; height:36px; border-radius:50%; font-size:16px; cursor:pointer; transition:var(--transition); }
+.lightbox-zoom-btn:hover { background:rgba(255,255,255,0.3); }
+
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; font-size:13px; font-weight:500; color:var(--gray-700); margin-bottom:6px; }
+.form-group textarea { width:100%; padding:10px 14px; border:1px solid var(--gray-300); border-radius:6px; font-size:13px; font-family:inherit; outline:none; resize:vertical; min-height:80px; transition:var(--transition); }
+.form-group textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(26,115,232,0.1); }
+.patient-info-bar { display:flex; flex-wrap:wrap; gap:12px; padding:12px 16px; background:var(--gray-50); border-radius:var(--radius); margin-bottom:20px; }
+.patient-info-bar .pi-item { display:flex; align-items:center; gap:6px; font-size:13px; }
+.patient-info-bar .pi-label { color:var(--gray-500); white-space:nowrap; }
+.patient-info-bar .pi-value { color:var(--gray-800); font-weight:500; }
+.patient-info-bar .pi-sep { width:1px; height:16px; background:var(--gray-300); margin:0 4px; }
+
+.form-actions { display:flex; gap:10px; justify-content:flex-end; padding-top:16px; border-top:1px solid var(--gray-100); margin-top:8px; }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border:none; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; transition:var(--transition); font-family:inherit; }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:var(--primary-dark); }
+.btn-success { background:var(--success); color:#fff; }
+.btn-outline { background:#fff; border:1px solid var(--gray-300); color:var(--gray-700); }
+.btn-outline:hover { background:var(--gray-50); border-color:var(--gray-400); }
+.btn-lg { padding:10px 24px; font-size:14px; }
+
+.scoring-placeholder { text-align:center; padding:40px 20px; color:var(--gray-500); }
+.scoring-placeholder .ph-icon { font-size:40px; margin-bottom:10px; opacity:0.4; }
+.scoring-placeholder p { font-size:14px; }
+.scoring-overall { display:flex; align-items:center; gap:20px; padding:20px; background:var(--gray-50); border-radius:var(--radius); margin-bottom:16px; }
+.scoring-overall .big-score { font-size:48px; font-weight:700; color:var(--primary); line-height:1; }
+.scoring-overall .big-score-label { font-size:13px; color:var(--gray-600); }
+.scoring-overall .rank-info { flex:1; }
+.scoring-overall .rank-text { font-size:15px; font-weight:500; color:var(--gray-800); margin-bottom:4px; }
+.scoring-overall .rank-bar { height:8px; background:var(--gray-200); border-radius:4px; overflow:hidden; margin-bottom:4px; }
+.scoring-overall .rank-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--success)); border-radius:4px; }
+.scoring-overall .rank-sub { font-size:12px; color:var(--gray-500); }
+
+.score-item { margin-bottom:12px; }
+.score-item .si-header { display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px; }
+.score-item .si-label { color:var(--gray-700); }
+.score-item .si-val { color:var(--primary); font-weight:600; }
+.score-item .si-bar { height:6px; background:var(--gray-200); border-radius:3px; overflow:hidden; }
+.score-item .si-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+.si-fill-good { background:var(--success); }
+.si-fill-ok { background:var(--warning); }
+.si-fill-bad { background:var(--danger); }
+
+.expert-review { background:var(--primary-lighter); border-radius:var(--radius); padding:16px 20px; margin-top:16px; }
+.expert-review .er-title { font-size:14px; font-weight:600; color:var(--primary); margin-bottom:8px; }
+.expert-review .er-body { font-size:13px; color:var(--gray-700); line-height:1.7; }
+.expert-review .er-body ul { margin:8px 0 0 18px; }
+.expert-review .er-body li { margin-bottom:4px; }
+
+.modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:2000; display:none; align-items:center; justify-content:center; }
+.modal-overlay.show { display:flex; }
+.modal { background:#fff; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); width:90%; max-width:440px; }
+.modal-header { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid var(--gray-200); }
+.modal-header h3 { font-size:16px; color:var(--gray-900); }
+.modal-close { background:none; border:none; font-size:20px; cursor:pointer; color:var(--gray-500); }
+.modal-body { padding:24px; font-size:14px; color:var(--gray-700); }
+.modal-footer { padding:14px 24px; border-top:1px solid var(--gray-200); display:flex; justify-content:flex-end; gap:10px; }
+.toast { position:fixed; top:80px; right:24px; padding:12px 20px; border-radius:8px; color:#fff; font-size:13px; font-weight:500; z-index:4000; opacity:0; transform:translateX(20px); transition:all 0.3s ease; pointer-events:none; }
+.toast.show { opacity:1; transform:translateX(0); }
+.toast-success { background:var(--success); }
+.toast-info { background:var(--primary); }
+.toast-warning { background:var(--orange); }
+
+@media (max-width:1280px) { .content-split { flex-direction:column; } .case-list-panel { width:100%; max-height:400px; } }
+@media (max-width:1024px) { .sidebar { width:60px; } .sidebar .menu-item span { display:none; } .sidebar .menu-group-title { display:none; } .main-content { margin-left:60px; } .submenu .menu-item { padding-left:10px; } .lightbox-nav.prev { left:10px; } .lightbox-nav.next { right:10px; } }
+</style>
+</head>
+<body>
+<div class="header">
+    <a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a>
+    <div class="header-nav">
+        <a href="眼底图像输入.html">AI筛查</a><a href="临床数据开放共享.html">数据平台</a><a href="基础课程.html">AI教育</a><a href="临床决策支撑.html">专家系统</a><a href="数据采集工具（确认）.html">数据工具</a>
+    </div>
+    <div class="header-right"><span class="user-info" id="headerUserName">管理员</span><button class="btn-logout" onclick="logout()">退出</button></div>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <div class="menu-group">
+        <div class="menu-group-title">AI教育平台</div>
+        <a class="menu-item" href="基础课程.html"><span class="menu-icon">📖</span>基础课程</a>
+        <a class="menu-item" href="案例教学.html"><span class="menu-icon">📋</span>案例教学</a>
+        <div class="menu-item has-submenu active expanded" onclick="toggleSubmenu(this)"><span class="menu-icon">🔧</span>技能实践<span class="arrow">▶</span></div>
+        <div class="submenu open">
+            <a class="menu-item" href="虚拟临床技能实训.html">虚拟临床技能实训</a>
+            <a class="menu-item active" href="经典病例诊断实训.html">经典病例诊断实训</a>
+            <a class="menu-item" href="疑难病例分析与学术研讨.html">疑难病例分析与学术研讨</a>
+            <a class="menu-item" href="读片与病例大赛系统.html">读片与病例大赛系统</a>
+            <a class="menu-item" href="数据标注与AI实训.html">数据标注与AI实训</a>
+        </div>
+        <a class="menu-item" href="考试中心.html"><span class="menu-icon">📝</span>考试中心</a>
+        <a class="menu-item" href="个人中心与能力评估.html"><span class="menu-icon">👤</span>个人中心与能力评估</a>
+    </div>
+</div>
+
+<div class="main-content">
+<div class="breadcrumb"><a href="技能实践.html">AI教育平台</a><span class="sep">&gt;</span><a href="技能实践.html">技能实践</a><span class="sep">&gt;</span><span>经典病例诊断实训</span></div>
+<h1 class="page-title">经典病例诊断实训</h1>
+
+<!-- 区域一：病例筛选 -->
+<div class="filter-bar" id="filterBar">
+    <div class="filter-group">
+        <span class="filter-label">疾病分类：</span>
+        <select id="filterDisease" onchange="applyFilters()">
+            <option value="all">全部</option>
+            <option value="糖尿病视网膜病变">糖尿病视网膜病变</option>
+            <option value="青光眼">青光眼</option>
+            <option value="AMD">AMD</option>
+            <option value="高血压视网膜病变">高血压视网膜病变</option>
+            <option value="RVO">RVO</option>
+            <option value="视神经病变">视神经病变</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <span class="filter-label">难度等级：</span>
+        <select id="filterDifficulty" onchange="applyFilters()">
+            <option value="all">全部</option>
+            <option value="基础">基础</option>
+            <option value="进阶">进阶</option>
+            <option value="疑难">疑难</option>
+        </select>
+    </div>
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="filterSearch" placeholder="搜索病例名称..." oninput="applyFilters()">
+    </div>
+    <span class="result-count" id="resultCount">共 15 个病例</span>
+</div>
+
+<!-- 区域二：病例列表 + 区域三：病例详情 -->
+<div class="content-split">
+    <div class="case-list-panel" id="caseListPanel">
+        <div class="panel-header">病例列表 <span class="count-badge" id="listCount">15个</span></div>
+        <div class="case-list-body" id="caseListBody"></div>
+    </div>
+    <div class="case-detail-panel" id="caseDetailPanel">
+        <div class="case-detail-empty"><div class="empty-icon">📋</div><p>请从左侧列表中选择一个病例查看详情</p></div>
+    </div>
+</div>
+</div>
+
+<!-- 灯箱弹窗 -->
+<div class="lightbox-overlay" id="lightbox">
+    <div class="lightbox-content">
+        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+        <div id="lightboxImageContainer"></div>
+        <div class="lightbox-info" id="lightboxInfo"></div>
+        <button class="lightbox-nav prev" onclick="lightboxNav(-1)">‹</button>
+        <button class="lightbox-nav next" onclick="lightboxNav(1)">›</button>
+        <div class="lightbox-zoom-controls">
+            <button class="lightbox-zoom-btn" onclick="lightboxZoom(-0.2)">−</button>
+            <button class="lightbox-zoom-btn" onclick="lightboxZoom(0.2)">+</button>
+            <button class="lightbox-zoom-btn" onclick="lightboxZoom(0)" style="font-size:12px;">1:1</button>
+        </div>
+    </div>
+</div>
+
+<!-- 确认弹窗 -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+        <div class="modal-header"><h3 id="confirmModalTitle">确认操作</h3><button class="modal-close" onclick="closeModal('confirmModal')">✕</button></div>
+        <div class="modal-body" id="confirmModalBody"></div>
+        <div class="modal-footer" id="confirmModalFooter"></div>
+    </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const imagingColors = { '眼底彩照':'#4caf50','OCT':'#2196f3','FFA':'#ff9800','视野':'#9c27b0','UBM':'#00bcd4','24h眼压':'#f44336','B超':'#607d8b','眼底自发荧光':'#795548' };
+
+const mockCases = [
+    { id:1, name:'非增殖期糖尿病视网膜病变', disease:'糖尿病视网膜病变', difficulty:'基础', difficultyStars:1,
+      patient:{ name:'张秀兰', gender:'女', age:56, caseNo:'DR2026001', chief:'视力下降半年，糖尿病史8年' },
+      imaging:[{ type:'眼底彩照', label:'右眼后极部彩照', desc:'可见散在微血管瘤、点状出血、硬性渗出', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT扫描', desc:'黄斑中心凹形态可，无明显水肿，CMT 245μm', color:'#2196f3' },{ type:'FFA', label:'FFA荧光造影', desc:'后极部散在高荧光点，符合微血管瘤渗漏', color:'#ff9800' },{ type:'视野', label:'30-2视野检查', desc:'未见明显视野缺损', color:'#9c27b0' }],
+      standardAnswer:{ diagnosis:'双眼非增殖期糖尿病视网膜病变（轻度NPDR）', basis:'1. 糖尿病病史8年伴血糖控制欠佳（HbA1c 8.2%）\n2. 眼底彩照可见微血管瘤、点状出血、硬性渗出\n3. OCT未见黄斑水肿\n4. 符合ETDRS轻度NPDR标准', differential:'1. 高血压视网膜病变：虽有高血压病史，但眼底表现以微血管瘤和硬性渗出为主，与DR特征一致\n2. 视网膜静脉阻塞：出血形态不符合RVO的火焰状出血', treatment:'1. 严格控制血糖（目标HbA1c <7.0%）\n2. 控制血压（目标<130/80mmHg）\n3. 定期眼底检查，每6-12个月复查\n4. 暂无需眼科激光或抗VEGF治疗', followup:'1. 3个月后内分泌科复查HbA1c\n2. 6个月后眼科复查眼底彩照+OCT\n3. 如出现视力恶化或黄斑水肿及时就诊' },
+      expertReview:{ advantage:'该病例诊断思路清晰，能准确把握NPDR的临床特征并合理排除鉴别诊断。', weakness:'在治疗方案中可进一步细化血糖控制的具体目标值和用药建议。', suggestions:['建议补充血脂管理方案（糖尿病患者常合并高脂血症）','可考虑增加眼底照相定期对比的方案'] } },
+    { id:2, name:'原发性开角型青光眼', disease:'青光眼', difficulty:'进阶', difficultyStars:3,
+      patient:{ name:'王志明', gender:'男', age:62, caseNo:'GLA2026002', chief:'进行性视野缺损2年，眼压波动于24-28mmHg' },
+      imaging:[{ type:'眼底彩照', label:'双眼视盘彩照', desc:'视盘C/D比约0.7，盘沿变窄，下方盘沿切迹', color:'#4caf50' },{ type:'OCT', label:'RNFL厚度分析', desc:'双眼上下方RNFL明显变薄', color:'#2196f3' },{ type:'视野', label:'Humphrey 24-2视野', desc:'右眼下方弓形暗点，左眼鼻侧阶梯', color:'#9c27b0' },{ type:'UBM', label:'前房角UBM', desc:'双眼房角开放，无关闭征象', color:'#00bcd4' },{ type:'24h眼压', label:'24小时眼压曲线', desc:'昼夜波动大，峰值28mmHg（凌晨3点）', color:'#f44336' }],
+      standardAnswer:{ diagnosis:'双眼原发性开角型青光眼（中度）', basis:'1. 眼压升高（24-28mmHg），房角开放\n2. 视盘C/D比0.7，盘沿切迹\n3. OCT示RNFL变薄\n4. 视野缺损与青光眼性损害一致', differential:'1. 正常眼压性青光眼：该患者眼压明显升高，可排除\n2. 闭角型青光眼：UBM示房角开放\n3. 继发性青光眼：无葡萄膜炎、外伤、激素使用史', treatment:'1. 一线用药：前列腺素类衍生物（拉坦前列素滴眼液 qn）\n2. 若未达标加用β受体阻滞剂或碳酸酐酶抑制剂\n3. 目标眼压<18mmHg\n4. 若药物控制不佳考虑SLT或小梁切除术', followup:'1. 用药1个月后复查眼压\n2. 每3-6个月复查视野+OCT RNFL\n3. 每6-12个月复查视盘立体照相' },
+      expertReview:{ advantage:'诊断依据充分，UBM排除房角关闭是亮点。', weakness:'治疗建议中目标眼压的设定需更加个体化。', suggestions:['根据基线眼压和损害程度计算目标眼压降幅百分比','关注患者用药依从性和不良反应'] } },
+    { id:3, name:'湿性年龄相关性黄斑变性', disease:'AMD', difficulty:'进阶', difficultyStars:3,
+      patient:{ name:'李国强', gender:'男', age:71, caseNo:'AMD2026003', chief:'右眼视物变形伴中心暗点3个月' },
+      imaging:[{ type:'眼底彩照', label:'右眼黄斑区彩照', desc:'黄斑区灰白色病灶伴周围出血和硬性渗出', color:'#4caf50' },{ type:'OCT', label:'黄斑区OCT', desc:'黄斑区SRF，RPE下中等反射CNV病灶', color:'#2196f3' },{ type:'FFA', label:'FFA荧光血管造影', desc:'早期花边状高荧光，晚期荧光渗漏扩大，典型CNV', color:'#ff9800' },{ type:'OCT', label:'OCTA血管成像', desc:'可见脉络膜新生血管网，位于RPE下方', color:'#2196f3' }],
+      standardAnswer:{ diagnosis:'右眼湿性（新生血管性）年龄相关性黄斑变性（典型CNV）', basis:'1. 老年患者（71岁），吸烟史40年\n2. 视物变形、中心暗点3个月\n3. OCT示SRF+CNV病灶\n4. FFA示典型CNV渗漏特征\n5. OCTA证实脉络膜新生血管网', differential:'1. PCV：需ICGA进一步鉴别\n2. 糖尿病黄斑水肿：无糖尿病史\n3. 中心性浆液性脉络膜视网膜病变：FFA表现不同', treatment:'1. 抗VEGF治疗：阿柏西普或雷珠单抗玻璃体腔注射\n2. 初始方案：每月1次×3次loading dose\n3. 后续T&E方案\n4. 补充AREDS2配方营养素\n5. 戒烟指导', followup:'1. 每月复查OCT+视力\n2. 注射后1周电话随访\n3. 指导Amsler表家庭自测' },
+      expertReview:{ advantage:'诊断逻辑清晰，能准确区分典型CNV与其他黄斑病变，T&E方案提及是亮点。', weakness:'鉴别诊断中PCV的排除仅靠FFA还不够充分。', suggestions:['建议补充ICGA检查以明确排除PCV','在治疗建议中加入视力预后评估'] } },
+    { id:4, name:'增殖性糖尿病视网膜病变合并黄斑水肿', disease:'糖尿病视网膜病变', difficulty:'疑难', difficultyStars:5,
+      patient:{ name:'刘美华', gender:'女', age:48, caseNo:'DR2026004', chief:'突发右眼视力急剧下降至眼前手动3天' },
+      imaging:[{ type:'眼底彩照', label:'右眼眼底彩照', desc:'广泛新生血管、玻璃体积血、黄斑区水肿混浊', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT', desc:'弥漫性水肿，囊样改变，CMT 580μm', color:'#2196f3' },{ type:'FFA', label:'FFA荧光造影', desc:'广泛无灌注区，片状荧光渗漏', color:'#ff9800' },{ type:'B超', label:'眼部B超', desc:'玻璃体腔中后段点状及团状回声', color:'#607d8b' },{ type:'24h眼压', label:'24h眼压监测', desc:'右眼眼压偏高，26-32mmHg', color:'#f44336' }],
+      standardAnswer:{ diagnosis:'右眼增殖性糖尿病视网膜病变（PDR）合并黄斑水肿、玻璃体积血、继发性新生血管性青光眼（早期）', basis:'1. 1型糖尿病史20年，血糖控制极差\n2. 眼底彩照示广泛新生血管+玻璃体积血\n3. OCT示弥漫性黄斑水肿\n4. FFA示广泛无灌注区\n5. B超证实玻璃体积血\n6. 眼压升高提示早期NVG', differential:'1. CRVO：无PDR特征性新生血管\n2. 高血压视网膜病变：增殖性改变更具特征性\n3. 眼内炎：无感染征象', treatment:'1. 立即抗VEGF治疗\n2. 全视网膜光凝（PRP）\n3. 若积血不吸收行PPV\n4. 降眼压治疗\n5. 严格控制血糖', followup:'1. 每周复查视力+眼压\n2. 每月OCT+眼底彩照\n3. PRP后每4-6周1次×4次' },
+      expertReview:{ advantage:'对PDR复杂病情的多维度把握非常全面，治疗方案层次分明。', weakness:'继发性青光眼的鉴别诊断可更详细。', suggestions:['增加虹膜新生血管（NVI）的检查描述','在手术指征中加入更明确的时间节点'] } },
+    { id:5, name:'视网膜中央静脉阻塞', disease:'RVO', difficulty:'进阶', difficultyStars:3,
+      patient:{ name:'赵建国', gender:'男', age:58, caseNo:'RVO2026005', chief:'左眼突发无痛性视力下降1天' },
+      imaging:[{ type:'眼底彩照', label:'左眼眼底彩照', desc:'广泛火焰状出血，"番茄酱"样改变，视盘充血', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT', desc:'黄斑区囊样水肿，CMT 420μm', color:'#2196f3' },{ type:'FFA', label:'FFA荧光造影', desc:'静脉充盈延迟，大片遮蔽荧光，晚期黄斑渗漏', color:'#ff9800' },{ type:'视野', label:'视野检查', desc:'左眼中心暗点伴周边视野轻度缩小', color:'#9c27b0' }],
+      standardAnswer:{ diagnosis:'左眼缺血型视网膜中央静脉阻塞（CRVO）合并黄斑水肿', basis:'1. 突发无痛性视力下降\n2. 眼底彩照示广泛火焰状出血\n3. OCT示黄斑水肿\n4. FFA示静脉充盈延迟\n5. 危险因素：高血压+高脂血症', differential:'1. 糖尿病视网膜病变：无糖尿病史\n2. 高血压视网膜病变：无棉绒斑\n3. 视网膜动脉阻塞：无"樱桃红点"', treatment:'1. 抗VEGF治疗：阿柏西普或雷珠单抗\n2. 每月注射×6个月（PRN方案）\n3. 若水肿持续考虑地塞米松植入剂\n4. 血压控制+血脂管理\n5. 排查全身危险因素', followup:'1. 每月复查OCT+视力\n2. 必要时FFA评估缺血程度\n3. 内科联合管理高血压高脂血症' },
+      expertReview:{ advantage:'对CRVO的急性期表现把握准确，鉴别诊断到位。', weakness:'缺血型与非缺血型的区分不够明确。', suggestions:['根据FFA结果明确区分缺血型与非缺血型','补充虹膜新生血管的筛查方案'] } },
+    { id:6, name:'非动脉炎性前部缺血性视神经病变', disease:'视神经病变', difficulty:'疑难', difficultyStars:4,
+      patient:{ name:'陈建国', gender:'男', age:55, caseNo:'NAION2026006', chief:'晨起发现右眼下方视野缺损，无眼痛' },
+      imaging:[{ type:'眼底彩照', label:'右眼视盘彩照', desc:'视盘充血水肿，边界模糊，盘周线状出血', color:'#4caf50' },{ type:'OCT', label:'RNFL+视盘OCT', desc:'视盘周围RNFL增厚（水肿期）', color:'#2196f3' },{ type:'视野', label:'Humphrey 24-2', desc:'右眼下方水平性视野缺损', color:'#9c27b0' },{ type:'FFA', label:'FFA荧光造影', desc:'视盘早期低荧光，晚期高荧光渗漏', color:'#ff9800' }],
+      standardAnswer:{ diagnosis:'右眼非动脉炎性前部缺血性视神经病变（NAION）', basis:'1. 晨起无痛性视野缺损\n2. 视盘充血水肿\n3. 下方水平性视野缺损\n4. 无颞动脉炎症状', differential:'1. 动脉炎性AION：无颞部头痛、下颌跛行\n2. 视神经炎：有眼痛，年龄偏轻\n3. 压迫性病变：需影像学排除', treatment:'1. 控制危险因素：降压、降脂、戒烟\n2. 阿司匹林（二级预防）\n3. 避免夜间低血压\n4. 短期大剂量激素（尚有争议）', followup:'1. 1个月后复查视力和视野\n2. 3个月后视盘水肿消退\n3. 每年眼科随访关注对侧眼' },
+      expertReview:{ advantage:'NAION诊断思路清晰，能准确排除动脉炎性AION。', weakness:'治疗部分是NAION的难点。', suggestions:['补充睡眠呼吸暂停筛查建议','视盘形态学分析（小视盘/拥挤视盘）'] } },
+    { id:7, name:'高血压视网膜病变IV级', disease:'高血压视网膜病变', difficulty:'基础', difficultyStars:2,
+      patient:{ name:'周大伟', gender:'男', age:65, caseNo:'HTN2026007', chief:'常规体检发现眼底异常，血压180/110mmHg' },
+      imaging:[{ type:'眼底彩照', label:'双眼眼底彩照', desc:'动脉铜丝样改变，AV交叉压迫征，棉绒斑、火焰状出血', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT', desc:'视网膜内层可见水肿信号', color:'#2196f3' },{ type:'视野', label:'视野检查', desc:'轻度周边视野缩小', color:'#9c27b0' }],
+      standardAnswer:{ diagnosis:'双眼高血压视网膜病变IV级（KW分级）', basis:'1. 血压180/110mmHg\n2. 动脉铜丝样改变+AV交叉压迫征\n3. 棉绒斑+火焰状出血\n4. OCT示视网膜内层水肿', differential:'1. 糖尿病视网膜病变：无糖尿病史\n2. RVO：出血更广泛', treatment:'1. 紧急降压治疗\n2. 目标血压<140/90mmHg\n3. 排查继发性高血压\n4. 心脑血管风险评估', followup:'1. 1周后内科复查血压\n2. 3个月后眼科复查眼底\n3. 长期血压管理+每年眼科随访' },
+      expertReview:{ advantage:'能将眼底表现与全身高血压严重程度关联，KW分级判断准确。', weakness:'未充分讨论急进性高血压的急诊处理方案。', suggestions:['建议补充24小时动态血压监测','强调高血压急症的识别'] } },
+    { id:8, name:'息肉状脉络膜血管病变（PCV）', disease:'AMD', difficulty:'疑难', difficultyStars:5,
+      patient:{ name:'钱文华', gender:'女', age:68, caseNo:'PCV2026008', chief:'右眼视物模糊伴视物变小2周' },
+      imaging:[{ type:'眼底彩照', label:'右眼黄斑区彩照', desc:'橘红色结节样隆起病灶，伴视网膜下出血', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT', desc:'RPE隆起呈"拇指状"PED，伴SRF', color:'#2196f3' },{ type:'FFA', label:'FFA荧光造影', desc:'早期斑点状高荧光，晚期荧光池形成', color:'#ff9800' },{ type:'OCT', label:'ICGA造影', desc:'早期分支状脉络膜血管网，晚期多发息肉样膨隆', color:'#2196f3' }],
+      standardAnswer:{ diagnosis:'右眼息肉状脉络膜血管病变（PCV）', basis:'1. 老年女性，视物模糊伴变小\n2. 橘红色结节样病灶\n3. OCT示"拇指状"PED\n4. ICGA示BVN+息肉样膨隆（金标准）', differential:'1. 典型湿性AMD：PED形态不同\n2. RAP：ICGA表现不同', treatment:'1. 抗VEGF+PDT联合治疗\n2. 阿柏西普monthly×3 loading\n3. PDT封闭息肉\n4. 若息肉消退转抗VEGF单药T&E', followup:'1. 每月OCT+视力\n2. 每3-6个月ICGA\n3. Amsler表自测' },
+      expertReview:{ advantage:'ICGA的应用是区分PCV和典型AMD的关键，诊断流程符合金标准。', weakness:'治疗方案的时机选择可以更细化。', suggestions:['讨论抗VEGF单药vs联合PDT的证据对比','补充息肉位置对治疗方案的影响'] } },
+    { id:9, name:'慢性闭角型青光眼', disease:'青光眼', difficulty:'进阶', difficultyStars:4,
+      patient:{ name:'孙丽红', gender:'女', age:58, caseNo:'CACG2026009', chief:'双眼反复胀痛伴虹视1年，加重1周' },
+      imaging:[{ type:'眼底彩照', label:'双眼视盘彩照', desc:'右眼C/D 0.8，左眼C/D 0.6，盘沿明显变窄', color:'#4caf50' },{ type:'UBM', label:'双眼UBM', desc:'房角狭窄，多处PAS，房角关闭>180°', color:'#00bcd4' },{ type:'视野', label:'Humphrey 24-2', desc:'右眼管状视野（晚期），左眼上方弓形暗点（中期）', color:'#9c27b0' },{ type:'OCT', label:'RNFL分析', desc:'双眼RNFL广泛变薄', color:'#2196f3' }],
+      standardAnswer:{ diagnosis:'双眼慢性闭角型青光眼（右眼晚期，左眼中期）', basis:'1. 反复胀痛+虹视\n2. UBM示房角狭窄+PAS>180°\n3. 视盘C/D增大\n4. RNFL变薄\n5. 右眼管状视野', differential:'1. 急性闭角型青光眼：慢性进展\n2. 开角型青光眼：UBM证实房角关闭', treatment:'1. 右眼：小梁切除术\n2. 左眼：LPI+药物\n3. 术前降眼压药物\n4. MMC术中应用', followup:'1. 右眼术后第1天/1周/1月/3月\n2. 左眼LPI后1周复查UBM\n3. 长期每3-6个月视野+OCT' },
+      expertReview:{ advantage:'对慢性闭角型青光眼分期明确，治疗方案合理。', weakness:'LPI的适应症把握可更精确。', suggestions:['讨论PAS范围>180°时LPI的局限性','补充术后滤过泡管理方案'] } },
+    { id:10, name:'轻度非增殖期糖尿病视网膜病变', disease:'糖尿病视网膜病变', difficulty:'基础', difficultyStars:1,
+      patient:{ name:'吴小芳', gender:'女', age:42, caseNo:'DR2026010', chief:'常规糖尿病眼底筛查发现微血管瘤' },
+      imaging:[{ type:'眼底彩照', label:'双眼眼底彩照', desc:'后极部散在少数微血管瘤，无出血及渗出', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT', desc:'黄斑中心凹形态正常，无水肿', color:'#2196f3' }],
+      standardAnswer:{ diagnosis:'双眼轻度非增殖期糖尿病视网膜病变（ETDRS Level 20）', basis:'1. 仅见微血管瘤\n2. OCT未见黄斑水肿\n3. 糖尿病史3年', differential:'1. 高血压视网膜病变：无高血压史', treatment:'1. 优化血糖控制（HbA1c<7%）\n2. 每年眼底筛查\n3. 无需眼科特殊治疗', followup:'1. 每年眼科复查眼底彩照\n2. 若血糖控制不佳缩短至6个月' },
+      expertReview:{ advantage:'对轻度NPDR分级准确，治疗方案简洁明确。', weakness:'可补充早期干预对预防进展的重要性。', suggestions:['强调血糖、血压、血脂综合管理','建议患者教育内容'] } },
+    { id:11, name:'干性年龄相关性黄斑变性', disease:'AMD', difficulty:'基础', difficultyStars:2,
+      patient:{ name:'郑明华', gender:'男', age:73, caseNo:'AMD2026011', chief:'视物模糊、阅读困难加重半年' },
+      imaging:[{ type:'眼底彩照', label:'双眼黄斑区彩照', desc:'黄斑区散在玻璃膜疣，RPE色素紊乱', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT', desc:'RPE层不规则，散在drusen隆起，无SRF', color:'#2196f3' },{ type:'眼底自发荧光', label:'FAF', desc:'黄斑区斑驳状自发荧光异常', color:'#795548' }],
+      standardAnswer:{ diagnosis:'双眼干性（萎缩型）AMD（AREDS Category 3）', basis:'1. 老年患者\n2. 大量drusen+RPE色素紊乱\n3. OCT无渗出\n4. FAF示RPE功能异常', differential:'1. 湿性AMD：OCT无液体\n2. 遗传性黄斑营养不良：发病年龄早', treatment:'1. AREDS2配方营养素\n2. 戒烟+控制高血压\n3. 低视力康复\n4. 密切监测（Amsler表+OCT）', followup:'1. 每6-12个月OCT\n2. Amsler表家庭自测\n3. 出现变形或视力骤降立即就诊' },
+      expertReview:{ advantage:'干性AMD的分型和随访方案规范，Amsler表自测指导是亮点。', weakness:'可补充地理萎缩（GA）的识别和监测。', suggestions:['补充AREDS2配方详细成分','讨论临床试验中的补体抑制剂疗法'] } },
+    { id:12, name:'视网膜分支静脉阻塞', disease:'RVO', difficulty:'基础', difficultyStars:2,
+      patient:{ name:'林志远', gender:'男', age:52, caseNo:'BRVO2026012', chief:'右眼上方视物模糊2周' },
+      imaging:[{ type:'眼底彩照', label:'右眼眼底彩照', desc:'颞上方分支静脉沿线火焰状出血，棉绒斑', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT', desc:'黄斑区轻度水肿，CMT 320μm', color:'#2196f3' },{ type:'FFA', label:'FFA荧光造影', desc:'颞上分支静脉充盈延迟', color:'#ff9800' }],
+      standardAnswer:{ diagnosis:'右眼颞上分支视网膜静脉阻塞（BRVO）合并黄斑水肿', basis:'1. 上方视野模糊\n2. 颞上象限火焰状出血\n3. OCT示黄斑水肿\n4. FFA示静脉充盈延迟', differential:'1. CRVO：出血局限于一个象限\n2. 糖尿病视网膜病变：无糖尿病史', treatment:'1. 抗VEGF治疗\n2. 若水肿持续考虑格栅激光\n3. 血压管理', followup:'1. 每月复查OCT\n2. 注射3次后评估\n3. 内科联合管理' },
+      expertReview:{ advantage:'BRVO象限定位准确，鉴别诊断简洁有效。', weakness:'格栅激光的指征及时机需更明确。', suggestions:['明确抗VEGF转为激光治疗的指征','补充BRVO与HRVO的区分'] } },
+    { id:13, name:'正常眼压性青光眼', disease:'青光眼', difficulty:'疑难', difficultyStars:4,
+      patient:{ name:'黄雅琴', gender:'女', age:61, caseNo:'NTG2026013', chief:'体检发现视盘异常，无明显视力下降' },
+      imaging:[{ type:'眼底彩照', label:'双眼视盘彩照', desc:'视盘C/D约0.75，下方盘沿切迹，盘周萎缩弧', color:'#4caf50' },{ type:'OCT', label:'RNFL分析', desc:'下方RNFL明显变薄', color:'#2196f3' },{ type:'视野', label:'Humphrey 24-2', desc:'上方旁中心暗点，MD -4.2dB', color:'#9c27b0' },{ type:'24h眼压', label:'24h眼压监测', desc:'眼压波动12-17mmHg，未超过21mmHg', color:'#f44336' }],
+      standardAnswer:{ diagnosis:'双眼正常眼压性青光眼（NTG）', basis:'1. 眼压始终<21mmHg\n2. 视盘C/D增大+盘沿切迹\n3. RNFL变薄+视野缺损\n4. 排除其他视神经损害', differential:'1. 高度近视性视盘：无高度近视\n2. 缺血性视神经病变：视野模式不同\n3. 颅内占位：需MRI', treatment:'1. 目标眼压：较基线降30%\n2. 前列腺素类衍生物\n3. 若不足考虑SLT或手术\n4. 排查低血压和睡眠呼吸暂停', followup:'1. 每3-6个月视野+OCT\n2. 24h动态血压\n3. 神经内科会诊\n4. 睡眠监测' },
+      expertReview:{ advantage:'能跳出眼压"正常"的陷阱，综合视盘、RNFL、视野做出NTG诊断，非常专业。', weakness:'NTG的排他性诊断需要更全面。', suggestions:['建议完善头颅MRI排除压迫性病变','排查自身免疫性疾病'] } },
+    { id:14, name:'视神经炎', disease:'视神经病变', difficulty:'进阶', difficultyStars:3,
+      patient:{ name:'马晓丽', gender:'女', age:28, caseNo:'ON2026014', chief:'右眼视力突然下降伴眼球转动痛3天' },
+      imaging:[{ type:'眼底彩照', label:'右眼眼底彩照', desc:'视盘轻度充血水肿', color:'#4caf50' },{ type:'OCT', label:'视盘+RNFL OCT', desc:'视盘周围RNFL轻度增厚（急性期水肿）', color:'#2196f3' },{ type:'视野', label:'视野检查', desc:'右眼中心暗点', color:'#9c27b0' }],
+      standardAnswer:{ diagnosis:'右眼视神经炎（特发性脱髓鞘性）', basis:'1. 年轻女性急性视力下降\n2. 眼球转动痛（特征性）\n3. 中心暗点\n4. 视盘充血水肿', differential:'1. NAION：年龄偏大，无眼痛\n2. Leber遗传性视神经病变：无痛，多为青年男性', treatment:'1. IVMP 1g/d×3-5天\n2. 序贯口服泼尼松\n3. MRI头颅+眼眶\n4. 神经内科会诊\n5. 若确诊MS启动DMT', followup:'1. 治疗后1周复查视力\n2. MRI后神经内科联合随访\n3. 若确诊MS定期管理' },
+      expertReview:{ advantage:'对视神经炎急性期管理非常规范，眼痛作为关键症状捕捉到位。', weakness:'未充分讨论ONTT试验结论。', suggestions:['补充ONTT试验要点','讨论AQP4/MOG抗体检测意义','增加MS风险评估工具'] } },
+    { id:15, name:'急进性高血压视网膜病变', disease:'高血压视网膜病变', difficulty:'疑难', difficultyStars:4,
+      patient:{ name:'丁建国', gender:'男', age:48, caseNo:'HTN2026015', chief:'头痛、视力模糊1周，血压210/130mmHg' },
+      imaging:[{ type:'眼底彩照', label:'双眼眼底彩照', desc:'视盘水肿、棉绒斑、火焰状出血、星芒状黄斑病变', color:'#4caf50' },{ type:'OCT', label:'黄斑OCT', desc:'黄斑区视网膜内水肿，硬性渗出高反射信号', color:'#2196f3' },{ type:'FFA', label:'FFA荧光造影', desc:'视盘高荧光渗漏，多处小动脉闭塞所致无灌注区', color:'#ff9800' },{ type:'视野', label:'视野检查', desc:'广泛视野缩小，盲点扩大', color:'#9c27b0' }],
+      standardAnswer:{ diagnosis:'双眼急进性高血压视网膜病变（恶性高血压眼底改变，KW IV级）', basis:'1. 血压210/130mmHg（恶性高血压）\n2. 视盘水肿（KW IV级）\n3. 棉绒斑+出血+星芒状黄斑病变\n4. FFA示小动脉闭塞', differential:'1. 糖尿病视网膜病变：无糖尿病史\n2. 放射性视网膜病变：无放疗史', treatment:'1. 立即住院静脉降压\n2. 1h内降25%，2-6h内降至160/100-110mmHg\n3. 避免血压骤降\n4. 排查继发性高血压\n5. 心脑肾靶器官评估', followup:'1. 住院期间每日眼科会诊\n2. 血压控制后每1-3个月复查\n3. 长期多学科随访' },
+      expertReview:{ advantage:'对恶性高血压急症处理非常规范，降压目标和速度把握准确。', weakness:'可补充高血压急症的用药选择。', suggestions:['补充静脉降压药物的选择和用量','强调在不影响脑灌注的前提下逐步降压'] } }
+];
+
+let currentCaseId = 1;
+let filteredCases = [...mockCases];
+let lightboxImages = [], lightboxIndex = 0, lightboxScale = 1;
+let draftData = {}, scoringResult = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    try { var u = JSON.parse(localStorage.getItem('life_med_user')); if (u&&u.name) document.getElementById('headerUserName').textContent = u.name; } catch(e) {}
+    try { draftData = JSON.parse(localStorage.getItem('case_diag_drafts')||'{}'); } catch(e) { draftData = {}; }
+    applyFilters(); selectCase(currentCaseId);
+});
+
+function applyFilters() {
+    var d = document.getElementById('filterDisease').value;
+    var lv = document.getElementById('filterDifficulty').value;
+    var s = document.getElementById('filterSearch').value.toLowerCase().trim();
+    filteredCases = mockCases.filter(function(c) {
+        if (d!=='all' && c.disease!==d) return false;
+        if (lv!=='all' && c.difficulty!==lv) return false;
+        if (s && c.name.toLowerCase().indexOf(s)===-1) return false;
+        return true;
+    });
+    document.getElementById('listCount').textContent = filteredCases.length+'个';
+    document.getElementById('resultCount').textContent = '共 '+filteredCases.length+' 个病例';
+    renderCaseList();
+    if (filteredCases.length>0) {
+        if (!filteredCases.find(function(c){return c.id===currentCaseId;})) { currentCaseId=filteredCases[0].id; selectCase(currentCaseId); }
+    } else { currentCaseId=null; showEmptyDetail(); }
+}
+
+function renderCaseList() {
+    var h = '';
+    filteredCases.forEach(function(c) {
+        var sel = c.id===currentCaseId?' selected':'';
+        var stars = '';
+        for (var i=0;i<5;i++) stars+='<span class="'+(i<c.difficultyStars?'':'star-empty')+'">★</span>';
+        var dc='tag-blue'; if(c.disease==='糖尿病视网膜病变')dc='tag-green'; else if(c.disease==='AMD')dc='tag-orange'; else if(c.disease==='RVO')dc='tag-purple'; else if(c.disease==='视神经病变')dc='tag-red';
+        var its = c.imaging.slice(0,3).map(function(im){return '<span class="imaging-type">'+im.type+'</span>';}).join('');
+        h+='<div class="case-item'+sel+'" onclick="selectCase('+c.id+')">';
+        h+='<div class="ci-header"><span class="ci-name">'+c.name+'</span><span class="tag '+dc+'">'+c.disease+'</span></div>';
+        h+='<div class="ci-brief">'+c.patient.chief+'</div>';
+        h+='<div class="ci-meta"><span class="ci-difficulty">'+stars+'</span>'+its+'</div></div>';
+    });
+    if (filteredCases.length===0) h='<div style="padding:40px;text-align:center;color:var(--gray-500);">没有匹配的病例</div>';
+    document.getElementById('caseListBody').innerHTML = h;
+}
+
+function selectCase(id) {
+    currentCaseId=id; var c=mockCases.find(function(c){return c.id===id;}); if(!c)return;
+    scoringResult=null; renderCaseList(); renderCaseDetail(c);
+}
+
+function showEmptyDetail() {
+    document.getElementById('caseDetailPanel').innerHTML='<div class="case-detail-empty"><div class="empty-icon">📋</div><p>请从左侧列表中选择一个病例查看详情</p></div>';
+}
+
+function renderCaseDetail(c) {
+    var p=c.patient; var stars='';
+    for (var i=0;i<5;i++) stars+='<span style="color:'+(i<c.difficultyStars?'#fbbc04':'#dadce0')+'">★</span>';
+    var tabs='<button class="imaging-type-tab active" onclick="filterImaging(\'all\',this)">全部</button>';
+    var seen={}; c.imaging.forEach(function(im){ if(!seen[im.type]){seen[im.type]=true;tabs+='<button class="imaging-type-tab" onclick="filterImaging(\''+im.type+'\',this)">'+im.type+'</button>';} });
+    var grid=''; c.imaging.forEach(function(im,idx){
+        grid+='<div class="imaging-thumb" data-imtype="'+im.type+'" onclick="openLightbox('+c.id+','+idx+')">';
+        grid+='<div class="thumb-placeholder" style="background:linear-gradient(135deg,'+im.color+' 0%,'+im.color+'cc 100%);">'+im.type+'</div>';
+        grid+='<div class="thumb-label">'+im.label+'</div></div>';
+    });
+    var dk='case_'+c.id, dr=draftData[dk]||{};
+    var fh=''; fh+='<div class="patient-info-bar">';
+    fh+='<div class="pi-item"><span class="pi-label">姓名：</span><span class="pi-value">'+p.name+'</span></div><span class="pi-sep"></span>';
+    fh+='<div class="pi-item"><span class="pi-label">性别：</span><span class="pi-value">'+p.gender+'</span></div><span class="pi-sep"></span>';
+    fh+='<div class="pi-item"><span class="pi-label">年龄：</span><span class="pi-value">'+p.age+'岁</span></div><span class="pi-sep"></span>';
+    fh+='<div class="pi-item"><span class="pi-label">病例号：</span><span class="pi-value">'+p.caseNo+'</span></div><span class="pi-sep"></span>';
+    fh+='<div class="pi-item"><span class="pi-label">主诉：</span><span class="pi-value">'+p.chief+'</span></div></div>';
+    fh+='<div class="form-group"><label>诊断结论 <span style="color:var(--danger)">*</span></label><textarea id="diagConclusion" placeholder="请输入您的诊断结论（包含疾病名称、分期分级等）">'+(dr.conclusion||'')+'</textarea></div>';
+    fh+='<div class="form-group"><label>诊断依据 <span style="color:var(--danger)">*</span></label><textarea id="diagBasis" placeholder="请列出您的诊断依据（病史、检查结果等）">'+(dr.basis||'')+'</textarea></div>';
+    fh+='<div class="form-group"><label>鉴别诊断</label><textarea id="diagDiff" placeholder="请列出需要鉴别的疾病及排除理由">'+(dr.diff||'')+'</textarea></div>';
+    fh+='<div class="form-group"><label>治疗建议 <span style="color:var(--danger)">*</span></label><textarea id="diagTreatment" placeholder="请制定治疗方案（用药、手术、随访等）">'+(dr.treatment||'')+'</textarea></div>';
+    fh+='<div class="form-group"><label>随访计划</label><textarea id="diagFollowup" placeholder="请制定随访计划">'+(dr.followup||'')+'</textarea></div>';
+    fh+='<div class="form-actions"><button class="btn btn-outline" onclick="saveDraft('+c.id+')">💾 保存草稿</button><button class="btn btn-outline" onclick="resetForm('+c.id+')">🔄 重置</button><button class="btn btn-primary btn-lg" onclick="submitReport('+c.id+')">📤 提交报告</button></div>';
+
+    var sh='';
+    if (scoringResult && scoringResult.caseId===c.id) {
+        var sr=scoringResult;
+        sh+='<div class="scoring-result"><div class="scoring-overall"><div><div class="big-score">'+sr.total+'</div><div class="big-score-label">综合得分</div></div><div class="rank-info"><div class="rank-text">🏆 '+sr.rankText+'</div><div class="rank-bar"><div class="rank-fill" style="width:'+sr.percentile+'%"></div></div><div class="rank-sub">排名前 '+(100-sr.percentile)+'%</div></div></div>';
+        [{label:'诊断准确性',val:sr.scores.accuracy,max:40},{label:'报告完整性',val:sr.scores.completeness,max:25},{label:'治疗规范性',val:sr.scores.treatment,max:20},{label:'逻辑清晰度',val:sr.scores.logic,max:15}].forEach(function(it){
+            var pct=Math.round(it.val/it.max*100), cls=pct>=80?'si-fill-good':(pct>=60?'si-fill-ok':'si-fill-bad');
+            sh+='<div class="score-item"><div class="si-header"><span class="si-label">'+it.label+'</span><span class="si-val">'+it.val+'/'+it.max+'分</span></div><div class="si-bar"><div class="si-fill '+cls+'" style="width:'+pct+'%"></div></div></div>';
+        });
+        sh+='<div class="expert-review"><div class="er-title">💬 专家点评</div><div class="er-body"><p><strong>优点：</strong>'+c.expertReview.advantage+'</p><p style="margin-top:8px;"><strong>不足：</strong>'+c.expertReview.weakness+'</p><p style="margin-top:8px;"><strong>改进建议：</strong></p><ul>';
+        c.expertReview.suggestions.forEach(function(s){sh+='<li>'+s+'</li>';});
+        sh+='</ul></div></div></div>';
+    } else {
+        sh='<div class="scoring-placeholder"><div class="ph-icon">📊</div><p>提交报告后可查看评分</p></div>';
+    }
+
+    var html='';
+    html+='<div class="card"><div class="card-header"><span class="card-title">📷 影像浏览 - '+c.name+'</span><div class="ci-difficulty">'+stars+'</div></div><div class="card-body"><div class="imaging-type-tabs" id="imagingTabs">'+tabs+'</div><div class="imaging-grid" id="imagingGrid">'+grid+'</div></div></div>';
+    html+='<div class="card"><div class="card-header"><span class="card-title">📝 诊断报告撰写</span></div><div class="card-body">'+fh+'</div></div>';
+    html+='<div class="card" id="scoringCard"><div class="card-header"><span class="card-title">📊 诊断报告评分</span></div><div class="card-body">'+sh+'</div></div>';
+    document.getElementById('caseDetailPanel').innerHTML=html;
+    document.getElementById('caseDetailPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function filterImaging(type, btn) {
+    document.querySelectorAll('#imagingTabs .imaging-type-tab').forEach(function(t){t.classList.remove('active');});
+    btn.classList.add('active');
+    document.querySelectorAll('#imagingGrid .imaging-thumb').forEach(function(t){
+        t.style.display = (type==='all'||t.getAttribute('data-imtype')===type) ? '' : 'none';
+    });
+}
+
+function openLightbox(caseId, idx) {
+    var c = mockCases.find(function(c){return c.id===caseId;}); if(!c) return;
+    lightboxImages=c.imaging; lightboxIndex=idx; lightboxScale=1;
+    showLightboxImage(); document.getElementById('lightbox').classList.add('show');
+}
+
+function showLightboxImage() {
+    var im=lightboxImages[lightboxIndex];
+    var h='<div class="lb-placeholder" style="background:linear-gradient(135deg,'+im.color+' 0%,'+im.color+'cc 100%);width:600px;height:450px;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:scale('+lightboxScale+');transform-origin:center center;transition:transform 0.3s ease;">';
+    h+='<div style="font-size:28px;margin-bottom:10px;">'+im.type+'</div><div style="font-size:15px;opacity:0.85;">'+im.label+'</div></div>';
+    document.getElementById('lightboxImageContainer').innerHTML=h;
+    document.getElementById('lightboxInfo').textContent='('+(lightboxIndex+1)+'/'+lightboxImages.length+') '+im.label+' - '+im.desc;
+}
+
+function closeLightbox() { document.getElementById('lightbox').classList.remove('show'); }
+function lightboxNav(dir) { lightboxIndex=(lightboxIndex+dir+lightboxImages.length)%lightboxImages.length; lightboxScale=1; showLightboxImage(); }
+function lightboxZoom(d) { if(d===0)lightboxScale=1; else lightboxScale=Math.max(0.4,Math.min(3,lightboxScale+d)); showLightboxImage(); }
+
+document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLightbox();});
+document.addEventListener('keydown',function(e){var lb=document.getElementById('lightbox');if(!lb.classList.contains('show'))return;if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')lightboxNav(-1);if(e.key==='ArrowRight')lightboxNav(1);});
+
+function saveDraft(caseId) {
+    var dk='case_'+caseId; draftData[dk]={conclusion:document.getElementById('diagConclusion').value,basis:document.getElementById('diagBasis').value,diff:document.getElementById('diagDiff').value,treatment:document.getElementById('diagTreatment').value,followup:document.getElementById('diagFollowup').value};
+    try{localStorage.setItem('case_diag_drafts',JSON.stringify(draftData));}catch(e){}
+    showToast('草稿已保存','success');
+}
+
+function resetForm(caseId) {
+    showConfirm('确认重置','将清空所有已填写内容，此操作不可撤销。确定要重置吗？',function(){
+        ['diagConclusion','diagBasis','diagDiff','diagTreatment','diagFollowup'].forEach(function(id){document.getElementById(id).value='';});
+        delete draftData['case_'+caseId]; try{localStorage.setItem('case_diag_drafts',JSON.stringify(draftData));}catch(e){}
+        showToast('表单已重置','info');
+    });
+}
+
+function submitReport(caseId) {
+    if(!document.getElementById('diagConclusion').value.trim()){showToast('请填写诊断结论','warning');return;}
+    if(!document.getElementById('diagBasis').value.trim()){showToast('请填写诊断依据','warning');return;}
+    if(!document.getElementById('diagTreatment').value.trim()){showToast('请填写治疗建议','warning');return;}
+    showConfirm('提交报告','提交后将进行自动评分，提交后不可修改。确定要提交吗？',function(){
+        saveDraft(caseId); calculateScore(caseId);
+        var c=mockCases.find(function(c){return c.id===caseId;}); renderCaseDetail(c);
+        setTimeout(function(){var sc=document.getElementById('scoringCard');if(sc)sc.scrollIntoView({behavior:'smooth',block:'center'});},200);
+    });
+}
+
+function calculateScore(caseId) {
+    var c=mockCases.find(function(c){return c.id===caseId;});
+    var dr=draftData['case_'+caseId]||{};
+    var ud=(dr.conclusion||'').toLowerCase(), ub=(dr.basis||'').toLowerCase(), ut=(dr.treatment||'').toLowerCase(), uf=(dr.followup||'').toLowerCase();
+    function kw(user,std){var sw=std.split(/\s+/).filter(function(w){return w.length>=2;});var mc=0;sw.forEach(function(w){if(user.indexOf(w)!==-1)mc++;});return sw.length>0?mc/sw.length:0;}
+    var ds=Math.round(kw(ud,c.standardAnswer.diagnosis.toLowerCase())*40);
+    var bs=Math.round(kw(ub,c.standardAnswer.basis.toLowerCase())*25);
+    var ts=Math.round(kw(ut,c.standardAnswer.treatment.toLowerCase())*20);
+    var ls=Math.min(15,Math.round((dr.diff||'').length>20?8:2)+Math.round(uf.length>20?7:2));
+    ds=Math.min(40,Math.max(5,ds)); bs=Math.min(25,Math.max(3,bs)); ts=Math.min(20,Math.max(3,ts));
+    var total=ds+bs+ts+ls, pct=Math.min(98,Math.max(30,total+10));
+    scoringResult={caseId:caseId,total:total,percentile:pct,rankText:'击败了 '+pct+'% 的同行用户',scores:{accuracy:ds,completeness:bs,treatment:ts,logic:ls}};
+}
+
+function showConfirm(title,body,onConfirm) {
+    document.getElementById('confirmModalTitle').textContent=title;
+    document.getElementById('confirmModalBody').textContent=body;
+    document.getElementById('confirmModalFooter').innerHTML='<button class="btn btn-outline" onclick="closeModal(\'confirmModal\')">取消</button><button class="btn btn-primary" id="confirmOkBtn">确认</button>';
+    document.getElementById('confirmModal').classList.add('show');
+    document.getElementById('confirmOkBtn').onclick=function(){closeModal('confirmModal');if(onConfirm)onConfirm();};
+}
+
+function closeModal(id) { var el=document.getElementById(id); if(el){el.style.display='none';el.classList.remove('show');} }
+
+function showToast(msg,type) {
+    var t=document.getElementById('toast'); t.textContent=msg; t.className='toast toast-'+(type||'info')+' show';
+    clearTimeout(t._timeout); t._timeout=setTimeout(function(){t.classList.remove('show');},2500);
+}
+
+function toggleSubmenu(el) { el.classList.toggle('expanded'); var s=el.nextElementSibling; if(s&&s.classList.contains('submenu'))s.classList.toggle('open'); }
+
+function logout() { if(confirm('确定要退出登录吗？')){localStorage.removeItem('life_med_user');window.location.href='login.html';} }
+</script>
+</body>
+</html>

@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>智能教学服务</title>
+<style>
+/* ===== 生命医学主题库 - 通用样式 ===== */
+:root {
+    --primary: #1a73e8;
+    --primary-dark: #1557b0;
+    --primary-light: #e8f0fe;
+    --success: #34a853;
+    --warning: #fbbc04;
+    --danger: #ea4335;
+    --gray-50: #f8f9fa;
+    --gray-100: #f5f7fa;
+    --gray-200: #e8ecf0;
+    --gray-300: #dadce0;
+    --gray-400: #bdc1c6;
+    --gray-500: #9aa0a6;
+    --gray-600: #80868b;
+    --gray-700: #5f6368;
+    --gray-800: #3c4043;
+    --gray-900: #202124;
+    --text: #333333;
+    --text-secondary: #999999;
+    --bg: #ffffff;
+    --sidebar-width: 220px;
+    --header-height: 56px;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+    --transition: all 0.2s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-size: 14px; color: var(--text); background: var(--gray-50); min-height: 100vh; line-height: 1.6; }
+.header { height: var(--header-height); background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%); color: #fff; display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.header .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 40px; }
+.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; transition: var(--transition); }
+.header .header-nav a:hover, .header .header-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
+.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: var(--transition); }
+.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
+.header .header-right .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: var(--transition); }
+.header .header-right .btn-logout:hover { background: rgba(255,255,255,0.35); }
+.sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--gray-200); overflow-y: auto; z-index: 999; padding: 8px 0; }
+.sidebar .menu-group { margin-bottom: 4px; }
+.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.sidebar .menu-item { display: flex; align-items: center; padding: 10px 20px; color: var(--gray-700); text-decoration: none; font-size: 13px; transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+.sidebar .menu-item:hover { background: var(--gray-50); color: var(--primary); }
+.sidebar .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.sidebar .menu-item .menu-icon { width: 20px; margin-right: 10px; text-align: center; font-size: 14px; }
+.main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 24px; min-height: calc(100vh - var(--header-height)); }
+.breadcrumb { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.breadcrumb a { color: var(--primary); text-decoration: none; }
+.breadcrumb span.sep { color: var(--gray-400); }
+.page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
+.card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
+.card-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; transition: var(--transition); text-decoration: none; gap: 6px; white-space: nowrap; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: #2d9249; }
+.btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
+.btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-lg { padding: 12px 28px; font-size: 15px; }
+.tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; gap: 0; }
+.tab-btn { padding: 10px 20px; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-size: 14px; font-family: inherit; color: var(--gray-600); transition: var(--transition); font-weight: 500; }
+.tab-btn:hover { color: var(--primary); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+.tag-blue { background: #e8f0fe; color: #1a73e8; }
+.tag-green { background: #e6f4ea; color: #137333; }
+.tag-orange { background: #fef7e0; color: #b06000; }
+.tag-red { background: #fce8e6; color: #c5221f; }
+.tag-gray { background: #f1f3f4; color: #5f6368; }
+
+/* ===== 阅片练习专用样式 ===== */
+.view-panel { display: none; }
+.view-panel.active { display: block; }
+
+/* 顶部操作栏 */
+.exam-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding: 14px 18px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); }
+.exam-toolbar .toolbar-left { display: flex; align-items: center; gap: 12px; }
+.exam-toolbar .toolbar-right { display: flex; gap: 10px; }
+.exam-toolbar .exam-stats { display: flex; gap: 20px; font-size: 13px; color: var(--gray-600); }
+.exam-toolbar .exam-stats span strong { color: var(--primary); font-size: 15px; }
+
+/* 三栏布局 - 阅片练习 */
+.exam-layout { display: flex; gap: 16px; min-height: 600px; }
+.exam-layout .exam-left { width: 260px; flex-shrink: 0; }
+.exam-layout .exam-center { flex: 1; min-width: 0; }
+.exam-layout .exam-right { width: 340px; flex-shrink: 0; }
+
+/* 左侧影片列表 */
+.film-list { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.film-list .list-header { padding: 14px 16px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+.film-list .list-header .list-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+.film-list .list-header .list-count { font-size: 12px; color: var(--gray-500); background: var(--gray-100); padding: 2px 10px; border-radius: 10px; }
+.film-list .list-search { padding: 10px 14px; }
+.film-list .list-search input { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; outline: none; font-family: inherit; }
+.film-list .list-search input:focus { border-color: var(--primary); }
+.film-list .list-items { max-height: 480px; overflow-y: auto; }
+.film-list .film-item { padding: 12px 16px; border-bottom: 1px solid var(--gray-50); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 10px; }
+.film-list .film-item:hover { background: var(--primary-light); }
+.film-list .film-item.active { background: var(--primary-light); border-left: 3px solid var(--primary); }
+.film-list .film-item .film-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.film-list .film-item .film-status.pending { background: var(--gray-400); }
+.film-list .film-item .film-status.done { background: var(--success); }
+.film-list .film-item .film-status.wrong { background: var(--danger); }
+.film-list .film-item .film-info { flex: 1; min-width: 0; }
+.film-list .film-item .film-name { font-size: 13px; font-weight: 500; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.film-list .film-item .film-meta { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+/* 中间影像展示区 */
+.image-viewer { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; height: 100%; display: flex; flex-direction: column; }
+.image-viewer .viewer-header { margin-bottom: 14px; }
+.image-viewer .viewer-header .viewer-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
+.image-viewer .viewer-subtitle { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+.image-viewer .viewer-images { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
+.image-viewer .viewer-images.single-col { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.image-viewer .img-placeholder { border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 140px; }
+.image-viewer .img-placeholder .img-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.9); }
+.image-viewer .img-placeholder .img-label { font-size: 13px; font-weight: 600; }
+.image-viewer .img-placeholder .img-hint { font-size: 11px; opacity: 0.7; margin-top: 4px; }
+.image-viewer .viewer-meta { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--gray-100); display: flex; gap: 20px; font-size: 12px; color: var(--gray-600); }
+.image-viewer .viewer-meta .meta-item { display: flex; align-items: center; gap: 4px; }
+.image-viewer .difficulty-stars { color: var(--warning); letter-spacing: 2px; }
+
+/* 右侧答题区 */
+.answer-panel { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; display: flex; flex-direction: column; height: 100%; }
+.answer-panel .question-nav { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+.answer-panel .question-nav .q-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); border: 1.5px solid var(--gray-300); color: var(--gray-600); background: #fff; }
+.answer-panel .question-nav .q-num:hover { border-color: var(--primary); color: var(--primary); }
+.answer-panel .question-nav .q-num.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.answer-panel .question-nav .q-num.done { background: var(--success); color: #fff; border-color: var(--success); }
+.answer-panel .question-nav .q-num.wrong-dot { background: var(--danger); color: #fff; border-color: var(--danger); }
+.answer-panel .question-text { font-size: 14px; font-weight: 600; color: var(--gray-900); margin-bottom: 18px; line-height: 1.7; }
+.answer-panel .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; flex: 1; }
+.answer-panel .option-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1.5px solid var(--gray-200); border-radius: 8px; cursor: pointer; transition: var(--transition); font-size: 13px; }
+.answer-panel .option-item:hover { border-color: var(--primary); background: var(--primary-light); }
+.answer-panel .option-item.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+.answer-panel .option-item.correct { border-color: var(--success); background: #e6f4ea; color: var(--success); }
+.answer-panel .option-item.wrong { border-color: var(--danger); background: #fce8e6; color: var(--danger); }
+.answer-panel .option-item .opt-letter { width: 28px; height: 28px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; flex-shrink: 0; }
+.answer-panel .option-item.selected .opt-letter { background: var(--primary); color: #fff; }
+.answer-panel .option-item.correct .opt-letter { background: var(--success); color: #fff; }
+.answer-panel .option-item.wrong .opt-letter { background: var(--danger); color: #fff; }
+.answer-panel .answer-actions { display: flex; gap: 10px; margin-top: auto; }
+.answer-panel .answer-actions .btn-submit { flex: 1; }
+.answer-panel .answer-nav { display: flex; justify-content: space-between; margin-top: 12px; font-size: 13px; }
+.answer-panel .answer-nav a { color: var(--primary); cursor: pointer; text-decoration: none; }
+.answer-panel .answer-nav a:hover { text-decoration: underline; }
+.answer-panel .answer-nav a.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
+
+/* ===== 结果页样式 ===== */
+.result-summary { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 40px; }
+.result-summary .stat-box { text-align: center; }
+.result-summary .stat-value { font-size: 32px; font-weight: 700; }
+.result-summary .stat-label { font-size: 13px; color: var(--gray-600); margin-top: 4px; }
+.result-summary .stat-box.correct .stat-value { color: var(--success); }
+.result-summary .stat-box.wrong .stat-value { color: var(--danger); }
+.result-summary .stat-box.rate .stat-value { color: var(--primary); }
+.result-summary .stat-divider { width: 1px; height: 48px; background: var(--gray-200); }
+
+.result-layout { display: flex; gap: 16px; }
+.result-layout .result-left { width: 260px; flex-shrink: 0; }
+.result-layout .result-center { flex: 1; min-width: 0; }
+.result-layout .result-right { width: 340px; flex-shrink: 0; }
+
+/* 结果 - 答案解析 */
+.analysis-panel { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+.analysis-panel .analysis-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
+.analysis-panel .analysis-header .analysis-icon { width: 28px; height: 28px; background: var(--primary-light); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700; font-size: 14px; }
+.analysis-panel .analysis-header .analysis-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+.analysis-panel .correct-answer { background: #e6f4ea; padding: 12px 16px; border-radius: 6px; margin-bottom: 14px; font-size: 13px; color: #137333; }
+.analysis-panel .user-answer { padding: 12px 16px; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
+.analysis-panel .user-answer.match { background: #e6f4ea; color: #137333; }
+.analysis-panel .user-answer.mismatch { background: #fce8e6; color: #c5221f; }
+.analysis-panel .analysis-text { font-size: 13px; color: var(--gray-700); line-height: 1.8; }
+.analysis-panel .analysis-text h4 { font-size: 14px; margin: 12px 0 6px; color: var(--gray-900); }
+.analysis-panel .analysis-text ul { margin: 6px 0; padding-left: 20px; }
+.analysis-panel .analysis-text li { margin-bottom: 4px; }
+.analysis-panel .analysis-text .highlight { background: #fef7e0; padding: 1px 4px; border-radius: 3px; }
+
+/* 结果项列表（左侧） */
+.result-film-item { padding: 10px 14px; border-bottom: 1px solid var(--gray-50); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 10px; }
+.result-film-item:hover { background: var(--gray-50); }
+.result-film-item.active { background: var(--primary-light); }
+.result-film-item .result-icon { font-size: 18px; flex-shrink: 0; }
+.result-film-item .result-icon.correct { color: var(--success); }
+.result-film-item .result-icon.wrong { color: var(--danger); }
+
+/* ===== 知识点学习样式 ===== */
+.knowledge-layout { display: flex; gap: 16px; min-height: 600px; }
+.knowledge-layout .knowledge-sidebar { width: 260px; flex-shrink: 0; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.knowledge-layout .knowledge-sidebar .ks-header { padding: 14px 16px; border-bottom: 1px solid var(--gray-100); }
+.knowledge-layout .knowledge-sidebar .ks-header input { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; outline: none; font-family: inherit; }
+.knowledge-layout .knowledge-sidebar .ks-header input:focus { border-color: var(--primary); }
+.knowledge-layout .knowledge-sidebar .ks-tree { padding: 8px 0; max-height: 520px; overflow-y: auto; }
+.knowledge-layout .knowledge-sidebar .ks-category { padding: 10px 16px; font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
+.knowledge-layout .knowledge-sidebar .ks-topic { padding: 10px 16px 10px 28px; cursor: pointer; font-size: 13px; color: var(--gray-700); transition: var(--transition); border-left: 3px solid transparent; }
+.knowledge-layout .knowledge-sidebar .ks-topic:hover { background: var(--gray-50); color: var(--primary); }
+.knowledge-layout .knowledge-sidebar .ks-topic.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.knowledge-layout .knowledge-main { flex: 1; min-width: 0; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; }
+.knowledge-layout .knowledge-main .km-title { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.knowledge-layout .knowledge-main .km-subtitle { font-size: 13px; color: var(--gray-500); margin-bottom: 24px; line-height: 1.7; }
+.knowledge-layout .knowledge-main .km-section { margin-bottom: 24px; }
+.knowledge-layout .knowledge-main .km-section h3 { font-size: 16px; font-weight: 600; color: var(--gray-800); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--gray-100); }
+.knowledge-layout .knowledge-main .km-section p { font-size: 13px; color: var(--gray-700); line-height: 1.9; margin-bottom: 8px; }
+.knowledge-layout .knowledge-main .km-section ul { margin: 8px 0; padding-left: 20px; font-size: 13px; color: var(--gray-700); }
+.knowledge-layout .knowledge-main .km-section li { margin-bottom: 6px; line-height: 1.7; }
+.knowledge-layout .knowledge-main .qa-card { background: var(--gray-50); border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
+.knowledge-layout .knowledge-main .qa-card .qa-q { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 8px; display: flex; align-items: flex-start; gap: 6px; }
+.knowledge-layout .knowledge-main .qa-card .qa-a { font-size: 13px; color: var(--gray-700); line-height: 1.8; display: flex; align-items: flex-start; gap: 6px; }
+.knowledge-layout .knowledge-main .qa-card .qa-ref { font-size: 11px; color: var(--gray-500); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--gray-300); }
+.knowledge-layout .knowledge-main .km-actions { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--gray-100); display: flex; justify-content: center; }
+
+/* 状态提示 */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--gray-500); font-size: 13px; }
+
+/* 动画 */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 1024px) { .sidebar { width: 60px; } .sidebar .menu-item span { display: none; } .sidebar .menu-group-title { display: none; } .main-content { margin-left: 60px; } }
+
+/* 眼底图像模拟背景 */
+.fundus-bg-1 { background: linear-gradient(135deg, #2d1b00 0%, #4a2000 30%, #8b3a00 60%, #d45000 80%, #ff6600 100%); }
+.fundus-bg-2 { background: linear-gradient(135deg, #1a0a00 0%, #3d1500 30%, #6b2200 60%, #a03000 80%, #d44000 100%); }
+.fundus-bg-3 { background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 40%, #2a2a55 70%, #3a3a66 100%); }
+.fundus-bg-4 { background: linear-gradient(135deg, #1a0010 0%, #3a0030 40%, #5a0040 70%, #7a1050 100%); }
+.fa-bg-1 { background: linear-gradient(135deg, #001a1a 0%, #003333 40%, #004d4d 70%, #006666 100%); }
+.oct-bg-1 { background: linear-gradient(180deg, #000 0%, #111 30%, #222 60%, #333 80%, #555 100%); }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a>
+    <div class="header-nav">
+        <a href="眼底图像输入.html">AI筛查</a>
+        <a href="临床数据开放共享.html">数据平台</a>
+        <a href="基础课程.html">AI教育</a>
+        <a href="临床决策支撑.html">专家系统</a>
+        <a href="数据采集工具（确认）.html">数据工具</a>
+    </div>
+    <div class="header-right">
+        <span class="user-info" id="headerUserName">管理员</span>
+        <button class="btn-logout" onclick="logout()">退出</button>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <div class="menu-group"><div class="menu-group-title">开放数据平台</div>
+        <a class="menu-item" href="临床数据开放共享.html">临床数据开放共享</a>
+        <a class="menu-item" href="科技文献检索推荐.html">科技文献检索推荐</a>
+        <a class="menu-item active" href="智能教学服务.html">智能教学服务</a>
+        <a class="menu-item" href="知识图谱查询与推理.html">知识图谱查询与推理</a>
+    </div>
+</div>
+
+<div class="main-content">
+
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="#">开放数据平台</a><span class="sep">></span><span id="breadcrumbLabel">智能教学服务 / 阅片练习</span>
+    </div>
+
+    <!-- ==================== 视图一：阅片练习列表 ==================== -->
+    <div class="view-panel active" id="view-exam">
+        <!-- 顶部操作栏 -->
+        <div class="exam-toolbar">
+            <div class="toolbar-left">
+                <h1 class="page-title" style="margin-bottom:0;">阅片练习</h1>
+            </div>
+            <div class="toolbar-right">
+                <div class="exam-stats">
+                    <span>待阅: <strong id="stat-pending">8</strong></span>
+                    <span>已阅: <strong id="stat-done">0</strong></span>
+                    <span>正确率: <strong id="stat-rate">-</strong></span>
+                </div>
+                <button class="btn btn-primary" onclick="showKnowledge()">知识点学习</button>
+            </div>
+        </div>
+
+        <!-- Tab + 列表 -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab-group="film" data-tab="pending" onclick="switchFilmTab('pending')">待阅影片列表</button>
+            <button class="tab-btn" data-tab-group="film" data-tab="done" onclick="switchFilmTab('done')">已阅影片列表</button>
+        </div>
+
+        <!-- 待阅影片列表 -->
+        <div data-tab-content="film" data-tab="pending" class="tab-content active" id="film-pending">
+            <div class="exam-layout">
+                <!-- 左：题卡列表 -->
+                <div class="exam-left">
+                    <div class="film-list">
+                        <div class="list-header">
+                            <span class="list-title">待阅影片</span>
+                            <span class="list-count" id="pending-count">8</span>
+                        </div>
+                        <div class="list-search">
+                            <input type="text" placeholder="搜索影片名称/ID" oninput="filterFilmList(this.value, 'pending')">
+                        </div>
+                        <div class="list-items" id="pending-film-items"></div>
+                    </div>
+                </div>
+                <!-- 中：影像展示 -->
+                <div class="exam-center" id="exam-image-viewer"></div>
+                <!-- 右：答题区 -->
+                <div class="exam-right" id="exam-answer-panel"></div>
+            </div>
+        </div>
+
+        <!-- 已阅影片列表 -->
+        <div data-tab-content="film" data-tab="done" class="tab-content" id="film-done">
+            <div class="film-list" style="max-width:900px;">
+                <div class="list-header">
+                    <span class="list-title">已阅影片</span>
+                    <span class="list-count" id="done-count">0</span>
+                </div>
+                <div class="list-items" id="done-film-items">
+                    <div class="empty-state">暂无已阅影片</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 视图二：阅片练习结果 ==================== -->
+    <div class="view-panel" id="view-result">
+        <div class="exam-toolbar">
+            <div class="toolbar-left">
+                <button class="btn btn-outline" onclick="showExamList()">← 返回列表</button>
+                <h1 class="page-title" style="margin-bottom:0;margin-left:12px;">阅片练习结果</h1>
+            </div>
+            <div class="toolbar-right">
+                <button class="btn btn-primary" onclick="showKnowledge()">知识点学习</button>
+            </div>
+        </div>
+
+        <!-- 得分统计 -->
+        <div class="result-summary" id="result-summary-bar"></div>
+
+        <!-- 结果详情 -->
+        <div class="result-layout">
+            <div class="result-left">
+                <div class="film-list">
+                    <div class="list-header"><span class="list-title">答题明细</span></div>
+                    <div class="list-items" id="result-film-list"></div>
+                </div>
+            </div>
+            <div class="result-center" id="result-image-viewer"></div>
+            <div class="result-right" id="result-analysis"></div>
+        </div>
+    </div>
+
+    <!-- ==================== 视图三：知识点学习 ==================== -->
+    <div class="view-panel" id="view-knowledge">
+        <div class="exam-toolbar">
+            <div class="toolbar-left">
+                <button class="btn btn-outline" onclick="showExamList()">← 返回列表</button>
+                <h1 class="page-title" style="margin-bottom:0;margin-left:12px;">知识点学习</h1>
+            </div>
+        </div>
+
+        <div class="knowledge-layout">
+            <div class="knowledge-sidebar">
+                <div class="ks-header">
+                    <input type="text" placeholder="搜索医学主题..." oninput="filterKnowledge(this.value)">
+                </div>
+                <div class="ks-tree" id="knowledge-tree"></div>
+            </div>
+            <div class="knowledge-main" id="knowledge-content"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ===== Mock 数据：8道阅片练习题 =====
+const examQuestions = [
+    {
+        id: 'OPHTH-2023-0041',
+        title: '眼底彩照 OPHTH-2023-0041',
+        diagnosis: '糖尿病视网膜病变',
+        question: '根据上述病例信息和眼底影像表现，最可能的诊断是？',
+        options: [
+            'A. 年龄相关性黄斑变性 (AMD)',
+            'B. 增殖期糖尿病视网膜病变',
+            'C. 重度非增殖性糖尿病视网膜病变',
+            'D. 高血压性视网膜病变'
+        ],
+        correctIndex: 1, // B
+        images: ['fundus-bg-1', 'fa-bg-1', 'oct-bg-1'],
+        imageLabels: ['眼底彩照', '荧光血管造影(FA)', 'OCT'],
+        meta: { type: '眼底彩照', eye: '右眼', difficulty: 3 },
+        explanation: '该病例显示视网膜可见大量出血斑、微血管瘤及棉绒斑，符合增殖期糖尿病视网膜病变的典型表现。荧光血管造影显示广泛的无灌注区和新生血管渗漏。OCT显示黄斑水肿。患者有糖尿病病史10年，糖化血红蛋白控制不佳。鉴别诊断：AMD主要表现为玻璃膜疣和地图状萎缩；高血压性视网膜病变表现为动脉狭窄和交叉压迫征；重度非增殖性DR虽有出血但无新生血管。'
+    },
+    {
+        id: 'OPHTH-2023-0047',
+        title: '眼底彩照 OPHTH-2023-0047',
+        diagnosis: '青光眼',
+        question: '根据上述病例信息和眼底影像表现，最可能的诊断是？',
+        options: [
+            'A. 正常眼底',
+            'B. 糖尿病视网膜病变',
+            'C. 原发性开角型青光眼',
+            'D. 视网膜中央静脉阻塞'
+        ],
+        correctIndex: 2, // C
+        images: ['fundus-bg-2', 'fundus-bg-3', 'oct-bg-1'],
+        imageLabels: ['眼底彩照', '眼底彩照（对侧眼）', 'OCT'],
+        meta: { type: '眼底彩照', eye: '左眼', difficulty: 3 },
+        explanation: '眼底彩照显示视盘杯盘比明显增大（C/D≈0.8），盘沿变窄，符合青光眼性视神经病变。OCT显示视网膜神经纤维层（RNFL）变薄。患者眼压升高（26mmHg），视野检查显示弓形暗点。鉴别诊断：正常眼底C/D比一般<0.5；DR应有出血渗出；CRVO表现为广泛视网膜出血（"番茄酱"样眼底）。'
+    },
+    {
+        id: 'OPHTH-2023-0052',
+        title: '眼底彩照 OPHTH-2023-0052',
+        diagnosis: 'AMD',
+        question: '该患者67岁，主诉中心视力下降、视物变形。最可能的诊断是？',
+        options: [
+            'A. 湿性年龄相关性黄斑变性',
+            'B. 干性年龄相关性黄斑变性',
+            'C. 中心性浆液性脉络膜视网膜病变',
+            'D. 黄斑裂孔'
+        ],
+        correctIndex: 0, // A
+        images: ['fundus-bg-4', 'fa-bg-1', 'oct-bg-1'],
+        imageLabels: ['眼底彩照', '荧光血管造影(FA)', 'OCT'],
+        meta: { type: '眼底彩照', eye: '右眼', difficulty: 2 },
+        explanation: '眼底彩照显示黄斑区出血、渗出及色素紊乱。FA显示典型的新生血管渗漏（经典型CNV）。OCT显示视网膜下液、色素上皮脱离（PED）和视网膜内囊样水肿，符合湿性AMD的特征。干性AMD主要表现为玻璃膜疣和地图状萎缩。中浆多见于年轻男性，OCT表现为浆液性PED而无出血。黄斑裂孔OCT显示全层视网膜缺损。'
+    },
+    {
+        id: 'OPHTH-2023-0058',
+        title: '眼底彩照 OPHTH-2023-0058',
+        diagnosis: '高血压性视网膜病变',
+        question: '患者55岁，高血压病史15年，血压控制不佳。最可能的诊断是？',
+        options: [
+            'A. 糖尿病视网膜病变',
+            'B. 高血压性视网膜病变',
+            'C. 视网膜静脉阻塞',
+            'D. 正常眼底'
+        ],
+        correctIndex: 1, // B
+        images: ['fundus-bg-3', 'fundus-bg-1', 'fundus-bg-2'],
+        imageLabels: ['眼底彩照', '眼底彩照（放大）', '眼底彩照（对侧眼）'],
+        meta: { type: '眼底彩照', eye: '双眼', difficulty: 2 },
+        explanation: '眼底显示视网膜动脉普遍狭窄，动静脉交叉压迫征阳性（Gunn征），可见少量棉绒斑和火焰状出血，符合高血压性视网膜病变II-III级。患者无糖尿病病史且血糖正常，排除DR。无静脉迂曲扩张及广泛出血，排除CRVO。鉴别要点：高血压眼底以动脉改变为主，DR以微血管瘤和出血为主要特征。'
+    },
+    {
+        id: 'OPHTH-2023-0063',
+        title: '眼底彩照 OPHTH-2023-0063',
+        diagnosis: '轻度非增殖性DR',
+        question: '患者48岁，2型糖尿病病史5年，视力无明显下降。最可能的诊断是？',
+        options: [
+            'A. 正常眼底',
+            'B. 轻度非增殖性糖尿病视网膜病变',
+            'C. 增殖期糖尿病视网膜病变',
+            'D. 高血压性视网膜病变'
+        ],
+        correctIndex: 1, // B
+        images: ['fundus-bg-1', 'fundus-bg-2', 'fundus-bg-3'],
+        imageLabels: ['眼底彩照（右眼）', '眼底彩照（左眼）', '眼底彩照（后极部放大）'],
+        meta: { type: '眼底彩照', eye: '双眼', difficulty: 1 },
+        explanation: '眼底显示后极部散在微血管瘤和点状出血，未见棉绒斑、新生血管或明显渗出，符合轻度NPDR（ETDRS分级）。关键鉴别：正常眼底无微血管瘤；增殖期DR可见新生血管（NVD/NVE）；高血压性视网膜病变表现为动脉改变为主。此阶段需加强血糖控制并定期随访。'
+    },
+    {
+        id: 'OPHTH-2023-0068',
+        title: '眼底彩照 OPHTH-2023-0068',
+        diagnosis: '视网膜中央静脉阻塞',
+        question: '患者62岁，突发左眼视力下降3天。最可能的诊断是？',
+        options: [
+            'A. 糖尿病视网膜病变',
+            'B. 视网膜中央静脉阻塞',
+            'C. 视网膜动脉阻塞',
+            'D. 前部缺血性视神经病变'
+        ],
+        correctIndex: 1, // B
+        images: ['fundus-bg-2', 'fa-bg-1', 'oct-bg-1'],
+        imageLabels: ['眼底彩照', '荧光血管造影(FA)', 'OCT'],
+        meta: { type: '眼底彩照', eye: '左眼', difficulty: 2 },
+        explanation: '眼底显示广泛视网膜出血（以神经纤维层为主的火焰状出血），静脉迂曲扩张，视网膜水肿，呈典型的"番茄酱"样眼底，符合CRVO。FA显示静脉充盈延迟、毛细血管无灌注区。OCT显示黄斑水肿。鉴别：DR出血以前层（点状/斑状）为主且有微血管瘤；CRAO表现为视网膜苍白水肿+樱桃红斑；AION表现为视盘水肿而无弥漫出血。'
+    },
+    {
+        id: 'OPHTH-2023-0073',
+        title: '眼底彩照 OPHTH-2023-0073',
+        diagnosis: '干性AMD',
+        question: '患者72岁，双眼视力缓慢下降2年。最可能的诊断是？',
+        options: [
+            'A. 湿性年龄相关性黄斑变性',
+            'B. 干性年龄相关性黄斑变性',
+            'C. 病理性近视黄斑病变',
+            'D. Stargardt病'
+        ],
+        correctIndex: 1, // B
+        images: ['fundus-bg-4', 'fundus-bg-3', 'oct-bg-1'],
+        imageLabels: ['眼底彩照', '眼底彩照（对侧眼）', 'OCT'],
+        meta: { type: '眼底彩照', eye: '双眼', difficulty: 2 },
+        explanation: '眼底显示黄斑区多发玻璃膜疣（drusen）、色素上皮改变及地图状萎缩，符合干性AMD。OCT显示RPE不规则、玻璃膜疣隆起及外层视网膜萎缩。无明显出血、渗出或视网膜下液，排除湿性AMD。病理性近视可见豹纹状眼底和后巩膜葡萄肿。Stargardt病多见于青少年，眼底有黄白色斑点。'
+    },
+    {
+        id: 'OPHTH-2023-0078',
+        title: '眼底彩照 OPHTH-2023-0078',
+        diagnosis: '孔源性视网膜脱离',
+        question: '患者45岁，高度近视，突发右眼视野缺损伴闪光感。最可能的诊断是？',
+        options: [
+            'A. 玻璃体后脱离',
+            'B. 孔源性视网膜脱离',
+            'C. 渗出性视网膜脱离',
+            'D. 牵拉性视网膜脱离'
+        ],
+        correctIndex: 1, // B
+        images: ['fundus-bg-1', 'fundus-bg-2', 'oct-bg-1'],
+        imageLabels: ['眼底彩照', '眼底彩照（周边部）', 'OCT'],
+        meta: { type: '眼底彩照', eye: '右眼', difficulty: 3 },
+        explanation: '眼底显示颞上方视网膜隆起，呈灰白色波浪状，可见马蹄形裂孔。高度近视是RRD的主要危险因素。OCT显示神经上皮层脱离。鉴别：玻璃体后脱离通常不伴视野缺损；渗出性RD由炎症/肿瘤引起，无裂孔且视网膜下液可移动；牵拉性RD见于DR/PVR，呈凹面脱离形态。需紧急手术处理。'
+    }
+];
+
+// ===== 知识点学习数据 =====
+const knowledgeData = {
+    '视网膜疾病': {
+        title: '视网膜疾病总论',
+        subtitle: '视网膜是眼球内壁的神经组织层，负责光信号转换为神经信号。视网膜疾病是导致视力丧失的主要原因之一。',
+        sections: [
+            { title: '常见视网膜疾病分类', content: '<ul><li><strong>血管性疾病：</strong>糖尿病视网膜病变、视网膜静脉阻塞、高血压性视网膜病变</li><li><strong>黄斑疾病：</strong>年龄相关性黄斑变性（AMD）、黄斑裂孔、中心性浆液性脉络膜视网膜病变</li><li><strong>视网膜脱离：</strong>孔源性、牵拉性、渗出性</li><li><strong>遗传性疾病：</strong>视网膜色素变性、Stargardt病</li></ul>' },
+            { title: '眼底检查方法', content: '<p>眼底检查是诊断视网膜疾病的核心手段，常用方法包括：</p><ul><li>直接检眼镜检查</li><li>间接检眼镜检查</li><li>裂隙灯+前置镜/三面镜</li><li>眼底彩照</li><li>荧光血管造影（FA）</li><li>光学相干断层扫描（OCT）</li><li>OCT血管成像（OCTA）</li></ul>' }
+        ]
+    },
+    '糖尿病视网膜病变': {
+        title: '糖尿病视网膜病变（DR）',
+        subtitle: 'DR是糖尿病最常见的微血管并发症之一，是工作年龄人群致盲的首要原因。早期筛查和干预可显著降低失明风险。',
+        sections: [
+            { title: '流行病学', content: '<p>全球约1/3的糖尿病患者合并DR，其中约1/10存在威胁视力的DR。中国糖尿病患者DR患病率约为25-30%。病程越长、血糖控制越差，DR风险越高。</p>' },
+            { title: '分期标准', content: '<p><strong>国际临床分级标准：</strong></p><ul><li><strong>无明显DR：</strong>眼底无异常</li><li><strong>轻度NPDR：</strong>仅有微血管瘤</li><li><strong>中度NPDR：</strong>介于轻度和重度之间</li><li><strong>重度NPDR（4-2-1法则）：</strong>四个象限均有20+个视网膜内出血、两个象限静脉串珠、一个象限内显著的IRMA</li><li><strong>PDR：</strong>出现新生血管、玻璃体积血或视网膜前出血</li></ul>' },
+            { title: '阅片要点', content: '<p>阅片时需重点关注：微血管瘤分布、出血形态（点状/斑状vs火焰状）、硬性渗出、棉绒斑、静脉改变（串珠/襻）、IRMA、新生血管（NVD/NVE）、纤维增殖、黄斑水肿。</p>' },
+            { title: '常见问题', content: '' }
+        ],
+        qaItems: [
+            { q: 'DR的主要危险因素有哪些？', a: '根据《我国糖尿病性视网膜病变临床诊疗指南（2022）》，DR的主要危险因素包括：糖尿病病程长、血糖控制不佳（HbA1c升高）、高血压、血脂异常、妊娠、肾病等。其中糖尿病病程是最强的预测因素。', ref: '中华眼科杂志, 2022, 58(3): 161-170.' },
+            { q: 'DR筛查的频率如何确定？', a: '1型糖尿病：确诊后5年内开始筛查，此后每年1次。2型糖尿病：确诊时即应筛查，此后每年1次。已确诊DR者根据病变严重程度缩短筛查间隔。妊娠糖尿病：妊娠前及妊娠早期筛查，妊娠期间每3个月复查。', ref: 'ADA糖尿病视网膜病变立场声明, 2020.' }
+        ]
+    },
+    '年龄相关性黄斑变性': {
+        title: '年龄相关性黄斑变性（AMD）',
+        subtitle: 'AMD是50岁以上人群中心视力丧失的主要原因，分为干性（萎缩性）和湿性（新生血管性）两种类型。',
+        sections: [
+            { title: '临床分型', content: '<ul><li><strong>干性AMD（占85-90%）：</strong>玻璃膜疣、色素上皮异常、地图状萎缩，进展缓慢</li><li><strong>湿性AMD（占10-15%）：</strong>脉络膜新生血管（CNV）、出血、渗出、盘状瘢痕，进展迅速</li></ul>' },
+            { title: 'OCT特征', content: '<p>干性AMD OCT表现：RPE不规则隆起（玻璃膜疣）、外层视网膜变薄、地图状萎缩区RPE缺失。湿性AMD OCT表现：视网膜下液、视网膜内囊样水肿、色素上皮脱离（PED）、CNV（Ⅰ型/Ⅱ型/Ⅲ型）。</p>' },
+            { title: '阅片鉴别要点', content: '<p>与以下疾病鉴别：</p><ul><li>PCV（息肉状脉络膜血管病变）：多见于亚洲人群，ICGA可见息肉样病灶</li><li>RAP（视网膜血管瘤样增生）：Ⅲ型CNV，OCT可见视网膜内新生血管</li><li>中浆：年轻男性多见，OCT为浆液性PED，无CNV</li></ul>' }
+        ],
+        qaItems: [
+            { q: '干性AMD如何进展为湿性AMD？', a: '约10-15%的干性AMD患者会在5年内进展为湿性AMD。高危因素包括：大量大玻璃膜疣、双眼玻璃膜疣、色素上皮异常。转化机制涉及RPE-Bruch膜-脉络膜毛细血管复合体功能障碍导致的CNV形成。', ref: 'AREDS研究, Arch Ophthalmol, 2001.' }
+        ]
+    },
+    '青光眼': {
+        title: '青光眼性视神经病变',
+        subtitle: '青光眼是一组以视神经萎缩和视野缺损为共同特征的疾病，病理性眼压升高是主要危险因素。',
+        sections: [
+            { title: '视盘评估要点', content: '<ul><li><strong>杯盘比（C/D）：</strong>正常通常<0.5，青光眼患者常≥0.6，双眼C/D不对称>0.2提示异常</li><li><strong>盘沿形态：</strong>下方盘沿最宽→下方→上方→鼻侧→颞侧（ISNT规则），青光眼违反此规则</li><li><strong>RNFL缺损：</strong>局限性或弥漫性变薄</li><li><strong>盘周出血：</strong>火焰状出血提示进展风险</li></ul>' },
+            { title: 'OCT在青光眼中的应用', content: '<p>OCT可精准测量RNFL厚度和神经节细胞复合体（GCC）。常见参数：平均RNFL厚度、上下方RNFL厚度、GCC厚度。需结合年龄匹配的正常值数据库进行判断。</p>' }
+        ],
+        qaItems: [
+            { q: '正常眼压性青光眼（NTG）如何诊断？', a: 'NTG的诊断标准：①典型的青光眼性视神经病变和视野缺损；②眼压始终≤21mmHg（24小时眼压监测）；③房角开放；④排除其他原因（如缺血、压迫等）。NTG占开角型青光眼的30-50%。', ref: '中华眼科杂志, 2020, 56(1): 8-14.' }
+        ]
+    },
+    '视网膜静脉阻塞': {
+        title: '视网膜静脉阻塞（RVO）',
+        subtitle: 'RVO是仅次于DR的常见视网膜血管疾病，分为中央静脉阻塞（CRVO）和分支静脉阻塞（BRVO）。',
+        sections: [
+            { title: '临床特征', content: '<ul><li><strong>CRVO：</strong>广泛视网膜出血（火焰状为主）、静脉迂曲扩张、"番茄酱"样眼底、棉绒斑</li><li><strong>BRVO：</strong>沿阻塞静脉分布的扇形出血、AV交叉处常见阻塞点</li></ul>' },
+            { title: 'FA特征', content: '<p>FA显示静脉充盈延迟、毛细血管无灌注区、血管渗漏。缺血型CRVO表现为广泛无灌注区（≥10个视盘面积），需警惕新生血管并发症。</p>' }
+        ],
+        qaItems: []
+    },
+    '高血压性视网膜病变': {
+        title: '高血压性视网膜病变',
+        subtitle: '高血压可导致视网膜血管特征性改变，眼底检查可反映高血压的持续时间和严重程度。',
+        sections: [
+            { title: '分级标准（Keith-Wagener）', content: '<ul><li><strong>I级：</strong>视网膜动脉轻度狭窄</li><li><strong>II级：</strong>动脉明显狭窄、动静脉交叉压迫征</li><li><strong>III级：</strong>II级+棉绒斑、出血、渗出</li><li><strong>IV级：</strong>III级+视盘水肿</li></ul>' },
+            { title: '阅片要点', content: '<p>注意动脉狭窄程度、动静脉比值（正常2:3）、交叉压迫征（Gunn征/Salus征）、棉绒斑、火焰状出血、硬性渗出（星芒状黄斑病变）、视盘水肿。</p>' }
+        ],
+        qaItems: []
+    }
+};
+
+// ===== 全局状态 =====
+let userAnswers = {}; // { questionId: selectedIndex }
+let currentQIndex = 0;
+let currentFilmTab = 'pending';
+let currentView = 'exam';
+let currentResultIndex = 0;
+let currentKnowledgeTopic = '糖尿病视网膜病变';
+
+// ===== 初始化 =====
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        var user = JSON.parse(localStorage.getItem('life_med_user'));
+        if (user && user.name) document.getElementById('headerUserName').textContent = user.name;
+    } catch(e) {}
+    renderPendingFilmList();
+    selectQuestion(0);
+    renderKnowledgeTree();
+    renderKnowledgeContent(currentKnowledgeTopic);
+});
+
+// ===== 视图切换 =====
+function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.view-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('view-' + view).classList.add('active');
+    if (view === 'exam') {
+        document.getElementById('breadcrumbLabel').textContent = '智能教学服务 / 阅片练习';
+        renderPendingFilmList();
+        renderDoneFilmList();
+        updateStats();
+        var doneCount = Object.keys(userAnswers).length;
+        if (doneCount === examQuestions.length) {
+            // 全部做完，选中已阅tab
+        }
+    } else if (view === 'result') {
+        document.getElementById('breadcrumbLabel').textContent = '智能教学服务 / 阅片练习结果';
+        renderResultSummary();
+        renderResultFilmList();
+        selectResultQuestion(currentResultIndex);
+    } else if (view === 'knowledge') {
+        document.getElementById('breadcrumbLabel').textContent = '智能教学服务 / 知识点学习';
+        renderKnowledgeContent(currentKnowledgeTopic);
+    }
+}
+
+function showExamList() {
+    document.querySelectorAll('.tab-btn[data-tab-group="film"]').forEach(function(b) { b.classList.remove('active'); });
+    var pendingBtn = document.querySelector('.tab-btn[data-tab-group="film"][data-tab="pending"]');
+    if (pendingBtn) pendingBtn.classList.add('active');
+    document.querySelectorAll('[data-tab-content="film"]').forEach(function(c) { c.classList.remove('active'); });
+    var pendingContent = document.querySelector('[data-tab-content="film"][data-tab="pending"]');
+    if (pendingContent) pendingContent.classList.add('active');
+    currentFilmTab = 'pending';
+    switchView('exam');
+}
+
+function showKnowledge() {
+    switchView('knowledge');
+}
+
+// ===== Tab切换 =====
+function switchFilmTab(tab) {
+    currentFilmTab = tab;
+    var btns = document.querySelectorAll('[data-tab-group="film"]');
+    var contents = document.querySelectorAll('[data-tab-content="film"]');
+    btns.forEach(function(b) { b.classList.remove('active'); });
+    contents.forEach(function(c) { c.classList.remove('active'); });
+    var btn = document.querySelector('[data-tab-group="film"][data-tab="' + tab + '"]');
+    var content = document.querySelector('[data-tab-content="film"][data-tab="' + tab + '"]');
+    if (btn) btn.classList.add('active');
+    if (content) content.classList.add('active');
+    if (tab === 'done') renderDoneFilmList();
+}
+
+// ===== 渲染待阅列表 =====
+function renderPendingFilmList(filterText) {
+    var container = document.getElementById('pending-film-items');
+    var countEl = document.getElementById('pending-count');
+    var questions = examQuestions;
+    if (filterText) {
+        var ft = filterText.toLowerCase();
+        questions = questions.filter(function(q) {
+            return q.id.toLowerCase().includes(ft) || q.title.toLowerCase().includes(ft) || q.diagnosis.toLowerCase().includes(ft);
+        });
+    }
+    var pendingQuestions = questions.filter(function(q) { return !(q.id in userAnswers); });
+    countEl.textContent = pendingQuestions.length;
+    if (pendingQuestions.length === 0) {
+        container.innerHTML = '<div class="empty-state">所有影片已阅完毕</div>';
+    } else {
+        container.innerHTML = pendingQuestions.map(function(q, i) {
+            var origIdx = examQuestions.indexOf(q);
+            var activeClass = (currentFilmTab === 'pending' && origIdx === currentQIndex) ? ' active' : '';
+            return '<div class="film-item' + activeClass + '" onclick="selectQuestion(' + origIdx + ')">' +
+                '<span class="film-status pending"></span>' +
+                '<div class="film-info">' +
+                    '<div class="film-name">' + q.title + '</div>' +
+                    '<div class="film-meta">' + q.diagnosis + ' | ' + q.meta.eye + ' | ' + '★'.repeat(q.meta.difficulty) + '</div>' +
+                '</div>' +
+                '<span class="tag tag-gray">未作答</span>' +
+            '</div>';
+        }).join('');
+    }
+}
+
+function renderDoneFilmList() {
+    var container = document.getElementById('done-film-items');
+    var countEl = document.getElementById('done-count');
+    var doneQuestions = examQuestions.filter(function(q) { return q.id in userAnswers; });
+    countEl.textContent = doneQuestions.length;
+    if (doneQuestions.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无已阅影片</div>';
+    } else {
+        container.innerHTML = doneQuestions.map(function(q) {
+            var userIdx = userAnswers[q.id];
+            var isCorrect = (userIdx === q.correctIndex);
+            var statusClass = isCorrect ? 'done' : 'wrong';
+            var statusText = isCorrect ? '正确' : '错误';
+            var tagClass = isCorrect ? 'tag-green' : 'tag-red';
+            return '<div class="film-item" onclick="showResultForQuestion(\'' + q.id + '\')">' +
+                '<span class="film-status ' + statusClass + '"></span>' +
+                '<div class="film-info">' +
+                    '<div class="film-name">' + q.title + '</div>' +
+                    '<div class="film-meta">' + q.diagnosis + '</div>' +
+                '</div>' +
+                '<span class="tag ' + tagClass + '">' + statusText + '</span>' +
+            '</div>';
+        }).join('');
+    }
+}
+
+// ===== 选择题号 =====
+function selectQuestion(index) {
+    if (currentFilmTab === 'done') {
+        switchFilmTab('pending');
+    }
+    currentQIndex = index;
+    renderPendingFilmList();
+    renderImageArea(index);
+    renderAnswerPanel(index);
+    // 高亮左侧列表
+    setTimeout(function() {
+        var items = document.querySelectorAll('#pending-film-items .film-item');
+        items.forEach(function(item, i) {
+            item.classList.remove('active');
+        });
+        var targetItem = document.querySelectorAll('#pending-film-items .film-item')[index];
+        if (targetItem) targetItem.classList.add('active');
+    }, 50);
+}
+
+// ===== 渲染影像展示区 =====
+function renderImageArea(index) {
+    var container = document.getElementById('exam-image-viewer');
+    var q = examQuestions[index];
+    var imagesHtml = q.images.map(function(bgClass, i) {
+        return '<div class="img-placeholder ' + bgClass + '" style="grid-row:' + (i < 2 ? '1' : '2') + ';grid-column:' + (i % 2 + 1) + ';">' +
+            '<div class="img-overlay">' +
+                '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>' +
+                '<span class="img-label">' + q.imageLabels[i] + '</span>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+
+    container.innerHTML = '<div class="image-viewer">' +
+        '<div class="viewer-header">' +
+            '<div class="viewer-title">' + q.title + '</div>' +
+            '<div class="viewer-subtitle">题目ID: ' + q.id + '</div>' +
+        '</div>' +
+        '<div class="viewer-images">' + imagesHtml + '</div>' +
+        '<div class="viewer-meta">' +
+            '<span class="meta-item">影像类型: ' + q.meta.type + '</span>' +
+            '<span class="meta-item">拍摄眼: ' + q.meta.eye + '</span>' +
+            '<span class="meta-item">难度: <span class="difficulty-stars">' + '★'.repeat(q.meta.difficulty) + '</span></span>' +
+        '</div>' +
+    '</div>';
+}
+
+// ===== 渲染答题面板 =====
+function renderAnswerPanel(index) {
+    var container = document.getElementById('exam-answer-panel');
+    var q = examQuestions[index];
+    var isAnswered = q.id in userAnswers;
+    var selectedIndex = userAnswers[q.id];
+
+    // 题号导航
+    var navHtml = '<div class="question-nav">';
+    examQuestions.forEach(function(qItem, i) {
+        var cls = 'q-num';
+        if (i === index) cls += ' active';
+        if (qItem.id in userAnswers) {
+            var correct = (userAnswers[qItem.id] === qItem.correctIndex);
+            cls += correct ? ' done' : ' wrong-dot';
+        }
+        navHtml += '<span class="' + cls + '" onclick="selectQuestion(' + i + ')">' + (i + 1) + '</span>';
+    });
+    navHtml += '</div>';
+
+    // 选项（单选）
+    var optionsHtml = '<div class="options-list">';
+    q.options.forEach(function(opt, oi) {
+        var cls = 'option-item';
+        if (isAnswered) {
+            if (oi === q.correctIndex) cls += ' correct';
+            else if (oi === selectedIndex && selectedIndex !== q.correctIndex) cls += ' wrong';
+        } else if (oi === selectedIndex) {
+            cls += ' selected';
+        }
+        optionsHtml += '<div class="' + cls + '" onclick="' + (isAnswered ? '' : 'selectOption(' + oi + ')') + '">' +
+            '<span class="opt-letter">' + String.fromCharCode(65 + oi) + '</span>' +
+            '<span>' + opt.substring(3) + '</span>' +
+        '</div>';
+    });
+    optionsHtml += '</div>';
+
+    // 按钮区
+    var actionsHtml = '';
+    if (!isAnswered) {
+        actionsHtml = '<div class="answer-actions">' +
+            '<button class="btn btn-primary btn-submit" onclick="submitAnswer()" ' + (selectedIndex === undefined ? 'disabled' : '') + ' id="btn-submit">提交答案</button>' +
+        '</div>';
+    } else {
+        var correct = (selectedIndex === q.correctIndex);
+        actionsHtml = '<div class="answer-actions">' +
+            '<button class="btn ' + (correct ? 'btn-success' : 'btn-danger') + ' btn-submit" disabled>' + (correct ? '回答正确' : '回答错误') + '</button>' +
+            '<button class="btn btn-primary" onclick="showResultForQuestion(\'' + q.id + '\')">查看解析</button>' +
+        '</div>';
+    }
+
+    // 上下题导航
+    var navLinks = '<div class="answer-nav">';
+    navLinks += '<a class="' + (index === 0 ? 'disabled' : '') + '" onclick="' + (index > 0 ? 'selectQuestion(' + (index - 1) + ')' : '') + '">← 上一题</a>';
+    navLinks += '<a class="' + (index >= examQuestions.length - 1 ? 'disabled' : '') + '" onclick="' + (index < examQuestions.length - 1 ? 'selectQuestion(' + (index + 1) + ')' : '') + '">下一题 →</a>';
+    navLinks += '</div>';
+
+    container.innerHTML = '<div class="answer-panel">' +
+        navHtml +
+        '<div class="question-text">' + (index + 1) + '. ' + q.question + '</div>' +
+        optionsHtml +
+        actionsHtml +
+        navLinks +
+    '</div>';
+}
+
+// ===== 选择选项 =====
+function selectOption(optionIndex) {
+    var q = examQuestions[currentQIndex];
+    if (q.id in userAnswers) return; // 已作答不可修改
+    userAnswers[q.id] = optionIndex;
+    renderAnswerPanel(currentQIndex);
+    updateStats();
+}
+
+// ===== 提交答案 =====
+function submitAnswer() {
+    var q = examQuestions[currentQIndex];
+    if (!(q.id in userAnswers)) {
+        alert('请先选择一个选项');
+        return;
+    }
+    renderAnswerPanel(currentQIndex);
+    renderPendingFilmList();
+    renderDoneFilmList();
+    updateStats();
+
+    // 自动跳转下一题
+    var remaining = examQuestions.filter(function(qq) { return !(qq.id in userAnswers); });
+    if (remaining.length > 0) {
+        selectQuestion(examQuestions.indexOf(remaining[0]));
+    } else {
+        // 全部答完，显示结果
+        showResults();
+    }
+}
+
+// ===== 显示结果 =====
+function showResults() {
+    currentResultIndex = 0;
+    switchView('result');
+}
+
+function showResultForQuestion(questionId) {
+    var idx = examQuestions.findIndex(function(q) { return q.id === questionId; });
+    if (idx >= 0) {
+        currentResultIndex = idx;
+        switchView('result');
+    }
+}
+
+// ===== 结果页渲染 =====
+function renderResultSummary() {
+    var container = document.getElementById('result-summary-bar');
+    var total = examQuestions.length;
+    var correct = 0;
+    var wrong = 0;
+    examQuestions.forEach(function(q) {
+        if (q.id in userAnswers) {
+            if (userAnswers[q.id] === q.correctIndex) correct++;
+            else wrong++;
+        }
+    });
+    var answered = correct + wrong;
+    var rate = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+
+    container.innerHTML =
+        '<div class="stat-box correct">' +
+            '<div class="stat-value">' + correct + '</div>' +
+            '<div class="stat-label">正确</div>' +
+        '</div>' +
+        '<div class="stat-divider"></div>' +
+        '<div class="stat-box wrong">' +
+            '<div class="stat-value">' + wrong + '</div>' +
+            '<div class="stat-label">错误</div>' +
+        '</div>' +
+        '<div class="stat-divider"></div>' +
+        '<div class="stat-box rate">' +
+            '<div class="stat-value">' + rate + '%</div>' +
+            '<div class="stat-label">正确率</div>' +
+        '</div>';
+}
+
+function renderResultFilmList() {
+    var container = document.getElementById('result-film-list');
+    container.innerHTML = examQuestions.map(function(q, i) {
+        var answered = q.id in userAnswers;
+        var iconHtml = '';
+        var cls = '';
+        if (answered) {
+            var isCorrect = (userAnswers[q.id] === q.correctIndex);
+            iconHtml = isCorrect ? '✓' : '✗';
+            cls = isCorrect ? 'correct' : 'wrong';
+        } else {
+            iconHtml = '—';
+        }
+        var activeCls = (i === currentResultIndex) ? ' active' : '';
+        return '<div class="result-film-item' + activeCls + '" onclick="selectResultQuestion(' + i + ')">' +
+            '<span class="result-icon ' + cls + '">' + iconHtml + '</span>' +
+            '<div class="film-info">' +
+                '<div class="film-name">' + q.title + '</div>' +
+                '<div class="film-meta">' + q.diagnosis + ' | ' + (answered ? '已作答' : '未作答') + '</div>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
+function selectResultQuestion(index) {
+    currentResultIndex = index;
+    renderResultFilmList();
+    renderResultImage(index);
+    renderResultAnalysis(index);
+}
+
+function renderResultImage(index) {
+    var container = document.getElementById('result-image-viewer');
+    var q = examQuestions[index];
+    var imagesHtml = q.images.map(function(bgClass, i) {
+        return '<div class="img-placeholder ' + bgClass + '">' +
+            '<div class="img-overlay">' +
+                '<span class="img-label" style="font-size:20px;">' + q.imageLabels[i] + '</span>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+
+    container.innerHTML = '<div class="image-viewer">' +
+        '<div class="viewer-header">' +
+            '<div class="viewer-title">' + q.title + '</div>' +
+            '<div class="viewer-subtitle">题目ID: ' + q.id + '</div>' +
+        '</div>' +
+        '<div class="viewer-images single-col">' + imagesHtml + '</div>' +
+        '<div class="viewer-meta">' +
+            '<span class="meta-item">影像类型: ' + q.meta.type + '</span>' +
+            '<span class="meta-item">拍摄眼: ' + q.meta.eye + '</span>' +
+            '<span class="meta-item">难度: <span class="difficulty-stars">' + '★'.repeat(q.meta.difficulty) + '</span></span>' +
+        '</div>' +
+    '</div>';
+}
+
+function renderResultAnalysis(index) {
+    var container = document.getElementById('result-analysis');
+    var q = examQuestions[index];
+    var answered = q.id in userAnswers;
+    var userIdx = userAnswers[q.id];
+    var isCorrect = answered && (userIdx === q.correctIndex);
+
+    var answerCompareHtml = '';
+    if (answered) {
+        answerCompareHtml = '<div class="correct-answer"><strong>正确答案:</strong> ' + q.options[q.correctIndex] + '</div>';
+        answerCompareHtml += '<div class="user-answer ' + (isCorrect ? 'match' : 'mismatch') + '"><strong>你的答案:</strong> ' + q.options[userIdx] + (isCorrect ? ' ✓ 回答正确' : ' ✗ 回答错误') + '</div>';
+    } else {
+        answerCompareHtml = '<div class="correct-answer"><strong>正确答案:</strong> ' + q.options[q.correctIndex] + '</div>';
+        answerCompareHtml += '<div class="user-answer mismatch"><strong>你的答案:</strong> 未作答</div>';
+    }
+
+    // 选项对比展示
+    var optionsCompare = '<div style="margin-bottom:16px;">' + q.options.map(function(opt, oi) {
+        var cls = '';
+        if (answered && oi === userIdx && oi === q.correctIndex) cls = ' correct';
+        else if (answered && oi === userIdx && oi !== q.correctIndex) cls = ' wrong';
+        else if (oi === q.correctIndex) cls = ' correct';
+        return '<div class="option-item' + cls + '" style="cursor:default;">' +
+            '<span class="opt-letter">' + String.fromCharCode(65 + oi) + '</span>' +
+            '<span>' + opt.substring(3) + '</span>' +
+        '</div>';
+    }).join('') + '</div>';
+
+    container.innerHTML = '<div class="analysis-panel">' +
+        '<div class="analysis-header">' +
+            '<span class="analysis-icon">?</span>' +
+            '<span class="analysis-title">答案解析</span>' +
+        '</div>' +
+        answerCompareHtml +
+        optionsCompare +
+        '<div class="analysis-text">' +
+            '<h4>解析说明</h4>' +
+            '<p>' + q.explanation + '</p>' +
+        '</div>' +
+    '</div>';
+}
+
+// ===== 知识点学习 =====
+function renderKnowledgeTree() {
+    var container = document.getElementById('knowledge-tree');
+    var topics = Object.keys(knowledgeData);
+    var html = '<div class="ks-category">眼病知识分类</div>';
+    topics.forEach(function(topic) {
+        var activeCls = (topic === currentKnowledgeTopic) ? ' active' : '';
+        html += '<div class="ks-topic' + activeCls + '" onclick="selectKnowledgeTopic(\'' + topic + '\')" data-topic="' + topic + '">' + topic + '</div>';
+    });
+    container.innerHTML = html;
+}
+
+function selectKnowledgeTopic(topic) {
+    currentKnowledgeTopic = topic;
+    renderKnowledgeTree();
+    renderKnowledgeContent(topic);
+}
+
+function filterKnowledge(text) {
+    var items = document.querySelectorAll('#knowledge-tree .ks-topic');
+    var ft = text.toLowerCase();
+    items.forEach(function(item) {
+        var topic = item.getAttribute('data-topic') || '';
+        if (!ft || topic.toLowerCase().includes(ft)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function renderKnowledgeContent(topic) {
+    var container = document.getElementById('knowledge-content');
+    var data = knowledgeData[topic];
+    if (!data) { container.innerHTML = '<p>请选择左侧知识点主题</p>'; return; }
+
+    var sectionsHtml = data.sections.map(function(sec) {
+        return '<div class="km-section"><h3>' + sec.title + '</h3>' + sec.content + '</div>';
+    }).join('');
+
+    var qaHtml = '';
+    if (data.qaItems && data.qaItems.length > 0) {
+        qaHtml = '<div class="km-section"><h3>常见问题</h3>' +
+            data.qaItems.map(function(qa) {
+                return '<div class="qa-card">' +
+                    '<div class="qa-q"><span style="color:var(--primary);font-weight:700;">Q</span> ' + qa.q + '</div>' +
+                    '<div class="qa-a"><span style="color:var(--success);font-weight:700;">A</span> ' + qa.a + '</div>' +
+                    (qa.ref ? '<div class="qa-ref">参考文献: ' + qa.ref + '</div>' : '') +
+                '</div>';
+            }).join('') +
+        '</div>';
+    }
+
+    container.innerHTML =
+        '<div class="km-title">' + data.title + '</div>' +
+        '<div class="km-subtitle">' + data.subtitle + '</div>' +
+        sectionsHtml +
+        qaHtml +
+        '<div class="km-actions">' +
+            '<button class="btn btn-primary btn-lg" onclick="showExamList()">去答题</button>' +
+        '</div>';
+}
+
+// ===== 统计更新 =====
+function updateStats() {
+    var total = examQuestions.length;
+    var doneCount = Object.keys(userAnswers).length;
+    var correct = 0;
+    examQuestions.forEach(function(q) {
+        if (q.id in userAnswers && userAnswers[q.id] === q.correctIndex) correct++;
+    });
+    document.getElementById('stat-pending').textContent = total - doneCount;
+    document.getElementById('stat-done').textContent = doneCount;
+    document.getElementById('stat-rate').textContent = doneCount > 0 ? Math.round((correct / doneCount) * 100) + '%' : '-';
+}
+
+// ===== 筛选 =====
+function filterFilmList(text, tab) {
+    if (tab === 'pending') renderPendingFilmList(text);
+}
+
+// ===== 通用函数 =====
+function navigateTo(url) { window.location.href = url; }
+function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+</script>
+</body>
+</html>

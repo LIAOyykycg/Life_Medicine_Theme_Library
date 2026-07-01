@@ -1,0 +1,761 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>读片与病例大赛系统</title><style>
+:root {
+    --primary: #1a73e8; --primary-dark: #1557b0; --primary-light: #e8f0fe;
+    --success: #34a853; --warning: #fbbc04; --danger: #ea4335;
+    --gray-50: #f8f9fa; --gray-100: #f5f7fa; --gray-200: #e8ecf0; --gray-300: #dadce0;
+    --gray-400: #bdc1c6; --gray-500: #9aa0a6; --gray-600: #80868b; --gray-700: #5f6368;
+    --gray-800: #3c4043; --gray-900: #202124;
+    --sidebar-width: 220px; --header-height: 56px; --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08); --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+    --transition: all 0.2s ease;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter','PingFang SC','Microsoft YaHei','Arial',sans-serif; font-size: 14px; color: #333; background: var(--gray-50); min-height: 100vh; line-height: 1.6; }
+.header { height: var(--header-height); background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%); color: #fff; display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.header .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 40px; }
+.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; transition: var(--transition); }
+.header .header-nav a:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
+.header .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--gray-200); overflow-y: auto; z-index: 999; padding: 8px 0; }
+.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.sidebar .menu-item { display: flex; align-items: center; padding: 10px 20px; color: var(--gray-700); text-decoration: none; font-size: 13px; transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+.sidebar .menu-item:hover { background: var(--gray-50); color: var(--primary); }
+.sidebar .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.sidebar .menu-icon { width: 20px; margin-right: 10px; text-align: center; font-size: 14px; }
+.menu-item.has-submenu { position: relative; cursor: pointer; }
+.menu-item .arrow { margin-left: auto; font-size: 10px; transition: transform 0.2s; }
+.menu-item.expanded .arrow { transform: rotate(90deg); }
+.submenu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.submenu.open { max-height: 280px; }
+.submenu .menu-item { padding-left: 50px; font-size: 12px; }
+.submenu .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 24px; min-height: calc(100vh - var(--header-height)); }
+.breadcrumb { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.breadcrumb a { color: var(--primary); text-decoration: none; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
+.card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
+.card-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); gap: 6px; }
+.btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+.tag-green { background: #e6f4ea; color: #137333; }
+.tag-orange { background: #fef7e0; color: #b06000; }
+.tag-red { background: #fce8e6; color: #c5221f; }
+.tag-gray { background: #f1f3f4; color: #5f6368; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table th { background: var(--gray-100); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--gray-700); border-bottom: 2px solid var(--gray-200); }
+table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-800); }
+table tbody tr:hover { background: var(--gray-50); }
+table tbody tr.active-row { background: var(--primary-light); border-left: 3px solid var(--primary); }
+.tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; }
+.tab-btn { padding: 10px 20px; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-size: 14px; font-family: inherit; color: var(--gray-600); transition: var(--transition); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: #fff; border-radius: 12px; box-shadow: var(--shadow-lg); width: 90%; max-height: 85vh; overflow-y: auto; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--gray-200); }
+.modal-header h3 { font-size: 17px; color: var(--gray-900); }
+.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-500); }
+.modal-body { padding: 24px; }
+.modal-footer { padding: 14px 24px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; }
+.exam-layout { display: flex; gap: 20px; }
+.exam-left { flex: 1; }
+.exam-right { width: 360px; flex-shrink: 0; }
+.exam-image { background: #000; border-radius: var(--radius); height: 320px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.exam-image .mock-fundus { width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle at 45% 45%, #4a2000 10%, #1a0800 60%, #0a0000 100%); }
+.exam-image .mock-vessel { position: absolute; width: 80%; height: 1px; background: rgba(200,50,50,0.3); top: 50%; left: 10%; transform: rotate(-10deg); }
+.exam-image .mock-hem { position: absolute; width: 10px; height: 6px; border-radius: 50%; background: #cc3333; opacity: 0.6; }
+.exam-question { margin-top: 12px; padding: 12px; background: #e8f0fe; border-radius: 6px; font-size: 13px; color: #1a56db; }
+.option-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.option-item { padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: 8px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.option-item:hover { border-color: var(--primary); background: var(--primary-light); }
+.option-item.selected { border-color: var(--primary); background: var(--primary-light); }
+.option-item .opt-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--gray-300); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.option-item.selected .opt-radio { border-color: var(--primary); background: var(--primary); }
+.option-item.selected .opt-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+.timer-bar { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--gray-50); border-radius: 6px; margin-bottom: 12px; }
+.timer-bar .timer-icon { color: var(--warning); font-size: 16px; }
+.timer-bar .timer-text { font-weight: 600; color: var(--gray-800); }
+.timer-bar.warning .timer-text { color: var(--danger); }
+.qnav { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding: 12px; background: var(--gray-50); border-radius: 6px; }
+.qnav .qdot { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 1px solid var(--gray-300); background: #fff; transition: var(--transition); }
+.qnav .qdot.current { background: var(--primary); color: #fff; border-color: var(--primary); }
+.qnav .qdot.answered { background: var(--success); color: #fff; border-color: var(--success); }
+.result-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin: 16px 0; }
+.result-card { padding: 16px; border-radius: 8px; text-align: center; }
+.result-card .rval { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+.result-card .rlbl { font-size: 12px; color: var(--gray-600); }
+.result-card.score { background: linear-gradient(135deg, #fce8e6, #fff5f5); } .result-card.score .rval { color: var(--danger); }
+.result-card.rank { background: #e8f0fe; } .result-card.rank .rval { color: var(--primary); }
+.result-card.accuracy { background: #e6f4ea; } .result-card.accuracy .rval { color: var(--success); }
+.result-card.time { background: #fef7e0; } .result-card.time .rval { color: #b06000; }
+.alert-warning { background: #fef7e0; color: #b06000; border: 1px solid #feefc3; padding: 12px 16px; border-radius: 6px; font-size: 13px; }
+
+/* ===== Toast 提示 ===== */
+.toast-container { position: fixed; top: 80px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+.toast { padding: 12px 20px; border-radius: 8px; font-size: 13px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: toastIn 0.3s ease, toastOut 0.3s ease 2.0s forwards; max-width: 320px; display: flex; align-items: center; gap: 8px; }
+.toast-success { background: #34a853; }
+.toast-info { background: #1a73e8; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+
+/* ===== 已报名按钮(灰色禁用态) ===== */
+.btn-registered { background: #e8ecf0; color: #9aa0a6; border: 1px solid #dadce0; cursor: not-allowed; pointer-events: none; }
+
+/* ===== 比赛结果弹窗样式（参照原型图） ===== */
+.result-modal-box { max-width: 620px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.18); animation: fadeInUp 0.3s ease; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.result-header { display: flex; align-items: center; padding: 16px 24px; background: #fff; border-bottom: 1px solid #e8ecf0; gap: 12px; }
+.result-title { font-size: 16px; font-weight: 600; color: #202124; flex: 1; margin: 0; }
+.tag-result-status { background: #fce8e6; color: #c5221f; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+.result-close { font-size: 18px; color: #9aa0a6; cursor: pointer; background: none; border: none; padding: 4px; }
+.result-close:hover { color: #3c4043; }
+.result-body { padding: 24px; }
+.result-grid-new { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+.result-card-new { padding: 20px 16px; border-radius: 10px; text-align: center; transition: transform 0.2s; }
+.result-card-new:hover { transform: translateY(-2px); }
+.card-score { background: #FFF0F0; }
+.card-rank { background: #F0F4FF; }
+.card-accuracy { background: #E8F5E8; }
+.card-time { background: #FFF8E1; }
+.rval-new { font-size: 38px; font-weight: 700; line-height: 1.2; margin-bottom: 4px; }
+.card-score .rval-new { color: #E53935; }
+.card-rank .rval-new { color: #1976D2; }
+.card-accuracy .rval-new { color: #388E3C; }
+.card-time .rval-new { color: #F57C00; }
+.rsub { font-size: 16px; font-weight: 500; color: inherit; opacity: 0.7; }
+.rlbl-new { font-size: 13px; color: #666; font-weight: 400; }
+.result-motivation { padding: 14px 16px; background: #F0F4FF; border-radius: 8px; font-size: 14px; color: #1565C0; text-align: center; margin-bottom: 20px; line-height: 1.5; }
+.result-motivation .highlight-pct { color: #00B0FF; font-weight: 700; font-size: 16px; }
+
+/* 各题得分详情 */
+.result-detail-section { margin-bottom: 20px; }
+.result-detail-title { font-size: 15px; font-weight: 600; color: #202124; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #e8ecf0; }
+.result-detail-table { max-height: 200px; overflow-y: auto; }
+.result-detail-table table { font-size: 12px; }
+.result-detail-table th { background: #f5f7fa; padding: 8px 12px; font-size: 12px; }
+.result-detail-table td { padding: 8px 12px; }
+.result-detail-table .td-correct { color: #388E3C; font-weight: 600; }
+.result-detail-table .td-wrong { color: #E53935; font-weight: 600; }
+.result-detail-table .td-type { color: #5f6368; font-size: 11px; }
+
+/* 横向对比 */
+.result-compare { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.compare-item { display: flex; align-items: center; gap: 12px; }
+.compare-label { width: 80px; font-size: 12px; color: #5f6368; flex-shrink: 0; text-align: right; }
+.compare-bar-wrap { flex: 1; background: #f1f3f4; border-radius: 6px; height: 22px; position: relative; overflow: hidden; }
+.compare-bar-fill { height: 100%; border-radius: 6px; transition: width 0.8s ease; }
+.compare-pct { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #202124; }
+
+/* 底部按钮 */
+.result-footer { display: flex; justify-content: center; gap: 12px; }
+.btn-review { padding: 8px 20px; font-size: 14px; border-radius: 6px; }
+.btn-primary-result { padding: 8px 24px; font-size: 14px; background: #E53935; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: background 0.2s; }
+.btn-primary-result:hover { background: #C62828; }
+
+@media (max-width: 1024px) { .sidebar { width: 60px; } .sidebar .menu-item span { display: none; } .sidebar .menu-group-title { display: none; } .main-content { margin-left: 60px; } .submenu .menu-item { padding-left: 10px; } .exam-layout { flex-direction: column; } .exam-right { width: 100%; } .result-grid-new { grid-template-columns: 1fr 1fr; } }
+</style></head><body>
+<div class="header"><a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a><div class="header-nav"><a href="眼底图像输入.html">AI筛查</a><a href="临床数据开放共享.html">数据平台</a><a href="基础课程.html">AI教育</a><a href="临床决策支撑.html">专家系统</a><a href="数据采集工具（确认）.html">数据工具</a></div><div class="header-right"><span class="user-info" id="headerUserName">管理员</span><button class="btn-logout" onclick="logout()">退出</button></div></div>
+<div class="sidebar" id="sidebar">
+    <div class="menu-group"><div class="menu-group-title">AI教育平台</div>
+        <a class="menu-item" href="基础课程.html"><span class="menu-icon">📖</span>基础课程</a>
+        <a class="menu-item" href="案例教学.html"><span class="menu-icon">📋</span>案例教学</a>
+        <div class="menu-item has-submenu active expanded" onclick="toggleSubmenu(this)"><span class="menu-icon">🔧</span>技能实践<span class="arrow">▶</span></div>
+        <div class="submenu open">
+            <a class="menu-item" href="虚拟临床技能实训.html">虚拟临床技能实训</a>
+            <a class="menu-item" href="经典病例诊断实训.html">经典病例诊断实训</a>
+            <a class="menu-item" href="疑难病例分析与学术研讨.html">疑难病例分析与学术研讨</a>
+            <a class="menu-item active" href="读片与病例大赛系统.html">读片与病例大赛系统</a>
+            <a class="menu-item" href="数据标注与AI实训.html">数据标注与AI实训</a>
+        </div>
+        <a class="menu-item" href="考试中心.html"><span class="menu-icon">📝</span>考试中心</a>
+        <a class="menu-item" href="个人中心与能力评估.html"><span class="menu-icon">👤</span>个人中心与能力评估</a>
+    </div>
+</div>
+<div class="main-content" id="mainView">
+<div class="breadcrumb"><a href="技能实践.html">AI教育平台</a><span class="sep">&gt;</span><a href="技能实践.html">技能实践</a><span class="sep">&gt;</span><span>读片与病例大赛系统</span></div>
+<h1 class="page-title" style="background:linear-gradient(135deg,#c62828,#d32f2f);color:#fff;padding:16px 20px;border-radius:8px;">眼科读片与病例大赛</h1>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="filterCompetition('all',this)">全部</button>
+    <button class="tab-btn" onclick="filterCompetition('ongoing',this)">进行中</button>
+    <button class="tab-btn" onclick="filterCompetition('upcoming',this)">即将开始</button>
+    <button class="tab-btn" onclick="filterCompetition('ended',this)">已结束</button>
+</div>
+
+<div class="card"><div class="table-wrap"><table><thead><tr><th>比赛名称</th><th>比赛描述</th><th>起止时间</th><th>时长</th><th>参赛人数</th><th>状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr class="active-row">
+    <td style="font-weight:600;">糖尿病视网膜病变阅片大赛</td>
+    <td style="font-size:12px;color:var(--gray-600);">基于眼底彩照进行DR分级诊断</td>
+    <td>2024-06-01 ~ 2024-07-15</td>
+    <td>45min</td>
+    <td>1,283</td>
+    <td><span class="tag tag-green">进行中</span></td>
+    <td><button class="btn btn-primary btn-sm" onclick="enterExam('糖尿病视网膜病变阅片大赛')">进入比赛</button></td>
+</tr>
+<tr>
+    <td style="font-weight:600;">OCT黄斑病变读片挑战赛</td>
+    <td style="font-size:12px;color:var(--gray-600);">OCT影像黄斑区病变识别与分类</td>
+    <td>2024-06-15 ~ 2024-08-01</td>
+    <td>60min</td>
+    <td>956</td>
+    <td><span class="tag tag-green">进行中</span></td>
+    <td><button class="btn btn-primary btn-sm" onclick="enterExam('OCT黄斑病变读片挑战赛')">进入比赛</button></td>
+</tr>
+<tr>
+    <td style="font-weight:600;">青光眼视野判读大赛</td>
+    <td style="font-size:12px;color:var(--gray-600);">视野报告判读与青光眼分期评估</td>
+    <td>2024-07-01 ~ 2024-08-15</td>
+    <td>40min</td>
+    <td>742</td>
+    <td><span class="tag tag-orange">即将开始</span></td>
+    <td><button class="btn btn-primary btn-sm" onclick="registerCompetition(this, '青光眼视野判读大赛')">点击报名</button></td>
+</tr>
+<tr>
+    <td style="font-weight:600;">FFA荧光血管造影读片赛</td>
+    <td style="font-size:12px;color:var(--gray-600);">FFA各期图像判读与病理分析</td>
+    <td>2024-05-01 ~ 2024-06-10</td>
+    <td>50min</td>
+    <td>1,567</td>
+    <td><span class="tag tag-gray">已结束</span></td>
+    <td><button class="btn btn-outline btn-sm" onclick="showCompetitionResult('FFA荧光血管造影读片赛')">查看结果</button></td>
+</tr>
+<tr>
+    <td style="font-weight:600;">多模态影像综合诊断大赛</td>
+    <td style="font-size:12px;color:var(--gray-600);">整合眼底彩照+OCT+FFA综合诊断</td>
+    <td>2024-04-01 ~ 2024-05-20</td>
+    <td>90min</td>
+    <td>2,103</td>
+    <td><span class="tag tag-gray">已结束</span></td>
+    <td><button class="btn btn-outline btn-sm" onclick="showCompetitionResult('多模态影像综合诊断大赛')">查看结果</button></td>
+</tr>
+</tbody></table></div></div>
+</div>
+
+<!-- 比赛作答弹窗 -->
+<div class="modal-overlay" id="examModal">
+    <div class="modal" style="max-width:960px;">
+        <div class="modal-header" style="background:linear-gradient(135deg,#c62828,#d32f2f);color:#fff;">
+            <div style="display:flex;align-items:center;gap:12px;"><h3 id="examTitle">糖尿病视网膜病变阅片大赛</h3><span class="tag tag-status" style="background:rgba(255,255,255,0.2);color:#fff;font-size:11px;">进行中</span></div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <span id="qIndex">第 3 / 20 题</span>
+                <div class="timer-bar" style="background:rgba(255,255,255,0.15);margin:0;" id="timerBar"><span class="timer-icon">⏱</span><span class="timer-text" id="timerText" style="color:#fff;">45:00</span></div>
+                <button class="modal-close" style="color:#fff;" onclick="closeExamModal()">✕</button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="exam-layout">
+                <div class="exam-left">
+                    <div class="exam-image" style="position:relative;">
+                        <div class="mock-fundus"></div>
+                        <div class="mock-vessel" style="top:40%;transform:rotate(-5deg);"></div>
+                        <div class="mock-vessel" style="top:48%;transform:rotate(3deg);"></div>
+                        <div class="mock-hem" style="top:38%;left:42%;"></div>
+                        <div class="mock-hem" style="top:44%;left:55%;width:8px;height:4px;"></div>
+                        <div class="mock-hem" style="top:42%;left:36%;width:6px;height:3px;"></div>
+                        <div style="position:absolute;top:8px;left:12px;color:#fff;font-size:12px;">眼底彩照（右眼）</div>
+                    </div>
+                    <div class="exam-question">
+                        <strong id="qDesc">根据上述眼底图像表现，该患者糖尿病视网膜病变的分级应为？</strong>
+                    </div>
+                </div>
+                <div class="exam-right">
+                    <div class="option-list" id="optionList">
+                        <div class="option-item" onclick="selectOption(this, 'A')"><span class="opt-radio"></span>A. 无明显DR改变</div>
+                        <div class="option-item" onclick="selectOption(this, 'B')"><span class="opt-radio"></span>B. 轻度非增殖期DR</div>
+                        <div class="option-item selected" onclick="selectOption(this, 'C')"><span class="opt-radio"></span>C. 中度非增殖期DR</div>
+                        <div class="option-item" onclick="selectOption(this, 'D')"><span class="opt-radio"></span>D. 重度非增殖期DR</div>
+                        <div class="option-item" onclick="selectOption(this, 'E')"><span class="opt-radio"></span>E. 增殖期DR</div>
+                    </div>
+                    <!-- 题号导航 -->
+                    <div class="qnav" id="qnav">
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:12px;">
+                        <button class="btn btn-outline" style="flex:1;" onclick="prevQuestion()">上一题</button>
+                        <button class="btn btn-outline" style="flex:1;" onclick="nextQuestion()">下一题</button>
+                    </div>
+                    <div class="alert-warning" style="margin-top:12px;display:flex;align-items:center;gap:8px;">
+                        <span>⚠️</span>提交后将无法更改答案，确认所有题目都已填答吗？
+                    </div>
+                    <button class="btn btn-danger" style="width:100%;margin-top:8px;" onclick="submitExam()">提交答案</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 结果弹窗（参照原型图重构） -->
+<div class="modal-overlay" id="resultModal">
+    <div class="modal result-modal-box">
+        <!-- 顶部标题栏 -->
+        <div class="result-header">
+            <h3 class="result-title" id="resultExamName">糖尿病视网膜病变阅片大赛</h3>
+            <span class="tag tag-result-status">已结束</span>
+            <button class="modal-close result-close" onclick="closeResultModal()">✕</button>
+        </div>
+        <div class="result-body">
+            <!-- 成绩总览 2x2 网格 -->
+            <div class="result-grid-new">
+                <div class="result-card-new card-score">
+                    <div class="rval-new" id="rScore">88</div>
+                    <div class="rlbl-new">最终得分</div>
+                </div>
+                <div class="result-card-new card-rank">
+                    <div class="rval-new" id="rRank">28<span class="rsub">/1233</span></div>
+                    <div class="rlbl-new">当前排名</div>
+                </div>
+                <div class="result-card-new card-accuracy">
+                    <div class="rval-new" id="rAccuracy">88%</div>
+                    <div class="rlbl-new">正确率</div>
+                </div>
+                <div class="result-card-new card-time">
+                    <div class="rval-new" id="rTime">23:42</div>
+                    <div class="rlbl-new">用时</div>
+                </div>
+            </div>
+            <!-- 激励提示条 -->
+            <div class="result-motivation">
+                💡 您已击败了 <span class="highlight-pct" id="rBeat">92%</span> 的参赛选手，继续保持！
+            </div>
+            <!-- 各题得分详情列表 -->
+            <div class="result-detail-section">
+                <div class="result-detail-title">各题得分详情</div>
+                <div class="result-detail-table">
+                    <table>
+                        <thead><tr><th>题号</th><th>题型</th><th>结果</th><th>得分</th><th>用时</th></tr></thead>
+                        <tbody id="resultDetailBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 横向对比 -->
+            <div class="result-compare">
+                <div class="compare-item">
+                    <div class="compare-label">排名分布</div>
+                    <div class="compare-bar-wrap">
+                        <div class="compare-bar-fill" style="width:92%;background:linear-gradient(90deg,#34a853,#66bb6a);"></div>
+                        <span class="compare-pct">TOP 2.2%</span>
+                    </div>
+                </div>
+                <div class="compare-item">
+                    <div class="compare-label">正确率分布</div>
+                    <div class="compare-bar-wrap">
+                        <div class="compare-bar-fill" style="width:88%;background:linear-gradient(90deg,#1a73e8,#64b5f6);"></div>
+                        <span class="compare-pct">高于 92% 参赛者</span>
+                    </div>
+                </div>
+                <div class="compare-item">
+                    <div class="compare-label">平均用时</div>
+                    <div class="compare-bar-wrap">
+                        <div class="compare-bar-fill" style="width:55%;background:linear-gradient(90deg,#fbbc04,#ffca28);"></div>
+                        <span class="compare-pct">快于 73% 参赛者</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 底部操作按钮 -->
+            <div class="result-footer">
+                <button class="btn btn-outline btn-review" onclick="showWrongAnswerReview()">查看错题解析</button>
+                <button class="btn btn-primary-result" onclick="closeResultModal()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 提示容器 -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ===== 全局状态 =====
+var currentQ = 3, totalQ = 20;
+var examDuration = 45 * 60; // 默认45分钟（秒）
+var examTimerInterval = null;
+var examSecondsRemaining = 0;
+var examSubmitted = false;
+var userAnswers = {}; // {1:'C', 2:'B', ...}
+var examStartTime = null;
+
+// ===== 导航与通用 =====
+function navigateTo(url) { window.location.href = url; }
+function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+function openModal(id) { var el = document.getElementById(id); if(el) { el.style.display = 'flex'; el.classList.add('show'); } }
+function closeModal(id) { var el = document.getElementById(id); if(el) { el.style.display = 'none'; el.classList.remove('show'); } }
+function toggleSubmenu(el) { el.classList.toggle('expanded'); var sub = el.nextElementSibling; if (sub && sub.classList.contains('submenu')) { sub.classList.toggle('open'); } }
+
+// ===== Toast 提示 =====
+function showToast(message, type) {
+    type = type || 'success';
+    var container = document.getElementById('toastContainer');
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(function(){ if (toast.parentNode) toast.parentNode.removeChild(toast); }, 2500);
+}
+
+// ===== 比赛报名 =====
+var registeredCompetitions = {};
+function registerCompetition(btn, competitionName) {
+    if (registeredCompetitions[competitionName]) return;
+    registeredCompetitions[competitionName] = true;
+    btn.textContent = '进入比赛';
+    btn.className = 'btn btn-registered btn-sm';
+    btn.onclick = null;
+    showToast('报名成功！比赛开始后可进入参赛', 'success');
+}
+
+// ===== Tab 筛选 =====
+function filterCompetition(type, btn) {
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    var tbody = document.querySelector('table tbody');
+    var rows = tbody.querySelectorAll('tr');
+    rows.forEach(function(row){
+        var statusTag = row.querySelector('.tag');
+        var status = '';
+        if (statusTag.classList.contains('tag-green')) status = 'ongoing';
+        else if (statusTag.classList.contains('tag-orange')) status = 'upcoming';
+        else if (statusTag.classList.contains('tag-gray')) status = 'ended';
+        if (type === 'all' || status === type) { row.style.display = ''; }
+        else { row.style.display = 'none'; }
+    });
+}
+
+// ===== 比赛时长映射 =====
+var competitionMeta = {
+    '糖尿病视网膜病变阅片大赛': { duration: 45, totalQ: 20 },
+    'OCT黄斑病变读片挑战赛': { duration: 60, totalQ: 25 },
+    '青光眼视野判读大赛': { duration: 40, totalQ: 15 },
+    'FFA荧光血管造影读片赛': { duration: 50, totalQ: 20 },
+    '多模态影像综合诊断大赛': { duration: 90, totalQ: 30 }
+};
+
+// ===== 进入比赛 =====
+function enterExam(name) {
+    var meta = competitionMeta[name] || { duration: 45, totalQ: 20 };
+    examDuration = meta.duration * 60;
+    totalQ = meta.totalQ;
+    currentQ = 1;
+    userAnswers = {};
+    examSubmitted = false;
+    examStartTime = Date.now();
+
+    // 设置标题（不含重复的状态标签，状态标识已在标题栏右侧）
+    document.getElementById('examTitle').innerHTML = name;
+    document.getElementById('examTitle').nextElementSibling.textContent = '进行中';
+
+    // 初始化题目导航
+    initQNav();
+    initQuestions();
+    openModal('examModal');
+
+    // 启动倒计时
+    startCountdown(examDuration);
+}
+
+// ===== 倒计时 =====
+function startCountdown(seconds) {
+    examSecondsRemaining = seconds;
+    clearInterval(examTimerInterval);
+    updateTimerDisplay();
+    examTimerInterval = setInterval(function(){
+        examSecondsRemaining--;
+        updateTimerDisplay();
+        if (examSecondsRemaining <= 0) {
+            clearInterval(examTimerInterval);
+            autoSubmit();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    var mins = Math.floor(examSecondsRemaining / 60);
+    var secs = examSecondsRemaining % 60;
+    var display = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+    document.getElementById('timerText').textContent = display;
+
+    // 最后5分钟警告
+    var timerBar = document.getElementById('timerBar');
+    if (examSecondsRemaining <= 300 && examSecondsRemaining > 0) {
+        timerBar.classList.add('warning');
+        updateTimerBarFlash(examSecondsRemaining <= 60);
+    } else {
+        timerBar.classList.remove('warning');
+    }
+}
+
+var flashInterval = null;
+function updateTimerBarFlash(flash) {
+    var tb = document.getElementById('timerBar');
+    if (flash && !flashInterval) {
+        flashInterval = setInterval(function(){ tb.style.opacity = (tb.style.opacity === '0.5' ? '1' : '0.5'); }, 500);
+    } else if (!flash) {
+        clearInterval(flashInterval);
+        flashInterval = null;
+        tb.style.opacity = '1';
+    }
+}
+
+function autoSubmit() {
+    alert('⏱ 比赛时间到！系统将自动提交您的答案。');
+    submitExam();
+}
+
+// ===== 关闭作答弹窗（停止计时器） =====
+function closeExamModal() {
+    if (!examSubmitted && examSecondsRemaining > 0) {
+        if (!confirm('确定要退出比赛吗？退出后本次作答将不会保存。')) return;
+    }
+    clearInterval(examTimerInterval);
+    clearInterval(flashInterval);
+    examTimerInterval = null;
+    flashInterval = null;
+    var tb = document.getElementById('timerBar');
+    tb.style.opacity = '1';
+    tb.classList.remove('warning');
+    closeModal('examModal');
+}
+
+// ===== 关闭结果弹窗 =====
+function closeResultModal() {
+    closeModal('resultModal');
+}
+
+// ===== 比赛结果 Mock 数据 =====
+var competitionResultData = {
+    'FFA荧光血管造影读片赛': {
+        totalQ: 20,
+        totalParticipants: 1567,
+        results: [
+            { type: '单选', desc: 'FFA早期图像中，脉络膜荧光出现的时间窗为？', options: ['A. 动脉前期','B. 动脉期','C. 动静脉期','D. 静脉期','E. 晚期'], answer: 'B' },
+            { type: '单选', desc: 'FFA显示荧光渗漏呈花瓣样，最可能的诊断是？', options: ['A. 糖尿病黄斑水肿','B. 中心性浆液性脉络膜视网膜病变','C. 黄斑囊样水肿','D. 年龄相关性黄斑变性','E. 视网膜静脉阻塞'], answer: 'C' },
+            { type: '单选', desc: 'FFA晚期图像中，窗样缺损的主要原因？', options: ['A. 视网膜下出血','B. RPE萎缩','C. 脉络膜新生血管','D. 视网膜水肿','E. 玻璃体出血'], answer: 'B' },
+            { type: '单选', desc: 'FFA动脉期未见荧光充盈的区域，提示？', options: ['A. 毛细血管无灌注区','B. 视网膜前出血','C. 脉络膜脱离','D. 视网膜脱离','E. 玻璃体混浊'], answer: 'A' },
+            { type: '多选', desc: 'FFA中提示CNV活动的征象包括？（多选）', options: ['A. 早期荧光渗漏','B. 晚期荧光积存','C. 荧光遮蔽','D. 边界清晰的强荧光','E. 晚期荧光减弱'], answer: 'AB' },
+            { type: '单选', desc: 'FFA显示视盘晚期强荧光，最可能的诊断？', options: ['A. 视盘玻璃疣','B. 视盘水肿','C. 视神经萎缩','D. 正常变异','E. 青光眼'], answer: 'B' },
+            { type: '单选', desc: 'FFA中背景荧光减弱常见于？', options: ['A. 白化病','B. 高度近视','C. 视网膜色素变性','D. Stargardt病','E. 以上都是'], answer: 'E' },
+            { type: '单选', desc: 'FFA静脉期可见串珠样荧光，提示？', options: ['A. 视网膜静脉周围炎','B. 视网膜静脉阻塞','C. 糖尿病视网膜病变','D. Coats病','E. 以上均可能'], answer: 'E' }
+        ],
+        score: 78,
+        rank: 156,
+        accuracy: 78,
+        timeUsed: '31:24',
+        beatPct: 90
+    },
+    '多模态影像综合诊断大赛': {
+        totalQ: 30,
+        totalParticipants: 2103,
+        results: [
+            { type: '单选', desc: '眼底彩照+OCT综合判断，该黄斑区病变最可能的类型是？', options: ['A. 黄斑裂孔','B. 黄斑前膜','C. 玻璃体黄斑牵引','D. 黄斑劈裂','E. 中心性浆液性脉络膜视网膜病变'], answer: 'A' },
+            { type: '单选', desc: 'FFA联合OCTA判断，该CNV的类型为？', options: ['A. I型CNV','B. II型CNV','C. III型CNV','D. 息肉状脉络膜血管病变','E. 混合型CNV'], answer: 'B' },
+            { type: '多选', desc: '综合FFA+OCT+视野，青光眼诊断的金标准依据包括？（多选）', options: ['A. RNFL变薄','B. 视野缺损','C. 眼压升高','D. 视盘凹陷扩大','E. 房角镜检查结果'], answer: 'ABD' },
+            { type: '单选', desc: 'OCT显示视网膜下高反射物质，FFA显示早期遮蔽晚期染色，诊断为？', options: ['A. 视网膜下出血','B. 脉络膜痣','C. 脉络膜骨瘤','D. 视网膜下纤维化','E. 脉络膜黑色素瘤'], answer: 'B' },
+            { type: '单选', desc: '多模态影像显示外层视网膜管状结构，最可能的诊断？', options: ['A. 视网膜脱离','B. 视网膜劈裂','C. ORT','D. 黄斑囊样水肿','E. 玻璃体黄斑牵引'], answer: 'C' }
+        ],
+        score: 85,
+        rank: 42,
+        accuracy: 85,
+        timeUsed: '62:15',
+        beatPct: 98
+    }
+};
+
+// ===== 查看比赛结果 =====
+function showCompetitionResult(competitionName) {
+    var data = competitionResultData[competitionName];
+    if (!data) return;
+
+    var totalQ = data.totalQ;
+    var totalParticipants = data.totalParticipants;
+    var results = data.results;
+    var totalScore = data.score;
+    var rank = data.rank;
+    var accuracy = data.accuracy;
+    var timeStr = data.timeUsed;
+    var beatPct = data.beatPct;
+
+    // 填充顶部 2x2 成绩总览
+    document.getElementById('resultExamName').textContent = competitionName;
+    document.getElementById('rScore').textContent = totalScore;
+    document.getElementById('rRank').innerHTML = rank + '<span class="rsub">/' + totalParticipants + '</span>';
+    document.getElementById('rAccuracy').textContent = accuracy + '%';
+    document.getElementById('rTime').textContent = timeStr;
+    document.getElementById('rBeat').textContent = beatPct + '%';
+
+    // 构建各题得分详情（随机模拟对错）
+    var scorePerQ = Math.floor(100 / totalQ);
+    var detailRows = '';
+    var correctCount = 0;
+    var usedQuestions = [];
+    for (var i = 1; i <= totalQ; i++) {
+        var qData = results[(i - 1) % results.length];
+        // 根据 accuracy 控制正确率
+        var isCorrect = (Math.random() * 100) < accuracy;
+        if (isCorrect) correctCount++;
+        var qScore = isCorrect ? scorePerQ : 0;
+        var qTime = Math.floor(30 + Math.random() * 120);
+        var resultIcon = isCorrect ? '<span class="td-correct">✅ 正确</span>' : '<span class="td-wrong">❌ 错误</span>';
+        var timeStrQ = Math.floor(qTime / 60) + ':' + (qTime % 60 < 10 ? '0' : '') + (qTime % 60);
+        detailRows += '<tr><td>' + i + '</td><td class="td-type">' + qData.type + '</td><td>' + resultIcon + '</td><td>' + qScore + '分</td><td>' + timeStrQ + '</td></tr>';
+    }
+
+    document.getElementById('resultDetailBody').innerHTML = detailRows;
+
+    // 更新横向对比条
+    var compareBars = document.querySelectorAll('#resultModal .compare-bar-fill');
+    var comparePcts = document.querySelectorAll('#resultModal .compare-pct');
+    if (compareBars[0]) compareBars[0].style.width = beatPct + '%';
+    if (compareBars[1]) compareBars[1].style.width = accuracy + '%';
+    if (comparePcts[0]) comparePcts[0].textContent = 'TOP ' + Math.round((rank / totalParticipants) * 100) + '%';
+    if (comparePcts[1]) comparePcts[1].textContent = '高于 ' + beatPct + '% 参赛者';
+
+    // 打开弹窗
+    openModal('resultModal');
+}
+
+// ===== 查看错题解析 =====
+function showWrongAnswerReview() {
+    var detailRows = document.querySelectorAll('#resultDetailBody tr');
+    var wrongCount = 0;
+    detailRows.forEach(function(row){
+        var cells = row.querySelectorAll('td');
+        if (cells.length >= 3 && cells[2].textContent.trim() === '❌') wrongCount++;
+    });
+    if (wrongCount === 0) {
+        alert('恭喜！所有题目全部正确，没有错题需要查看。');
+        return;
+    }
+    alert('错题解析功能：共 ' + wrongCount + ' 道错题。\n（模拟提示：实际功能将展示每道错题的正确答案与解析）');
+}
+
+// ===== 题目选择 =====
+function selectOption(el, val) {
+    document.querySelectorAll('#optionList .option-item').forEach(function(o){o.classList.remove('selected');});
+    el.classList.add('selected');
+    userAnswers[currentQ] = val;
+    initQNav();
+}
+
+// ===== 题目导航 =====
+function initQNav() {
+    var html = '';
+    for (var i = 1; i <= totalQ; i++) {
+        var cls = 'qdot';
+        if (i === currentQ) cls += ' current';
+        else if (userAnswers[i]) cls += ' answered';
+        html += '<div class="'+cls+'" onclick="jumpTo('+i+')">'+i+'</div>';
+    }
+    document.getElementById('qnav').innerHTML = html;
+    document.getElementById('qIndex').textContent = '第 '+currentQ+' / '+totalQ+' 题';
+}
+
+// ===== Mock 题目数据 =====
+var mockQuestions = [
+    { desc: '根据上述眼底图像表现，该患者糖尿病视网膜病变的分级应为？', type: '单选', options: ['A. 无明显DR改变','B. 轻度非增殖期DR','C. 中度非增殖期DR','D. 重度非增殖期DR','E. 增殖期DR'], answer: 'C' },
+    { desc: 'OCT显示黄斑区可见视网膜下液，最可能的诊断是？', type: '单选', options: ['A. 黄斑裂孔','B. 中心性浆液性脉络膜视网膜病变','C. 年龄相关性黄斑变性','D. 黄斑前膜','E. 糖尿病黄斑水肿'], answer: 'B' },
+    { desc: 'FFA早晚期图像显示荧光渗漏，病变位于？', type: '单选', options: ['A. 视网膜内层','B. 视网膜外层','C. 脉络膜层','D. 玻璃体腔','E. 视神经'], answer: 'B' },
+    { desc: '患者视野检查显示鼻侧阶梯，最可能的诊断？', type: '单选', options: ['A. 白内障','B. 青光眼','C. 视神经炎','D. 视网膜脱离','E. 黄斑病变'], answer: 'B' },
+    { desc: '该OCT图像中，椭圆体带的完整性如何？', type: '单选', options: ['A. 完全正常','B. 局部中断','C. 弥漫性消失','D. 增厚','E. 无法判断'], answer: 'C' },
+];
+
+function initQuestions() {
+    currentQ = 1;
+    loadQuestion(currentQ);
+}
+
+function loadQuestion(qIdx) {
+    var qData = mockQuestions[(qIdx - 1) % mockQuestions.length];
+    document.getElementById('qDesc').textContent = qData.desc;
+    var optHtml = '';
+    var labels = ['A','B','C','D','E'];
+    for (var i = 0; i < qData.options.length; i++) {
+        var sel = (userAnswers[qIdx] === labels[i]) ? ' selected' : '';
+        optHtml += '<div class="option-item'+sel+'" onclick="selectOption(this,\''+labels[i]+'\')"><span class="opt-radio"></span>'+qData.options[i]+'</div>';
+    }
+    document.getElementById('optionList').innerHTML = optHtml;
+    initQNav();
+}
+
+function jumpTo(n) { currentQ = n; loadQuestion(n); }
+function prevQuestion() { if (currentQ > 1) { currentQ--; loadQuestion(currentQ); } }
+function nextQuestion() { if (currentQ < totalQ) { currentQ++; loadQuestion(currentQ); } }
+
+// ===== 提交比赛 =====
+function submitExam() {
+    if (examSubmitted) return;
+    examSubmitted = true;
+    clearInterval(examTimerInterval);
+    clearInterval(flashInterval);
+    examTimerInterval = null;
+    flashInterval = null;
+    var tb = document.getElementById('timerBar');
+    tb.style.opacity = '1';
+    tb.classList.remove('warning');
+
+    // 计算成绩
+    var totalScore = 0;
+    var correctCount = 0;
+    var totalAnswered = 0;
+    var detailRows = '';
+    var elapsed = examDuration - examSecondsRemaining;
+    var usedMins = Math.floor(elapsed / 60);
+    var usedSecs = elapsed % 60;
+    var timeStr = (usedMins < 10 ? '0' : '') + usedMins + ':' + (usedSecs < 10 ? '0' : '') + usedSecs;
+
+    var scorePerQ = Math.floor(100 / totalQ); // 每题分值
+
+    for (var i = 1; i <= totalQ; i++) {
+        var qData = mockQuestions[(i - 1) % mockQuestions.length];
+        var userAns = userAnswers[i] || '未作答';
+        var correctAns = qData.answer;
+        var isCorrect = (userAns === correctAns);
+        var qScore = isCorrect ? scorePerQ : 0;
+        var qTime = Math.floor(30 + Math.random() * 90); // 模拟每题用时
+        if (userAns !== '未作答') totalAnswered++;
+        if (isCorrect) correctCount++;
+        totalScore += qScore;
+        var resultIcon = (userAns === '未作答') ? '<span style="color:#fbbc04;">—</span>' : (isCorrect ? '<span class="td-correct">✅ 正确</span>' : '<span class="td-wrong">❌ 错误</span>');
+        var typeLabel = qData.type;
+        var timeStrQ = Math.floor(qTime/60) + ':' + (qTime%60 < 10 ? '0' : '') + (qTime%60);
+        detailRows += '<tr><td>'+i+'</td><td class="td-type">'+typeLabel+'</td><td>'+resultIcon+'</td><td>'+(userAns==='未作答'?'0':qScore)+'分</td><td>'+timeStrQ+'</td></tr>';
+    }
+
+    var accuracy = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
+    var rank = Math.floor(Math.random() * 100) + 1;
+    var totalParticipants = 1233;
+    var beatPct = Math.round(((totalParticipants - rank) / totalParticipants) * 100);
+
+    // 填充结果弹窗
+    document.getElementById('resultExamName').textContent = document.getElementById('examTitle').textContent;
+    document.getElementById('rScore').textContent = totalScore;
+    document.getElementById('rRank').innerHTML = rank + '<span class="rsub">/' + totalParticipants + '</span>';
+    document.getElementById('rAccuracy').textContent = accuracy + '%';
+    document.getElementById('rTime').textContent = timeStr;
+    document.getElementById('rBeat').textContent = beatPct + '%';
+    document.getElementById('resultDetailBody').innerHTML = detailRows;
+
+    // 更新对比条
+    var compareBars = document.querySelectorAll('.compare-bar-fill');
+    if (compareBars[0]) compareBars[0].style.width = beatPct + '%';
+    if (compareBars[1]) compareBars[1].style.width = accuracy + '%';
+    var comparePcts = document.querySelectorAll('.compare-pct');
+    if (comparePcts[0]) comparePcts[0].textContent = 'TOP ' + Math.round((1 - beatPct/100) * 100) + '%';
+    if (comparePcts[1]) comparePcts[1].textContent = '高于 ' + beatPct + '% 参赛者';
+
+    closeModal('examModal');
+    setTimeout(function(){ openModal('resultModal'); }, 200);
+}
+
+// ===== 初始加载 =====
+document.addEventListener('DOMContentLoaded', function() {
+    try { var user = JSON.parse(localStorage.getItem('life_med_user')); if (user && user.name) { document.getElementById('headerUserName').textContent = user.name; } } catch(e) {}
+});
+</script></body></html>

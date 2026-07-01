@@ -1,0 +1,1736 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>案例教学 - 眼科病例实训系统</title><style>
+/* ===== 生命医学主题库 - 通用样式 ===== */
+:root {
+    --primary: #1a73e8;
+    --primary-dark: #1557b0;
+    --primary-light: #e8f0fe;
+    --success: #34a853;
+    --warning: #fbbc04;
+    --danger: #ea4335;
+    --gray-50: #f8f9fa;
+    --gray-100: #f5f7fa;
+    --gray-200: #e8ecf0;
+    --gray-300: #dadce0;
+    --gray-400: #bdc1c6;
+    --gray-500: #9aa0a6;
+    --gray-600: #80868b;
+    --gray-700: #5f6368;
+    --gray-800: #3c4043;
+    --gray-900: #202124;
+    --text: #333333;
+    --text-secondary: #999999;
+    --bg: #ffffff;
+    --sidebar-width: 220px;
+    --header-height: 56px;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+    --transition: all 0.2s ease;
+    --blue-light: #e3f2fd;
+    --green-light: #e8f5e9;
+    --purple-light: #f3e5f5;
+    --orange-light: #fff3e0;
+    --teal: #00897b;
+    --purple: #7b1fa2;
+    --orange: #ef6c00;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-size: 14px; color: var(--text); background: var(--gray-50); min-height: 100vh; line-height: 1.6; }
+.header { height: var(--header-height); background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%); color: #fff; display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.header .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 40px; }
+.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; transition: var(--transition); }
+.header .header-nav a:hover, .header .header-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
+.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: var(--transition); }
+.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
+.header .header-right .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: var(--transition); }
+.header .header-right .btn-logout:hover { background: rgba(255,255,255,0.35); }
+.sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--gray-200); overflow-y: auto; z-index: 999; padding: 8px 0; }
+.sidebar .menu-group { margin-bottom: 4px; }
+.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.sidebar .menu-item { display: flex; align-items: center; padding: 10px 20px; color: var(--gray-700); text-decoration: none; font-size: 13px; transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+.sidebar .menu-item:hover { background: var(--gray-50); color: var(--primary); }
+.sidebar .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.sidebar .menu-item .menu-icon { width: 20px; margin-right: 10px; text-align: center; font-size: 14px; }
+.main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 24px; min-height: calc(100vh - var(--header-height)); }
+.breadcrumb { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.breadcrumb a { color: var(--primary); text-decoration: none; }
+.breadcrumb span.sep { color: var(--gray-400); }
+.page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
+.card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
+.card-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; transition: var(--transition); text-decoration: none; gap: 6px; white-space: nowrap; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: #2d9249; }
+.btn-warning { background: var(--warning); color: #202124; }
+.btn-warning:hover { background: #e5ac00; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #d33426; }
+.btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
+.btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-lg { padding: 10px 24px; font-size: 15px; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+.tag-blue { background: #e8f0fe; color: #1a73e8; }
+.tag-green { background: #e6f4ea; color: #137333; }
+.tag-orange { background: #fef7e0; color: #b06000; }
+.tag-red { background: #fce8e6; color: #c5221f; }
+.tag-purple { background: #f3e5f5; color: #7b1fa2; }
+.tag-gray { background: #f1f3f4; color: #5f6368; }
+.tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; gap: 0; }
+.tab-btn { padding: 10px 20px; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-size: 14px; font-family: inherit; color: var(--gray-600); transition: var(--transition); font-weight: 500; }
+.tab-btn:hover { color: var(--primary); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s; }
+.modal { background: #fff; border-radius: 12px; box-shadow: var(--shadow-lg); width: 90%; max-width: 640px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.25s; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--gray-200); }
+.modal-header h3 { font-size: 17px; color: var(--gray-900); font-weight: 600; }
+.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-500); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+.modal-close:hover { background: var(--gray-50); color: var(--gray-700); }
+.modal-body { padding: 24px; }
+.modal-footer { padding: 14px 24px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; }
+.alert { padding: 12px 16px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+.alert-info { background: #e8f0fe; color: #1a56db; border: 1px solid #d2e3fc; }
+.alert-success { background: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
+.alert-warning { background: #fef7e0; color: #b06000; border: 1px solid #feefc3; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ===== 扩展样式 ===== */
+.page-subtitle { font-size: 14px; color: var(--gray-600); margin-top: -16px; margin-bottom: 20px; }
+
+/* 病例分级卡片 */
+.case-level-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.level-card { background: #fff; border-radius: 12px; box-shadow: var(--shadow); padding: 20px 24px; cursor: pointer; transition: all 0.25s ease; border: 2px solid transparent; position: relative; overflow: hidden; }
+.level-card:hover { border-color: var(--primary); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.level-card.selected { border-color: var(--primary); }
+.level-card .level-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+.level-card .level-name { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+.level-card .level-desc { font-size: 12px; color: var(--gray-500); margin-bottom: 12px; }
+.level-card .level-stats { display: flex; gap: 20px; font-size: 12px; color: var(--gray-600); margin-bottom: 10px; }
+.level-card .level-stats span { display: flex; align-items: center; gap: 4px; }
+.level-card .progress-bar { height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; }
+.level-card .progress-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+.level-card.basic .level-icon { background: var(--blue-light); color: var(--primary); }
+.level-card.basic .progress-bar-fill { background: var(--primary); }
+.level-card.advanced .level-icon { background: var(--green-light); color: var(--success); }
+.level-card.advanced .progress-bar-fill { background: var(--success); }
+.level-card.research .level-icon { background: var(--purple-light); color: var(--purple); }
+.level-card.research .progress-bar-fill { background: var(--purple); }
+
+/* 病例列表 */
+.case-list { display: none; }
+.case-list.active { display: block; }
+.case-list-header { font-size: 14px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; padding: 8px 0; }
+.case-item { background: #fff; border-radius: 8px; box-shadow: var(--shadow); padding: 14px 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.2s ease; border-left: 3px solid transparent; }
+.case-item:hover { border-left-color: var(--primary); background: var(--gray-50); box-shadow: var(--shadow-lg); }
+.case-item .case-status { flex-shrink: 0; }
+.case-item .case-info { flex: 1; }
+.case-item .case-title-text { font-size: 14px; font-weight: 600; color: var(--gray-800); }
+.case-item .case-meta { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.case-item .case-difficulty { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.star { color: var(--warning); font-size: 13px; }
+.star.empty { color: var(--gray-300); }
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.status-dot.not-started { background: var(--gray-400); }
+.status-dot.in-progress { background: var(--warning); }
+.status-dot.completed { background: var(--success); }
+.status-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+.status-tag.not-started { background: var(--gray-100); color: var(--gray-600); }
+.status-tag.in-progress { background: var(--orange-light); color: var(--orange); }
+.status-tag.completed { background: var(--green-light); color: var(--success); }
+
+/* 推理步骤 */
+.step-nav { display: flex; gap: 0; margin-bottom: 24px; background: var(--gray-50); border-radius: 10px; padding: 4px; }
+.step-nav-item { flex: 1; text-align: center; padding: 10px 8px; font-size: 12px; color: var(--gray-500); cursor: pointer; border-radius: 8px; transition: var(--transition); position: relative; font-weight: 500; }
+.step-nav-item .step-num { display: block; width: 24px; height: 24px; border-radius: 50%; background: var(--gray-300); color: #fff; margin: 0 auto 4px; line-height: 24px; font-size: 12px; font-weight: 700; }
+.step-nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+.step-nav-item.active .step-num { background: var(--primary); }
+.step-nav-item.done { color: var(--success); }
+.step-nav-item.done .step-num { background: var(--success); }
+.step-panel { display: none; }
+.step-panel.active { display: block; }
+.step-panel .step-title { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.step-panel .step-hint { font-size: 13px; color: var(--gray-500); margin-bottom: 16px; }
+.reasoning-input { width: 100%; min-height: 120px; padding: 12px 14px; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 13px; font-family: inherit; line-height: 1.7; resize: vertical; outline: none; transition: var(--transition); }
+.reasoning-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.dd-item { background: var(--gray-50); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+.dd-item .dd-name { font-weight: 500; font-size: 13px; }
+.checkbox-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.checkbox-option { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border: 1px solid var(--gray-200); border-radius: 8px; cursor: pointer; transition: var(--transition); background: #fff; font-size: 13px; }
+.checkbox-option:hover { border-color: var(--primary); background: var(--primary-light); }
+.checkbox-option.selected { border-color: var(--primary); background: var(--primary-light); }
+.checkbox-option input[type=checkbox] { accent-color: var(--primary); }
+.result-panel { background: var(--gray-50); border-radius: 10px; padding: 20px; }
+.result-panel .score-circle-wrap { text-align: center; margin-bottom: 16px; }
+.score-circle { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; flex-direction: column; position: relative; }
+.score-circle-inner { position: absolute; width: 104px; height: 104px; border-radius: 50%; background: #fff; }
+.score-value { position: relative; z-index: 1; font-size: 32px; font-weight: 800; color: var(--primary); }
+.score-label { position: relative; z-index: 1; font-size: 11px; color: var(--gray-500); }
+.score-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.score-bar-item { margin-bottom: 8px; }
+.score-bar-item .score-bar-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; color: var(--gray-700); }
+.score-bar-item .progress-bar { height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+.score-bar-item .progress-bar-fill { height: 100%; border-radius: 4px; }
+
+/* AI 对比 */
+/* ===== AI诊断对比学习 - 并排双列对比布局 ===== */
+.compare-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; align-items: stretch; }
+
+/* 对比面板通用容器 */
+.ai-panel, .expert-panel { background: #fff; border-radius: 12px; box-shadow: 0 2px 14px rgba(0,0,0,0.07); overflow: hidden; display: flex; flex-direction: column; }
+.ai-panel { border: 1px solid rgba(26,115,232,0.12); }
+.expert-panel { border: 1px solid rgba(52,168,83,0.12); }
+
+/* 面板标题栏 - 醒目的渐变色头部 */
+.ai-panel .panel-header, .expert-panel .panel-header { padding: 15px 20px; color: #fff; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+.ai-panel .panel-header { background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%); }
+.expert-panel .panel-header { background: linear-gradient(135deg, #2d7d32 0%, #34a853 100%); }
+.panel-header .header-icon { font-size: 18px; line-height: 1; }
+.panel-body { padding: 20px; flex: 1; }
+
+/* 区域小标题 */
+.section-label { font-size: 13px; font-weight: 700; color: var(--gray-800); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.section-label::before { content: ''; display: inline-block; width: 4px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+.ai-panel .section-label::before { background: var(--primary); }
+.expert-panel .section-label::before { background: var(--success); }
+
+/* === AI诊断面板 === */
+/* 置信度模块 */
+.confidence-module { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--gray-100); }
+.confidence-module .cf-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.confidence-module .cf-title { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+.confidence-module .cf-value { font-size: 24px; font-weight: 800; line-height: 1; }
+.cf-value.high-conf { color: #34a853; }
+.cf-value.medium-conf { color: #f9a825; }
+.cf-value.low-conf { color: #ef6c00; }
+.confidence-module .cf-bar { height: 10px; background: #e8ecf0; border-radius: 5px; overflow: hidden; }
+.confidence-module .cf-bar-fill { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+.cf-bar-fill.high-conf { background: linear-gradient(90deg, #34a853, #66bb6a); }
+.cf-bar-fill.medium-conf { background: linear-gradient(90deg, #f9a825, #fdd835); }
+.cf-bar-fill.low-conf { background: linear-gradient(90deg, #ef6c00, #ff9800); }
+
+/* AI诊断结论名称 */
+.ai-diagnosis-name { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; padding: 12px 16px; background: var(--primary-light); border-radius: 8px; border-left: 4px solid var(--primary); line-height: 1.4; }
+
+/* 病灶检测卡片列表 */
+.lesion-module { margin-bottom: 18px; }
+.lesion-card-list { display: flex; flex-direction: column; gap: 6px; }
+.lesion-card { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--gray-50); border-radius: 8px; font-size: 13px; color: var(--gray-700); transition: background 0.15s; }
+.lesion-card:hover { background: #e8f0fe; }
+.lesion-card .l-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.lesion-card .l-dot.red { background: #ea4335; }
+.lesion-card .l-dot.orange { background: #ef6c00; }
+.lesion-card .l-dot.yellow { background: #fbbc04; }
+.lesion-card .l-dot.gray { background: #9aa0a6; }
+.lesion-card .l-name { flex: 1; font-weight: 500; }
+.lesion-card .l-conf-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #e8f0fe; color: var(--primary); font-weight: 600; white-space: nowrap; }
+
+/* 推理依据有序列表 */
+.reasoning-module { margin-top: 2px; }
+.reasoning-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.reasoning-list li { font-size: 13px; color: var(--gray-700); line-height: 1.6; padding: 10px 14px; background: #fafbfc; border-radius: 8px; border-left: 3px solid rgba(26,115,232,0.25); display: flex; gap: 8px; align-items: flex-start; }
+.reasoning-list li .r-num { width: 22px; height: 22px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+/* === 专家诊断面板 === */
+.expert-diagnosis-name { font-size: 16px; font-weight: 700; color: #2e7d32; margin-bottom: 18px; padding: 12px 16px; background: #e8f5e9; border-radius: 8px; border-left: 4px solid var(--success); line-height: 1.4; }
+
+/* 诊断依据序号列表 */
+.basis-module { margin-bottom: 18px; }
+.basis-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.basis-list li { font-size: 13px; color: var(--gray-700); padding: 10px 14px; background: var(--gray-50); border-radius: 8px; display: flex; align-items: flex-start; gap: 9px; transition: background 0.15s; }
+.basis-list li:hover { background: #e8f5e9; }
+.basis-list li .b-num { width: 22px; height: 22px; border-radius: 50%; background: #e8f5e9; color: #2e7d32; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.basis-list li .b-text { flex: 1; line-height: 1.5; }
+
+/* 治疗建议对勾列表 */
+.treatment-module { margin-top: 2px; }
+.treatment-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.treatment-list li { font-size: 13px; color: var(--gray-700); padding: 10px 14px; background: #f1f8f4; border-radius: 8px; border-left: 3px solid #34a853; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; transition: background 0.15s; }
+.treatment-list li:hover { background: #e8f5e9; }
+.treatment-list li .t-check { color: #34a853; font-weight: 700; flex-shrink: 0; font-size: 15px; }
+
+/* === 底部诊断差异解析 === */
+.diff-analysis { background: #fff; border-radius: 12px; box-shadow: 0 2px 14px rgba(0,0,0,0.07); padding: 24px; margin-bottom: 16px; }
+.diff-analysis .diff-title { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+.diff-analysis .diff-title::before { content: ''; display: inline-block; width: 4px; height: 20px; background: var(--purple); border-radius: 2px; }
+.diff-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.diff-table thead th { background: #f5f7fa; padding: 12px 14px; text-align: left; font-weight: 700; color: var(--gray-800); border-bottom: 2px solid var(--gray-200); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.diff-table tbody td { padding: 12px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); vertical-align: top; }
+.diff-table tbody tr:hover td { background: #fafbfc; }
+.diff-table tbody tr.highlight td { background: #fef9e7; }
+.diff-table .match { color: #34a853; font-weight: 600; }
+.diff-table .mismatch { color: #ea4335; font-weight: 600; }
+.diff-table .partial { color: #ef6c00; font-weight: 600; }
+
+/* 生成学习报告按钮 */
+.btn-gen-report { background: linear-gradient(135deg, #175CD3 0%, #7643E3 100%); color: #fff; border: none; padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(23,92,211,0.3); white-space: nowrap; }
+.btn-gen-report:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(23,92,211,0.45); }
+.btn-gen-report .report-icon { font-size: 16px; }
+
+/* 旧版兼容 - 保留panel-title基础样式 */
+.panel-title { font-size: 15px; font-weight: 700; }
+.back-btn { cursor: pointer; color: var(--primary); font-size: 13px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px; }
+
+/* 讨论区 */
+.discussion-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.discussion-title { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.sort-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 13px; color: var(--gray-600); }
+.sort-bar select { padding: 6px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; outline: none; font-family: inherit; }
+.post-item { background: #fff; border-radius: 8px; box-shadow: var(--shadow); padding: 14px 18px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 14px; }
+.post-item:hover { box-shadow: var(--shadow-lg); }
+.post-item.pinned { border-left: 4px solid var(--danger); }
+.post-item.teacher { background: #fffbf0; }
+.post-item .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--gray-600); flex-shrink: 0; }
+.post-item .post-info { flex: 1; }
+.post-item .post-title { font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+.post-item .post-meta { font-size: 12px; color: var(--gray-500); display: flex; gap: 12px; align-items: center; }
+.post-item .post-stats { text-align: right; flex-shrink: 0; }
+.post-item .post-stats .reply-count { font-size: 16px; font-weight: 700; color: var(--primary); }
+.post-item .post-stats .reply-label { font-size: 11px; color: var(--gray-500); }
+.post-item .post-stats .last-time { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+.pin-tag { display: inline-block; background: #fce8e6; color: var(--danger); padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-right: 6px; }
+.teacher-tag { display: inline-block; background: #fff3e0; color: var(--orange); padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-right: 6px; }
+
+/* 帖子详情 */
+.post-detail { display: none; }
+.post-detail-content { background: #fff; border-radius: 8px; box-shadow: var(--shadow); padding: 20px; margin-bottom: 12px; }
+.post-detail-content .post-body { font-size: 14px; color: var(--gray-800); line-height: 1.8; margin: 12px 0; }
+.post-detail-content .post-images { display: flex; gap: 8px; margin-top: 12px; }
+.post-detail-content .post-images img { max-width: 200px; border-radius: 6px; border: 1px solid var(--gray-200); }
+.reply-list { margin-bottom: 16px; }
+.reply-item { background: var(--gray-50); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; border-left: 3px solid var(--gray-200); }
+.reply-item.nested { margin-left: 30px; background: #f0f4ff; border-left-color: var(--primary); }
+.reply-item .reply-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.reply-item .reply-author { font-weight: 600; font-size: 13px; }
+.reply-item .reply-time { font-size: 11px; color: var(--gray-400); }
+.reply-item .reply-body { font-size: 13px; color: var(--gray-700); }
+.reply-form { background: #fff; border-radius: 8px; box-shadow: var(--shadow); padding: 16px; display: flex; gap: 10px; align-items: flex-end; }
+.reply-form textarea { flex: 1; min-height: 60px; padding: 10px 14px; border: 1px solid var(--gray-300); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical; outline: none; }
+.reply-form textarea:focus { border-color: var(--primary); }
+
+/* 报告弹窗 */
+.report-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 3000; display: flex; align-items: center; justify-content: center; }
+.report-modal { background: #fff; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s; }
+.report-content { padding: 32px; }
+.report-header { text-align: center; margin-bottom: 24px; }
+.report-header h2 { font-size: 24px; font-weight: 700; color: var(--gray-900); }
+.report-header .report-subtitle { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+.report-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--gray-600); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-100); }
+.report-score-section { display: grid; grid-template-columns: 160px 1fr; gap: 24px; margin-bottom: 24px; align-items: center; }
+.report-score-big { text-align: center; background: var(--primary-light); border-radius: 16px; padding: 24px 16px; }
+.report-score-big .big-score { font-size: 48px; font-weight: 800; color: var(--primary); line-height: 1; }
+.report-score-big .big-label { font-size: 14px; color: var(--gray-600); margin-top: 8px; }
+.report-score-detail { display: flex; flex-direction: column; gap: 12px; }
+.report-suggest { margin-bottom: 24px; }
+.report-suggest h4 { font-size: 15px; font-weight: 600; color: var(--gray-800); margin-bottom: 12px; }
+.suggest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.suggest-item { background: var(--gray-50); border-radius: 10px; padding: 14px; }
+.suggest-item .suggest-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 16px; }
+.suggest-item .suggest-title { font-size: 13px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+.suggest-item .suggest-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+.resource-list { list-style: none; padding: 0; }
+.resource-list li { padding: 8px 0; border-bottom: 1px solid var(--gray-50); }
+.resource-list li a { color: var(--primary); text-decoration: none; font-size: 13px; }
+.resource-list li a:hover { text-decoration: underline; }
+.report-actions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 20px; border-top: 1px solid var(--gray-100); margin-top: 20px; }
+
+.new-discussion-form { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px; }
+.new-discussion-form h3 { font-size: 16px; font-weight: 600; margin-bottom: 14px; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 9px 13px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.form-group textarea { resize: vertical; min-height: 100px; }
+.case-preview { background: #f0f7ff; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+.case-preview h4 { font-size: 14px; color: var(--primary); margin-bottom: 6px; }
+.case-preview p { font-size: 12px; color: var(--gray-600); margin-bottom: 2px; }
+
+@media (max-width: 1024px) { .sidebar { width: 60px; } .sidebar .menu-item span { display: none; } .sidebar .menu-group-title { display: none; } .main-content { margin-left: 60px; } .case-level-grid { grid-template-columns: 1fr; } .compare-layout { grid-template-columns: 1fr; } .report-score-section { grid-template-columns: 1fr; } .suggest-grid { grid-template-columns: 1fr; } }
+
+/* ===== 原型图匹配：病例推理实训专用样式 ===== */
+.reasoning-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; min-height: calc(100vh - 180px); }
+
+/* 左侧树状病例列表面板 */
+.case-tree-panel { background: #fff; border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+.case-tree-header { padding: 16px 18px; background: linear-gradient(135deg, #1E3F8A 0%, #2563eb 100%); color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.case-tree-header .tree-icon { font-size: 18px; }
+.case-tree-body { flex: 1; overflow-y: auto; padding: 4px 0; }
+.tree-category { margin-bottom: 2px; }
+.tree-category-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--gray-700); transition: var(--transition); user-select: none; }
+.tree-category-header:hover { background: var(--gray-50); }
+.tree-category-header .cat-icon { width: 24px; height: 24px; border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 12px; flex-shrink: 0; }
+.tree-category-header .cat-arrow { font-size: 10px; transition: transform 0.2s; color: var(--gray-400); }
+.tree-category-header .cat-arrow.open { transform: rotate(90deg); }
+.tree-category.basic .cat-icon { background: #e3f2fd; color: #1a73e8; }
+.tree-category.advanced .cat-icon { background: #e8f5e9; color: #2e7d32; }
+.tree-category.research .cat-icon { background: #f3e5f5; color: #7b1fa2; }
+.tree-category .cat-badge { font-size: 10px; color: var(--gray-400); font-weight: 400; margin-left: 4px; }
+.tree-sub-items { overflow: hidden; transition: max-height 0.3s ease; }
+.tree-sub-items.collapsed { max-height: 0; }
+.tree-case-item { display: flex; align-items: center; padding: 9px 14px 9px 32px; cursor: pointer; font-size: 13px; color: var(--gray-600); transition: all 0.15s ease; border-left: 3px solid transparent; gap: 8px; }
+.tree-case-item:hover { background: #f0f4ff; color: var(--primary); }
+.tree-case-item.selected { background: #e8f0fe; color: #1a56db; border-left-color: #1a56db; font-weight: 600; }
+.tree-case-item .case-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.tree-case-item .case-dot.not-started { background: #bdc1c6; }
+.tree-case-item .case-dot.in-progress { background: #fbbc04; }
+.tree-case-item .case-dot.completed { background: #34a853; }
+.tree-case-item .case-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tree-case-item .case-badge { font-size: 10px; background: var(--gray-100); color: var(--gray-500); padding: 1px 7px; border-radius: 8px; flex-shrink: 0; }
+
+/* 右侧推理工作区 */
+.reasoning-workspace { background: #f7f9fc; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.workspace-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.workspace-header .ws-title { font-size: 20px; font-weight: 700; color: #1E3F8A; display: flex; align-items: center; gap: 10px; }
+.workspace-header .ws-status { font-size: 12px; color: var(--gray-500); padding: 4px 12px; background: var(--gray-100); border-radius: 12px; }
+.btn-report-gen { background: #175CD3; color: #fff; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap; }
+.btn-report-gen:hover { background: #144bb5; box-shadow: 0 2px 8px rgba(23,92,211,0.3); }
+
+/* 病例信息条 */
+.case-info-bar { background: #fff; border-radius: 10px; padding: 14px 18px; border-left: 4px solid #1a73e8; font-size: 13px; color: var(--gray-700); display: flex; align-items: center; gap: 12px; }
+.case-info-bar .info-label { font-weight: 600; color: #1E3F8A; white-space: nowrap; }
+.case-info-bar .info-text { flex: 1; color: var(--gray-600); line-height: 1.5; }
+
+/* 步骤卡片 */
+.step-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; transition: all 0.2s; }
+.step-card.current { box-shadow: 0 2px 12px rgba(26,115,232,0.15); border: 1px solid rgba(26,115,232,0.2); }
+.step-card .step-card-header { padding: 14px 20px; background: #f8faff; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; gap: 8px; }
+.step-card .step-card-header .step-num-circle { width: 28px; height: 28px; border-radius: 50%; background: #1a73e8; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.step-card.done .step-card-header .step-num-circle { background: #34a853; }
+.step-card .step-card-header .step-card-title { font-size: 15px; font-weight: 700; color: #1E3F8A; }
+.step-card .step-card-header .step-required { color: #ea4335; font-size: 16px; margin-left: 2px; }
+.step-card .step-card-body { padding: 16px 20px; }
+.step-card .step-card-hint { font-size: 12px; color: var(--gray-400); margin-bottom: 10px; }
+.step-textarea { width: 100%; min-height: 100px; padding: 12px 14px; border: 1px solid #e0e4ea; border-radius: 8px; font-size: 13px; font-family: inherit; line-height: 1.7; resize: vertical; outline: none; transition: var(--transition); background: #fafbfc; color: var(--gray-800); }
+.step-textarea:focus { border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,0.08); background: #fff; }
+.step-textarea::placeholder { color: #b0b8c4; font-size: 12px; }
+
+/* 步骤底部导航 */
+.step-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; }
+.btn-step-back { background: #fff; border: 1px solid #dadce0; color: var(--gray-600); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; transition: var(--transition); }
+.btn-step-back:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.btn-step-next { background: #1a73e8; color: #fff; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: var(--transition); }
+.btn-step-next:hover { background: #1557b0; box-shadow: 0 2px 8px rgba(26,115,232,0.25); }
+.btn-step-submit { background: #175CD3; color: #fff; border: none; padding: 12px 36px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 700; transition: var(--transition); letter-spacing: 0.5px; }
+.btn-step-submit:hover { background: #144bb5; box-shadow: 0 3px 12px rgba(23,92,211,0.35); }
+.btn-report-submit { background: #7643E3; color: #fff; border: none; padding: 12px 28px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 700; transition: var(--transition); box-shadow: 0 3px 12px rgba(118,67,227,0.3); }
+.btn-report-submit:hover { background: #6935d9; box-shadow: 0 4px 16px rgba(118,67,227,0.4); transform: translateY(-1px); }
+
+/* 评分结果面板 */
+.score-result-panel { background: #fff; border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.score-result-header { padding: 20px 24px; background: linear-gradient(135deg, #1a73e8 0%, #2563eb 100%); color: #fff; display: flex; align-items: center; justify-content: space-between; }
+.score-result-header h3 { font-size: 17px; font-weight: 700; }
+.score-tag-pass { background: rgba(255,255,255,0.25); color: #fff; padding: 3px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.score-result-body { padding: 24px; }
+.score-main-row { display: flex; align-items: center; gap: 32px; margin-bottom: 24px; }
+.score-big-number { font-size: 56px; font-weight: 800; color: #1E3F8A; line-height: 1; }
+.score-big-outof { font-size: 16px; color: var(--gray-500); margin-left: 4px; }
+.score-big-bar { flex: 1; height: 8px; background: #e8ecf0; border-radius: 4px; overflow: hidden; }
+.score-big-bar-fill { height: 100%; background: linear-gradient(90deg, #1a73e8, #34a853); border-radius: 4px; transition: width 0.6s ease; }
+.score-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.score-detail-item { background: var(--gray-50); border-radius: 10px; padding: 14px 16px; }
+.score-detail-item .sd-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.score-detail-item .sd-name { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+.score-detail-item .sd-value { font-size: 14px; font-weight: 700; }
+.score-detail-item .sd-bar { height: 6px; background: #e0e4ea; border-radius: 3px; overflow: hidden; }
+.score-detail-item .sd-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+.score-detail-item .sd-comment { font-size: 11px; color: var(--gray-500); margin-top: 4px; }
+
+/* 专家点评 */
+.expert-review { margin-top: 16px; padding: 16px 20px; background: #fefdf6; border-left: 3px dashed #c4b998; border-radius: 0 8px 8px 0; }
+.expert-review .er-title { font-size: 13px; font-weight: 600; color: #8b7355; margin-bottom: 6px; }
+.expert-review .er-content { font-size: 12px; color: var(--gray-600); line-height: 1.7; }
+
+/* 辅助检查复选框 */
+.check-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.check-card { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border: 1px solid #e0e4ea; border-radius: 8px; cursor: pointer; transition: all 0.15s; background: #fff; font-size: 13px; }
+.check-card:hover { border-color: #1a73e8; background: #f8faff; }
+.check-card.selected { border-color: #1a73e8; background: #e8f0fe; color: #1a56db; font-weight: 500; }
+.check-card input[type=checkbox] { accent-color: #1a73e8; width: 16px; height: 16px; }
+
+/* 推理内容区 */
+#reasoningContent { flex-direction: column; gap: 16px; }
+#reasoningContent.show { display: flex; }
+.diag-select-wrap { margin-bottom: 10px; }
+.diag-select-wrap select { width: 100%; padding: 11px 14px; border: 1px solid #e0e4ea; border-radius: 8px; font-size: 13px; font-family: inherit; background: #fafbfc; outline: none; cursor: pointer; color: var(--gray-800); }
+.diag-select-wrap select:focus { border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,0.08); }
+
+/* 鉴别诊断条目 */
+.dd-entry { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.dd-entry .dd-index { width: 22px; height: 22px; border-radius: 50%; background: #e8f0fe; color: #1a73e8; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.dd-entry input { flex: 1; padding: 9px 12px; border: 1px solid #e0e4ea; border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; background: #fafbfc; }
+.dd-entry input:focus { border-color: #1a73e8; background: #fff; }
+.dd-entry .btn-remove-dd { background: none; border: none; color: var(--gray-400); cursor: pointer; font-size: 16px; padding: 4px 6px; border-radius: 4px; }
+.dd-entry .btn-remove-dd:hover { color: #ea4335; background: #fce8e6; }
+.btn-add-dd { background: none; border: 1px dashed #c4c9d0; color: var(--gray-500); padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; transition: var(--transition); }
+.btn-add-dd:hover { border-color: #1a73e8; color: #1a73e8; background: #f8faff; }
+
+/* 占位引导 */
+.empty-state { text-align: center; padding: 48px 20px; color: var(--gray-400); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state .empty-text { font-size: 14px; }
+
+/* ===== 共享布局：左侧病例树 + 右侧三级Tab内容区 ===== */
+.main-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; min-height: calc(100vh - 180px); }
+.main-layout .case-tree-panel { background: #fff; border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; height: fit-content; max-height: calc(100vh - 180px); position: sticky; top: 80px; }
+.main-layout .case-tree-header { padding: 16px 20px; font-size: 15px; font-weight: 700; color: #1E3F8A; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; gap: 8px; }
+.main-layout .case-tree-body { padding: 8px 12px; overflow-y: auto; flex: 1; }
+.tab-content-right { min-width: 0; }
+.tab-content-inner { display: none; }
+.tab-content-inner.active { display: block; }
+
+/* ===== 病例树样式 ===== */
+.tree-category { margin-bottom: 12px; }
+.tree-category-header { display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-radius: 8px; transition: var(--transition); font-size: 13px; font-weight: 600; color: var(--gray-700); user-select: none; }
+.tree-category-header:hover { background: var(--gray-50); }
+.tree-category .cat-icon { margin-right: 6px; font-size: 10px; }
+.tree-category .cat-badge { margin-left: auto; font-size: 11px; background: var(--gray-100); padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+.cat-arrow { font-size: 10px; transition: transform 0.2s; color: var(--gray-400); }
+.cat-arrow.open { transform: rotate(90deg); }
+.tree-sub-items { padding-left: 12px; }
+.tree-sub-items.collapsed { display: none; }
+.tree-case-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; border-radius: 6px; font-size: 13px; color: var(--gray-700); transition: all 0.15s; margin-bottom: 2px; }
+.tree-case-item:hover { background: #e8f0fe; }
+.tree-case-item.selected { background: #d2e3fc; color: #1a73e8; font-weight: 600; }
+.case-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--gray-300); }
+.case-dot.completed { background: #34a853; }
+.case-dot.not_started { background: #dadce0; }
+.case-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.case-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: var(--gray-100); color: var(--gray-500); flex-shrink: 0; }
+
+/* ===== 推理工作区样式 ===== */
+.reasoning-workspace { display: flex; flex-direction: column; gap: 0; min-height: 400px; }
+.empty-state { text-align: center; padding: 80px 20px; color: var(--gray-400); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state .empty-text { font-size: 14px; }
+.workspace-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fff; border-radius: 12px 12px 0 0; box-shadow: var(--shadow); }
+.ws-title { font-size: 17px; font-weight: 700; color: #1E3F8A; }
+.ws-status { font-size: 12px; padding: 4px 12px; border-radius: 12px; background: #e8f0fe; color: #1a73e8; font-weight: 500; }
+.case-info-bar { padding: 12px 20px; background: #f8faff; border-left: 3px solid #1a73e8; font-size: 13px; color: var(--gray-700); margin-top: -2px; }
+.step-footer { display: flex; align-items: center; padding: 16px 20px; background: #fff; border-radius: 0 0 12px 12px; box-shadow: var(--shadow); }
+.btn-step-back, .btn-step-next { padding: 10px 24px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; transition: var(--transition); }
+.btn-step-back { background: var(--gray-100); color: var(--gray-600); }
+.btn-step-back:hover { background: var(--gray-200); }
+.btn-step-next { background: #1a73e8; color: #fff; }
+.btn-step-next:hover { background: #1557b0; }
+.btn-step-submit { padding: 10px 24px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; transition: var(--transition); background: linear-gradient(135deg, #34a853, #1b9e3f); color: #fff; }
+.btn-step-submit:hover { box-shadow: 0 4px 12px rgba(52,168,83,0.3); transform: translateY(-1px); }
+
+/* ===== 原型图匹配：病例讨论区新版样式 ===== */
+.discussion-container { background: #f7f9fc; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px; min-height: 500px; }
+.discussion-top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.discussion-top-bar .disc-title { font-size: 18px; font-weight: 700; color: #1E3F8A; display: flex; align-items: center; gap: 8px; }
+.discussion-top-bar .disc-status { font-size: 12px; color: var(--gray-500); padding: 4px 12px; background: var(--gray-100); border-radius: 12px; }
+.discussion-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.sort-select { padding: 7px 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 13px; font-family: inherit; color: var(--gray-700); background: #fff; outline: none; cursor: pointer; }
+.sort-select:focus { border-color: #1a73e8; }
+.btn-new-post { background: #1a73e8; color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; gap: 5px; }
+.btn-new-post:hover { background: #1557b0; box-shadow: 0 2px 8px rgba(26,115,232,0.25); }
+
+/* 帖子卡片 - 匹配原型图 */
+.post-card { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 16px 18px; margin-bottom: 10px; transition: all 0.2s ease; position: relative; }
+.post-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+.post-card.teacher-post { background: #f6fef9; border-left: 3px solid #34a853; }
+.post-card.student-post { background: #fff; border-left: 3px solid #e0e4ea; }
+.post-card.pinned-post { border-left: 3px solid #ef6c00; }
+.post-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.post-card-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; color: #fff; }
+.post-card-avatar.teacher-av { background: #34a853; }
+.post-card-avatar.student-av { background: #1a73e8; }
+.post-card-author { font-size: 14px; font-weight: 600; color: var(--gray-800); }
+.post-card-time { font-size: 12px; color: var(--gray-400); margin-left: auto; white-space: nowrap; }
+.post-card-body { font-size: 13px; color: var(--gray-700); line-height: 1.7; margin-bottom: 8px; cursor: pointer; }
+.post-card-body:hover { color: var(--primary); }
+.post-card-actions { display: flex; align-items: center; gap: 12px; }
+.post-card-actions .action-btn { background: none; border: none; color: var(--gray-500); font-size: 12px; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: var(--transition); display: inline-flex; align-items: center; gap: 4px; }
+.post-card-actions .action-btn:hover { color: var(--primary); background: var(--gray-50); }
+.role-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.role-badge.teacher { background: #e8f5e9; color: #2e7d32; }
+.role-badge.student { background: #e8f0fe; color: #1a73e8; }
+.pin-badge { display: inline-block; background: #fff3e0; color: #ef6c00; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.essence-badge { display: inline-block; background: #fce4ec; color: #c62828; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.post-tags { display: inline-flex; gap: 4px; }
+
+/* 发帖输入区 - 匹配原型图 */
+.post-input-area { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 16px 18px; }
+.post-input-area .input-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; color: var(--gray-600); }
+.post-input-area .input-header .user-avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: #1a73e8; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 600; }
+.post-input-area textarea { width: 100%; min-height: 70px; padding: 10px 14px; border: 1px solid #dadce0; border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical; outline: none; background: #fafbfc; color: var(--gray-800); }
+.post-input-area textarea:focus { border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,0.08); background: #fff; }
+.post-input-area textarea::placeholder { color: #b0b8c4; }
+.post-input-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+.post-input-actions .attach-btn { background: none; border: 1px solid #dadce0; color: var(--gray-600); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; display: inline-flex; align-items: center; gap: 4px; transition: var(--transition); }
+.post-input-actions .attach-btn:hover { border-color: var(--primary); color: var(--primary); background: #f8faff; }
+.btn-send { background: #1a73e8; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: var(--transition); display: inline-flex; align-items: center; gap: 4px; }
+.btn-send:hover { background: #1557b0; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+
+/* 帖子详情页 */
+.discussion-detail { background: #f7f9fc; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.post-full-card { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 20px; }
+.post-full-card .full-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
+.post-full-card .full-body { font-size: 14px; color: var(--gray-800); line-height: 1.8; margin-bottom: 16px; }
+.post-full-card .full-images { display: flex; gap: 8px; margin-top: 12px; }
+.post-full-card .full-images img { max-width: 200px; border-radius: 6px; border: 1px solid var(--gray-200); }
+.reply-section { margin-top: 8px; }
+.reply-section .reply-title { font-size: 14px; font-weight: 600; color: var(--gray-700); margin-bottom: 10px; }
+.reply-card { background: #f8f9fa; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; border-left: 3px solid #dadce0; }
+.reply-card.nested-reply { margin-left: 28px; background: #f0f4ff; border-left-color: #1a73e8; }
+.reply-card .reply-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.reply-card .reply-author { font-weight: 600; font-size: 13px; }
+.reply-card .reply-time { font-size: 11px; color: var(--gray-400); margin-left: auto; }
+.reply-card .reply-body { font-size: 13px; color: var(--gray-700); line-height: 1.6; }
+.reply-input-area { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 14px; display: flex; gap: 10px; align-items: flex-end; }
+.reply-input-area textarea { flex: 1; min-height: 50px; padding: 10px 14px; border: 1px solid #dadce0; border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical; outline: none; }
+.reply-input-area textarea:focus { border-color: #1a73e8; }
+
+/* 无病例选择状态 */
+.no-case-selected { text-align: center; padding: 80px 20px; color: var(--gray-400); }
+.no-case-selected .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.no-case-selected .empty-text { font-size: 14px; }
+
+
+/* ===== 原型图匹配：AI诊断对比学习 - 病例资料摘要模块 ===== */
+.case-summary-module { background: #f0f5ff; border-radius: 12px; padding: 24px; margin-bottom: 20px; position: relative; }
+.case-summary-module .summary-badge { position: absolute; top: 16px; right: 20px; background: #e8f0fe; color: #1a73e8; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+.case-summary-module .summary-title { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.case-summary-module .summary-title .summary-icon { width: 28px; height: 28px; border-radius: 6px; background: #e3f2fd; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+.summary-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid #e0e4ea; }
+.summary-tab-btn { padding: 8px 18px; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; color: var(--gray-600); transition: var(--transition); }
+.summary-tab-btn:hover { color: #1a73e8; }
+.summary-tab-btn.active { color: #1a73e8; border-bottom-color: #1a73e8; font-weight: 600; }
+.summary-tab-content { min-height: 100px; }
+.summary-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 32px; }
+.summary-form-grid.full-width { grid-template-columns: 1fr; }
+.summary-field { display: flex; flex-direction: column; gap: 4px; }
+.summary-field .sf-label { font-size: 13px; font-weight: 600; color: #333; }
+.summary-field .sf-label .required { color: #ff4d4f; margin-left: 2px; }
+.summary-field .sf-value { font-size: 13px; color: var(--gray-700); padding: 8px 12px; background: #fff; border: 1px solid #d9d9d9; border-radius: 6px; min-height: 34px; display: flex; align-items: center; }
+.summary-field .sf-value.gender-options { border: none; background: none; padding: 4px 0; display: flex; gap: 20px; }
+.summary-field .sf-value.gender-options label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: var(--gray-700); }
+.summary-field .sf-value.gender-options input[type=radio] { accent-color: #1a73e8; }
+.summary-text-block { background: #fff; border: 1px solid #e0e4ea; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+.summary-text-block .stb-label { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 6px; }
+.summary-text-block .stb-content { font-size: 13px; color: var(--gray-700); line-height: 1.7; }
+.summary-exam-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+.summary-exam-item:last-child { border-bottom: none; }
+.summary-exam-item .exam-label { font-weight: 600; color: #333; min-width: 80px; }
+.summary-exam-item .exam-value { color: var(--gray-700); }
+
+/* compare页顶部操作栏 */
+.compare-top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
+.learning-status { font-size: 12px; color: var(--gray-500); background: var(--gray-100); padding: 6px 14px; border-radius: 12px; font-weight: 500; }
+
+.menu-item.has-submenu { position: relative; cursor: pointer; }
+.menu-item .arrow { margin-left: auto; font-size: 10px; transition: transform 0.2s; }
+.menu-item.expanded .arrow { transform: rotate(90deg); }
+.submenu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.submenu.open { max-height: 280px; }
+.submenu .menu-item { padding-left: 50px; font-size: 12px; }
+.submenu .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+</style></head><body>
+
+<!-- 顶部导航栏 -->
+<div class="header">
+    <a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a>
+    <div class="header-nav">
+        <a href="眼底图像输入.html">AI筛查</a>
+        <a href="临床数据开放共享.html">数据平台</a>
+        <a href="基础课程.html">AI教育</a>
+        <a href="临床决策支撑.html">专家系统</a>
+        <a href="数据采集工具（确认）.html">数据工具</a>
+    </div>
+    <div class="header-right">
+        <span class="user-info" id="headerUserName">管理员</span>
+        <button class="btn-logout" onclick="logout()">退出</button>
+    </div>
+</div>
+
+<!-- 左侧菜单栏 -->
+<div class="sidebar" id="sidebar">
+    <div class="menu-group">
+        <div class="menu-group-title">AI教育平台</div>
+        <a class="menu-item " href="基础课程.html"><span class="menu-icon">📖</span>基础课程</a>
+        <a class="menu-item active" href="案例教学.html"><span class="menu-icon">📋</span>案例教学</a>
+        <div class="menu-item has-submenu" onclick="toggleSubmenu(this)">
+            <span class="menu-icon">🔧</span>技能实践
+            <span class="arrow">▶</span>
+        </div>
+        <div class="submenu">
+            <a class="menu-item " href="虚拟临床技能实训.html">虚拟临床技能实训</a>
+            <a class="menu-item " href="经典病例诊断实训.html">经典病例诊断实训</a>
+            <a class="menu-item " href="疑难病例分析与学术研讨.html">疑难病例分析与学术研讨</a>
+            <a class="menu-item " href="读片与病例大赛系统.html">读片与病例大赛系统</a>
+            <a class="menu-item " href="数据标注与AI实训.html">数据标注与AI实训</a>
+        </div>
+        <a class="menu-item " href="考试中心.html"><span class="menu-icon">📝</span>考试中心</a>
+        <a class="menu-item " href="个人中心与能力评估.html"><span class="menu-icon">👤</span>个人中心与能力评估</a>
+    </div>
+</div>
+
+<!-- 主内容区 -->
+<div class="main-content">
+    <div class="breadcrumb"><a href="#">AI教育平台</a><span class="sep">&gt;</span><span>案例教学</span></div>
+    <h1 class="page-title">眼科病例实训系统</h1>
+
+        <!-- 三个Tab导航（位于共享病例树上方） -->
+    <div class="tabs" id="mainTabs">
+        <button class="tab-btn active" data-tab="reasoning">病例推理实训</button>
+        <button class="tab-btn" data-tab="compare">AI诊断对比学习</button>
+        <button class="tab-btn" data-tab="discussion">病例讨论</button>
+    </div>
+
+    <!-- 共享布局：左侧病例树 + 右侧Tab内容区 -->
+    <div class="main-layout">
+        <!-- 左侧：共享病例树面板（三个Tab共用） -->
+        <div class="case-tree-panel" id="sharedCaseTree">
+            <div class="case-tree-header">
+                <span class="tree-icon">☰</span>病例列表
+            </div>
+            <div class="case-tree-body" id="caseTreeBody"></div>
+        </div>
+
+        <!-- 右侧：Tab内容区 -->
+        <div class="tab-content-right" id="tabContentRight">
+            <!-- Tab 1: 病例推理实训 -->
+            <div id="tab-reasoning" class="tab-content-inner active">
+                <div class="reasoning-workspace" id="reasoningWorkspace">
+                    <div class="empty-state" id="emptyStateReasoning">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">请从左侧病例列表中选择一个病例<br>开始推理实训</div>
+                    </div>
+                    <div id="reasoningContent" style="display:none;">
+                        <div class="workspace-header">
+                            <span class="ws-title">诊断推理实训</span>
+                            <span class="ws-status" id="wsStatus">学习中</span>
+                        </div>
+                        <div class="case-info-bar" id="caseInfoBar"></div>
+                        <div id="stepCardsContainer"></div>
+                        <div class="step-footer" id="stepFooter">
+                            <button class="btn-step-back" id="btnPrevStep" onclick="prevStep_new()" style="visibility:hidden;">上一步</button>
+                            <div style="display:flex;gap:10px;margin-left:auto;">
+                                <button class="btn-step-next" id="btnNextStep" onclick="nextStep_new()">下一步</button>
+                                <button class="btn-step-submit" id="btnSubmitStep" onclick="submitReasoning_new()" style="display:none;">提交推理</button>
+                            </div>
+                        </div>
+                        <div id="resultPanelNew" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: AI诊断对比学习 -->
+            <div id="tab-compare" class="tab-content-inner">
+                <div class="no-case-selected" id="emptyStateCompare">
+                    <div class="empty-icon">📋</div>
+                    <div class="empty-text">请从左侧病例列表中选择一个病例<br>查看AI诊断对比分析</div>
+                </div>
+                <div id="compareContent" style="display:none;">
+                    <div class="compare-top-bar">
+                        <span class="learning-status" id="compareStatus">学习中</span>
+                        <button class="btn-gen-report" onclick="generateCompareReport()"><span class="report-icon">📊</span> 生成学习报告</button>
+                    </div>
+                    <div class="case-summary-module" id="caseSummaryModule">
+                        <div class="summary-badge" id="summaryBadge">T1</div>
+                        <div class="summary-title">
+                            <span class="summary-icon">📋</span>
+                            <span id="summaryCaseTitle">病例资料摘要</span>
+                        </div>
+                        <div class="summary-tabs" id="summaryTabs">
+                            <button class="summary-tab-btn active" data-stab="basic" onclick="switchSummaryTab('basic')">基本信息</button>
+                            <button class="summary-tab-btn" data-stab="eyeHistory" onclick="switchSummaryTab('eyeHistory')">眼科病史</button>
+                            <button class="summary-tab-btn" data-stab="systemicHistory" onclick="switchSummaryTab('systemicHistory')">全身病史</button>
+                            <button class="summary-tab-btn" data-stab="eyeExam" onclick="switchSummaryTab('eyeExam')">眼部检查</button>
+                            <button class="summary-tab-btn" data-stab="imaging" onclick="switchSummaryTab('imaging')">影像结果</button>
+                        </div>
+                        <div class="summary-tab-content" id="summaryTabContent"></div>
+                    </div>
+                    <div class="compare-layout">
+                        <div class="ai-panel" id="aiPanel"></div>
+                        <div class="expert-panel" id="expertPanel"></div>
+                    </div>
+                    <div class="diff-analysis" id="diffPanel"></div>
+                </div>
+            </div>
+
+            <!-- Tab 3: 病例讨论 -->
+            <div id="tab-discussion" class="tab-content-inner">
+                <div class="no-case-selected" id="emptyStateDiscussion">
+                    <div class="empty-icon">💬</div>
+                    <div class="empty-text">请从左侧病例列表中选择一个病例<br>查看相关讨论</div>
+                </div>
+                <div id="discussionContent" style="display:none;">
+                    <!-- 讨论列表视图 -->
+                    <div id="discussionListView">
+                        <div class="discussion-container">
+                            <div class="discussion-top-bar">
+                                <span class="disc-title">💬 病例讨论区</span>
+                                <span class="disc-status" id="discStatus">共 0 条讨论</span>
+                            </div>
+                            <div class="discussion-controls">
+                                <select class="sort-select" onchange="sortPosts(this.value)">
+                                    <option value="latest_reply">排序：最新回复</option>
+                                    <option value="publish_time">排序：发布时间</option>
+                                </select>
+                                <button class="btn-new-post" onclick="showNewDiscussion()">✏️ 发布新讨论</button>
+                            </div>
+                            <div id="postCardList"></div>
+                            <!-- 快速发帖 -->
+                            <div class="post-input-area" id="quickPostArea">
+                                <div class="input-header">
+                                    <span class="user-avatar-sm">管</span>
+                                    <span>快速发帖</span>
+                                </div>
+                                <textarea id="quickPostInput" placeholder="请输入您的讨论内容..."></textarea>
+                                <div class="post-input-actions">
+                                    <button class="attach-btn">🖼️ 图片</button>
+                                    <button class="btn-send" onclick="quickPublish()">发送 🚀</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 帖子详情视图 -->
+                    <div id="postDetailView" style="display:none;">
+                        <div class="discussion-detail">
+                            <button class="btn btn-outline" onclick="backToDiscussion()" style="margin-bottom:12px;">← 返回讨论列表</button>
+                            <div id="postDetailContent"></div>
+                            <div id="replyList" class="reply-section"></div>
+                            <div class="reply-input-area">
+                                <textarea id="replyInput" placeholder="输入您的回复..."></textarea>
+                                <button class="btn btn-primary" onclick="submitReply()">发送</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 发布新讨论表单 -->
+                    <div id="newDiscussionForm" style="display:none;">
+                        <div class="card" style="padding:24px;max-width:700px;">
+                            <h3 style="margin-bottom:16px;">发布新讨论</h3>
+                            <div class="form-group"><label>讨论标题</label><input id="newPostTitle" class="form-input" placeholder="请输入讨论标题"></div>
+                            <div class="form-group"><label>讨论内容</label><textarea id="newPostBody" class="form-textarea" placeholder="请输入讨论内容..." style="min-height:150px;"></textarea></div>
+                            <div class="form-group"><label>上传图片附件（模拟）</label><input type="file" accept="image/*" style="padding:8px;"></div>
+                            <div style="display:flex;gap:10px;">
+                                <button class="btn btn-primary" onclick="publishPost()">发布</button>
+                                <button class="btn btn-outline" onclick="cancelNewDiscussion()">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- 学习报告弹窗 -->
+<div class="report-overlay" id="reportOverlay" style="display:none;">
+    <div class="report-modal" id="reportContent"></div>
+</div>
+
+<script>
+// 子菜单展开/收起
+function toggleSubmenu(el) {
+    el.classList.toggle('expanded');
+    el.nextElementSibling.classList.toggle('open');
+}
+
+// ==================== Mock 数据 ====================
+const caseData = {
+    basic: [
+        { id:'B1', title:'轻度非增殖期糖尿病视网膜病变', disease:'糖尿病视网膜病变', difficulty:1, status:'not_started',
+          info:'患者男，56岁，糖尿病史8年，HbA1c 7.2%。双眼视力0.8，眼底检查可见少量微动脉瘤和点状出血。',
+          answer:{features:'糖尿病史8年，血糖控制一般(HbA1c 7.2%)，眼底可见微动脉瘤和点状出血，无黄斑水肿', dd:['轻度NPDR','中度NPDR','高血压视网膜病变'], checks:['OCT','眼底照相'], diagnosis:'轻度非增殖期糖尿病视网膜病变（NPDR）', treatment:'控制血糖，定期随访（每6-12个月），无需眼科干预'}},
+        { id:'B2', title:'早期原发性开角型青光眼', disease:'青光眼', difficulty:1, status:'not_started',
+          info:'患者女，62岁，体检发现眼压升高（右26mmHg，左24mmHg），无自觉症状。眼底检查C/D=0.6。',
+          answer:{features:'老年女性，眼压升高，无自觉症状，C/D增大', dd:['原发性开角型青光眼','高眼压症','正常眼压性青光眼'], checks:['视野','OCT','眼压'], diagnosis:'早期原发性开角型青光眼', treatment:'降眼压药物（前列腺素类滴眼液），定期复查视野和OCT'}},
+        { id:'B3', title:'干性年龄相关性黄斑变性', disease:'年龄相关性黄斑变性', difficulty:1, status:'not_started',
+          info:'患者男，72岁，主诉视力模糊、视物变形。眼底检查见黄斑区玻璃膜疣和色素紊乱。',
+          answer:{features:'老年男性，视力模糊、视物变形，黄斑区玻璃膜疣和色素紊乱', dd:['干性AMD','湿性AMD','糖尿病性黄斑病变'], checks:['OCT','眼底照相'], diagnosis:'干性年龄相关性黄斑变性', treatment:'口服抗氧化剂（AREDS2配方），定期随访，戒烟，注意防护紫外线'}},
+        { id:'B4', title:'高血压视网膜病变I级', disease:'高血压视网膜病变', difficulty:1, status:'not_started',
+          info:'患者男，48岁，高血压史5年，血压160/95mmHg。眼底检查见视网膜动脉轻度狭窄，动静脉交叉压迹。',
+          answer:{features:'中年男性，高血压5年，血压控制不佳，视网膜动脉轻度狭窄', dd:['高血压视网膜病变I级','高血压视网膜病变II级','糖尿病视网膜病变'], checks:['眼底照相','OCT'], diagnosis:'高血压视网膜病变I级', treatment:'积极控制血压，低盐饮食，定期眼科随访'}},
+        { id:'B5', title:'单纯性孔源性视网膜脱离', disease:'视网膜脱离', difficulty:2, status:'not_started',
+          info:'患者男，35岁，高度近视（-8.0D），突然出现眼前黑影、闪光感，视野缺损。',
+          answer:{features:'高度近视，突发黑影+闪光感+视野缺损', dd:['孔源性视网膜脱离','玻璃体后脱离','视网膜裂孔'], checks:['眼底照相','OCT','视野'], diagnosis:'单纯性孔源性视网膜脱离', treatment:'尽早行巩膜扣带术或玻璃体切割术，术后俯卧位'}}
+    ],
+    advanced: [
+        { id:'A1', title:'DR合并黄斑水肿（抗VEGF治疗决策）', disease:'糖尿病视网膜病变', difficulty:3, status:'not_started',
+          info:'患者女，62岁，2型糖尿病15年，HbA1c 8.5%。右眼视力0.2，OCT示黄斑中心凹厚度420μm，FFA示弥漫性渗漏。',
+          answer:{features:'长期糖尿病，血糖控制差，黄斑水肿严重（CRT 420μm），弥漫性渗漏', dd:['DME（糖尿病黄斑水肿）','视网膜静脉阻塞继发黄斑水肿','葡萄膜炎继发黄斑水肿'], checks:['OCT','FFA','眼底照相'], diagnosis:'糖尿病视网膜病变合并糖尿病黄斑水肿（DME）', treatment:'抗VEGF治疗（雷珠单抗/阿柏西普），PRN方案，联合控制血糖血压'}},
+        { id:'A2', title:'不典型急性闭角型青光眼', disease:'青光眼', difficulty:3, status:'not_started',
+          info:'患者女，55岁，主诉间歇性头痛、眼胀、恶心，曾误诊为偏头痛。裂隙灯检查见浅前房，房角镜检查示窄角。',
+          answer:{features:'间歇性头痛眼胀恶心，浅前房，窄角，曾误诊偏头痛', dd:['急性闭角型青光眼间歇期','偏头痛','颈源性头痛'], checks:['眼压','房角镜','视野','OCT'], diagnosis:'不典型急性闭角型青光眼（间歇期）', treatment:'激光周边虹膜切开术，双眼均需处理，定期复查房角'}},
+        { id:'A3', title:'湿性AMD合并PED', disease:'年龄相关性黄斑变性', difficulty:4, status:'not_started',
+          info:'患者男，78岁，右眼视力骤降2周。OCT示黄斑区视网膜下液和色素上皮脱离（PED），FFA示典型CNV渗漏。',
+          answer:{features:'老年男性，视力骤降，视网膜下液+PED，典型CNV渗漏', dd:['湿性AMD合并PED','息肉状脉络膜血管病变(PCV)','中心性浆液性脉络膜视网膜病变'], checks:['OCT','FFA','ICGA'], diagnosis:'湿性年龄相关性黄斑变性合并色素上皮脱离', treatment:'抗VEGF治疗（阿柏西普），T&E方案，必要时联合PDT'}},
+        { id:'A4', title:'视网膜分支静脉阻塞伴黄斑水肿', disease:'视网膜静脉阻塞', difficulty:3, status:'not_started',
+          info:'患者男，68岁，高血压10年，左眼视力突然下降。眼底见火焰状出血沿颞上支静脉分布，OCT示黄斑水肿。',
+          answer:{features:'老年高血压患者，急性视力下降，火焰状出血，黄斑水肿', dd:['BRVO合并黄斑水肿','CRVO','糖尿病视网膜病变'], checks:['OCT','FFA','眼底照相'], diagnosis:'视网膜分支静脉阻塞合并黄斑水肿', treatment:'抗VEGF治疗，控制高血压，定期OCT监测黄斑厚度'}}
+    ],
+    research: [
+        { id:'R1', title:'Vogt-小柳-原田综合征的眼科表现', disease:'葡萄膜炎', difficulty:5, status:'not_started',
+          info:'患者女，32岁，双眼视力下降伴头痛、耳鸣2周。眼底检查见多发性浆液性视网膜脱离，FFA示多灶性渗漏。',
+          answer:{features:'年轻女性，双眼视力下降+头痛+耳鸣，浆液性视网膜脱离，多灶性渗漏', dd:['Vogt-小柳-原田综合征','交感性眼炎','后巩膜炎','中心性浆液性脉络膜视网膜病变'], checks:['OCT','FFA','ICGA','OCT'], diagnosis:'Vogt-小柳-原田综合征（VKH）', treatment:'大剂量糖皮质激素冲击治疗，缓慢减量，免疫抑制剂维持'}},
+        { id:'R2', title:'Leber遗传性视神经病变（LHON）', disease:'遗传性眼病', difficulty:5, status:'not_started',
+          info:'患者男，22岁，无痛性双眼视力进行性下降3个月。眼底检查见视盘充血、边界模糊、小血管迂曲。线粒体DNA检测待查。',
+          answer:{features:'年轻男性，无痛性双眼视力下降，视盘充血+小血管迂曲，有家族史可能', dd:['Leber遗传性视神经病变','视神经炎','压迫性视神经病变','中毒性视神经病变'], checks:['视野','OCT','FFA','线粒体DNA检测'], diagnosis:'Leber遗传性视神经病变（LHON）', treatment:'艾地苯醌治疗，遗传咨询，低视力康复，避免烟酒和线粒体毒性药物'}},
+        { id:'R3', title:'眼内淋巴瘤的伪装综合征', disease:'眼内肿瘤', difficulty:5, status:'not_started',
+          info:'患者女，68岁，反复葡萄膜炎治疗效果不佳。玻璃体混浊，视网膜下黄白色浸润灶。既往有弥漫大B细胞淋巴瘤史。',
+          answer:{features:'老年人，顽固性葡萄膜炎，玻璃体混浊+视网膜下浸润，淋巴瘤病史', dd:['眼内淋巴瘤','感染性葡萄膜炎','白塞病','结节病'], checks:['OCT','FFA','ICGA','诊断性玻璃体切割'], diagnosis:'眼内淋巴瘤（伪装综合征）', treatment:'玻璃体切割获取病理，确诊后放疗+化疗，MTX玻璃体腔注射'}}
+    ]
+};
+
+const compareCaseData = [
+    { id:'C1', title:'糖尿病黄斑水肿', difficulty:'进阶', ai:{disease:'糖尿病黄斑水肿（DME）', confidence:92, lesions:['微动脉瘤：颞上象限可见2个微动脉瘤，直径约50-100μm','硬性渗出：黄斑区颞侧可见黄白色硬性渗出，总面积<1PD','视网膜下液：黄斑中心凹区域','囊样水肿：OCT示典型囊样改变'], reasoning:'结合长期糖尿病病史（15年）、HbA1c 8.5%提示血糖控制不佳、OCT显示典型DME形态（CRT 420μm）、FFA示弥漫性渗漏，符合DME诊断。AI模型重点关注黄斑区结构改变及渗漏模式。'}, expert:{diagnosis:'糖尿病黄斑水肿（DME）', basis:['糖尿病史15年 + HbA1c 8.5%','OCT：黄斑中心凹厚度420μm，囊样改变','FFA：弥漫性荧光渗漏','排除RVO等其他原因'], features:['囊样水肿形态典型','硬性渗出环形分布','无玻璃体后脱离']},
+        summary:{tabs:{basic:{name:'张建民',gender:'男',birthDate:'1968-03-15',visitAge:'56',contactAlt:'139xxxx1111',visitDate:'2024-06-15',patientId:'P20240615001',contact:'139xxxx1234',initialDiagnosis:'糖尿病视网膜病变'},eyeHistory:{chiefComplaint:'双眼视力下降伴视物变形6个月，右眼为重。',presentIllness:'患者6月前无明显诱因出现双眼视力逐渐下降，伴视物变形、眼前黑影飘动。右眼症状较左眼明显。曾于外院就诊，诊断为"糖尿病视网膜病变"，给予羟苯磺酸钙口服，症状无明显改善。近1月右眼视力进一步下降。',pastHistory:'双眼高度近视（-8.0D）20年。2型糖尿病15年，目前口服二甲双胍+甘精胰岛素治疗。高血压病史5年。否认眼部外伤及手术史。'},systemicHistory:{diabetes:'2型糖尿病15年。口服二甲双胍0.5g tid + 甘精胰岛素12U qn。近期HbA1c 8.5%。',hypertension:'高血压5年，口服氨氯地平5mg qd，血压控制可（135/85mmHg）。',other:'否认心脏病、脑血管疾病、肝肾疾病史。否认药物过敏史。吸烟20年，每日10支；偶饮酒。',familyHistory:'母亲患2型糖尿病；父亲患高血压。否认家族性眼病史。'},eyeExam:{va:'OD 0.2（矫正不提高），OS 0.3（矫正0.5）',iop:'OD 16mmHg，OS 15mmHg（非接触式）',slitLamp:'双眼角膜透明，前房深度正常，晶状体轻度混浊（N1C1P1），玻璃体未见明显混浊。',fundus:'右眼：视盘边界清，C/D=0.3，黄斑区囊样水肿伴环形硬性渗出，后极部散在微动脉瘤和点状出血。左眼：视盘边界清，C/D=0.3，黄斑区轻度水肿，少量硬性渗出和微动脉瘤。'},imaging:{oct:'OD：黄斑中心凹厚度（CRT）420μm，囊样改变，视网膜下液。OS：CRT 280μm，轻度囊样改变。',ffa:'OD：黄斑区弥漫性荧光渗漏，晚期囊样积存。OS：黄斑区轻度渗漏。',octa:'OD：中心凹无血管区（FAZ）扩大，深层毛细血管丛丢失。',bcva:'OD 0.2 LogMAR，OS 0.3 LogMAR'}}}},
+    { id:'C2', title:'急性闭角型青光眼', difficulty:'进阶', ai:{disease:'急性闭角型青光眼', confidence:88, lesions:['浅前房：Van Herick 1级，周边前房<1/4 CT','房角关闭：房角镜证实全周房角关闭','眼压升高：52mmHg','瞳孔中等散大：直径约5mm，光反射迟钝'], reasoning:'急性发作表现（剧烈眼痛、头痛、恶心呕吐）、裂隙灯检查示浅前房、房角镜证实全周关闭、眼压显著升高至52mmHg，符合急性闭角型青光眼诊断。需注意与葡萄膜炎继发青光眼鉴别。'}, expert:{diagnosis:'急性闭角型青光眼（急性发作期）', basis:['急性起病：眼痛、头痛、恶心','裂隙灯：浅前房，周边前房<1/4 CT','房角镜：全周房角关闭','眼压：52mmHg'], features:['角膜水肿','瞳孔中等散大固定','虹膜节段性萎缩']},
+        summary:{tabs:{basic:{name:'李秀英',gender:'女',birthDate:'1971-08-22',visitAge:'55',contactAlt:'138xxxx5678',visitDate:'2024-06-20',patientId:'P20240620003',contact:'138xxxx5678',initialDiagnosis:'急性闭角型青光眼待查'},eyeHistory:{chiefComplaint:'右眼剧烈疼痛伴同侧头痛、恶心呕吐4小时。',presentIllness:'患者4小时前无明显诱因突发右眼剧烈胀痛，伴同侧额颞部头痛、恶心、呕吐2次。视物模糊，眼前似有彩虹圈。否认外伤史。曾于社区医院测量眼压"很高"，建议转诊。',pastHistory:'双眼近视（-4.0D）多年。近1年偶有夜间眼胀、视物模糊，休息后可缓解，未重视。否认既往眼部疾病史。否认眼部手术史。母亲有青光眼病史。'},systemicHistory:{diabetes:'否认糖尿病史。',hypertension:'血压偶有偏高（140-150/90-95mmHg），未规律用药。',other:'否认心脏病、脑血管疾病史。否认药物过敏史。情绪波动大，近期因家庭琐事焦虑。',familyHistory:'母亲确诊原发性闭角型青光眼（已行LPI手术）。'},eyeExam:{va:'OD 0.1（矫正不提高），OS 0.8（矫正1.0）',iop:'OD 52mmHg，OS 18mmHg（Goldmann压平式）',slitLamp:'OD：角膜水肿（上皮微囊样水肿），前房极浅（Van Herick 1级），瞳孔中等散大（直径约5mm），光反射迟钝，虹膜纹理不清。OS：角膜透明，前房偏浅（Van Herick 2级），瞳孔圆，光反射灵敏。',fundus:'OD：因角膜水肿，眼底窥不清。OS：视盘边界清，C/D=0.5，血管走行正常。'},imaging:{oct:'OD：因角膜水肿，OCT图像质量欠佳。OS：RNFL厚度正常范围。',ffa:'暂未行FFA检查。',ubm:'OD：房角全周关闭，虹膜根部膨隆。OS：房角狭窄（部分关闭）。',vf:'OD：因疼痛未配合视野检查。OS：视野正常。'}}}},
+    { id:'C3', title:'湿性AMD', difficulty:'进阶', ai:{disease:'湿性AMD（经典型CNV）', confidence:85, lesions:['黄斑区视网膜下出血：大小约1.5PD','视网膜下液：OCT示黄斑区视网膜下液','色素上皮脱离（PED）：直径约800μm','CNV渗漏：FFA示典型花边状渗漏'], reasoning:'老年患者（78岁）、急性视力下降2周、OCT显示视网膜下液和PED、FFA示典型CNV渗漏模式，结合玻璃膜疣背景，诊断湿性AMD（经典型CNV伴PED）。需ICGA排除PCV。'}, expert:{diagnosis:'湿性AMD（经典型CNV伴PED）', basis:['年龄>50岁 + 急性视力下降','OCT：视网膜下液 + PED','FFA：典型花边状渗漏','ICGA排除PCV'], features:['纤维血管性PED','视网膜下出血','玻璃膜疣背景']},
+        summary:{tabs:{basic:{name:'王志远',gender:'男',birthDate:'1946-11-08',visitAge:'78',contactAlt:'136xxxx8901',visitDate:'2024-06-10',patientId:'P20240610005',contact:'136xxxx8901',initialDiagnosis:'湿性年龄相关性黄斑变性'},eyeHistory:{chiefComplaint:'右眼视力突然下降伴视物变形2周。',presentIllness:'患者2周前晨起后发现右眼视物模糊、视物变形（直线变弯曲），中心有暗影遮挡。无明显眼痛、眼红或闪光感。左眼视力尚可。否认近期外伤史。曾自行购买"眼药水"滴眼，无效。',pastHistory:'双眼轻度干性AMD病史5年，曾口服AREDS2配方营养补充剂。右眼白内障术后3年（Phaco+IOL）。否认青光眼、糖尿病视网膜病变等其他眼病史。'},systemicHistory:{diabetes:'否认糖尿病史。',hypertension:'高血压15年，口服缬沙坦80mg qd，血压控制可。',other:'高脂血症5年，口服阿托伐他汀10mg qn。否认心脏病、脑血管疾病史。否认药物过敏史。吸烟40年，已戒5年；偶饮酒。',familyHistory:'母亲患AMD（具体类型不详）。父亲患高血压、冠心病。'},eyeExam:{va:'OD 0.1（矫正0.15），OS 0.5（矫正0.8）',iop:'OD 14mmHg，OS 13mmHg',slitLamp:'OD：角膜透明，前房深度正常，IOL位正。OS：角膜透明，晶状体轻度混浊（N2C1P1）。',fundus:'OD：黄斑区视网膜下灰绿色隆起病灶，周围视网膜下出血，玻璃膜疣散在分布。OS：黄斑区玻璃膜疣和色素紊乱，无出血或渗出。'},imaging:{oct:'OD：黄斑区视网膜下液，纤维血管性PED（高度约320μm），视网膜内囊样改变。OS：玻璃膜疣，RPE不规则。',ffa:'OD：早期花边状高荧光（经典型CNV），晚期荧光渗漏扩大。OS：窗样缺损，无渗漏。',icga:'OD：未见息肉状病灶，排除PCV。OS：未见异常。',bcva:'OD 0.15 LogMAR，OS 0.8 LogMAR'}}}},
+    { id:'C4', title:'非动脉炎性前部缺血性视神经病变', difficulty:'科研', ai:{disease:'非动脉炎性AION', confidence:78, lesions:['视盘水肿：节段性，上方为主','视盘周围火焰状出血','视野缺损：下方水平视野缺损','小视盘拥挤'], reasoning:'急性无痛性视力下降、视盘节段性水肿伴周围出血、下方水平视野缺损、小视盘拥挤形态，符合NAION典型表现。需排除巨细胞动脉炎（颞动脉活检、ESR/CRP），年龄尚轻但存在血管危险因素。'}, expert:{diagnosis:'非动脉炎性前部缺血性视神经病变（NAION）', basis:['急性无痛性单眼视力下降','视盘水肿伴周围出血','视野：下方水平缺损','颞动脉活检阴性，ESR/CRP正常'], features:['小视盘拥挤','视盘分区性水肿','无巨细胞动脉炎症状']},
+        summary:{tabs:{basic:{name:'陈明辉',gender:'男',birthDate:'1972-05-30',visitAge:'52',contactAlt:'137xxxx4321',visitDate:'2024-06-25',patientId:'P20240625008',contact:'137xxxx4321',initialDiagnosis:'缺血性视神经病变待查'},eyeHistory:{chiefComplaint:'左眼下方视物不见，发现3天。',presentIllness:'患者3天前晨起后发现左眼下方视野缺损，无眼痛、眼红或闪光感。右眼视力正常。否认近期外伤史、剧烈运动或低血压事件。1周前曾患"感冒"，已痊愈。',pastHistory:'双眼近视（-3.0D）。否认青光眼、视网膜疾病史。否认眼部手术史。高血压病史3年，高脂血症2年。睡眠呼吸暂停综合征（已使用CPAP）。'},systemicHistory:{diabetes:'否认糖尿病史。空腹血糖5.8mmol/L（正常高值）。',hypertension:'高血压3年，口服氨氯地平+厄贝沙坦，血压控制可。',other:'高脂血症2年（LDL 3.8mmol/L），口服阿托伐他汀。阻塞性睡眠呼吸暂停综合征2年，使用CPAP治疗。否认心脏病、脑血管疾病。吸烟25年，每日15支。',familyHistory:'父亲患高血压、冠心病；母亲体健。否认家族性眼病、遗传病史。'},eyeExam:{va:'OD 1.0，OS 0.3（下方视野缺损影响）',iop:'OD 15mmHg，OS 14mmHg',slitLamp:'双眼角膜透明，前房深度正常，晶状体透明。',fundus:'OD：视盘边界清，C/D=0.15，小视盘拥挤形态。OS：视盘上方节段性水肿、充血，边界模糊，视盘周围火焰状出血，视网膜动脉轻度狭窄。黄斑区未见异常。'},imaging:{oct:'OD：RNFL厚度正常。OS：上方RNFL增厚（水肿），下方RNFL轻度变薄。',ffa:'OS：视盘上方早期低荧光，晚期荧光渗漏。',vf:'OD：正常。OS：下方水平视野缺损（与生理盲点相连）。',bcva:'OD 1.0，OS 0.3'}}}}
+];
+
+// 讨论帖子数据 - 按病例ID分组
+const postDataByCase = {
+    'all': [
+        { id:'P1', title:'DR伴黄斑水肿的抗VEGF治疗时机选择？', author:'张教授', role:'teacher', time:'2024-06-25 14:30', replies:128, lastReply:'2024-06-28 09:15', pinned:true, body:'各位同学，关于糖尿病黄斑水肿的抗VEGF治疗时机，我想听听大家的看法。根据AAO指南和我国专家共识，何时启动抗VEGF治疗最为合适？请结合临床经验讨论。', images:[], replies_list:[{author:'李医生', role:'student', time:'2024-06-25 16:42', body:'我认为CRT≥300μm且视力下降时应尽早启动。研究表明早期治疗预后更好，Protocol T研究也支持这一观点。'},{author:'王主任', role:'teacher', time:'2024-06-25 17:10', body:'同意李医生的观点。但要强调血糖控制是基础，HbA1c>8%的患者抗VEGF应答可能不佳。', nested_replies:[{author:'张教授', role:'teacher', time:'2024-06-25 18:05', body:'王主任补充得很好。我先提问：对于CRT 250-299μm但视力0.5以上的患者，各位如何决策？'}]}]},
+        { id:'P2', title:'急性闭角型青光眼的急诊处理流程讨论', author:'王主任', role:'teacher', time:'2024-06-24 10:00', replies:89, lastReply:'2024-06-27 16:30', pinned:false, body:'分享一例典型急性闭角型青光眼病例，讨论急诊处理流程中的关键步骤和常见误区。', images:[], replies_list:[{author:'陈医生', role:'student', time:'2024-06-24 11:20', body:'首先降眼压（甘露醇+乙酰唑胺），同时缩瞳，待角膜透明后行LPI。'}]},
+        { id:'P3', title:'BRVO是否需要常规行FFA检查？', author:'刘医生', role:'student', time:'2024-06-23 08:15', replies:102, lastReply:'2024-06-28 07:00', pinned:true, body:'临床中经常遇到视网膜分支静脉阻塞的患者，OCT已经可以清楚显示黄斑水肿情况。请问各位老师，是否每例BRVO都需要做FFA？', images:[], replies_list:[{author:'张教授', role:'teacher', time:'2024-06-23 10:30', body:'好问题。FFA对判断缺血程度和无灌注区范围仍有不可替代的价值，但并非每例都必须做。有黄斑水肿准备抗VEGF治疗时，OCT一般已足够。'}]},
+        { id:'P4', title:'儿童先天性白内障的手术时机与人工晶体选择', author:'赵主任', role:'teacher', time:'2024-06-20 15:00', replies:56, lastReply:'2024-06-27 11:00', pinned:false, body:'关于婴幼儿先天性白内障的处理策略，是眼科领域持续讨论的话题。分享我们的临床经验。', images:[], replies_list:[]},
+        { id:'P5', title:'高度近视黄斑劈裂的OCT特征与随访策略', author:'孙医生', role:'student', time:'2024-06-22 09:30', replies:45, lastReply:'2024-06-26 20:00', pinned:false, body:'近期遇到一例高度近视黄斑劈裂病例，OCT显示外层视网膜劈裂明显，目前BCVA 0.4，如何制定随访计划？', images:[], replies_list:[]},
+        { id:'P6', title:'抗VEGF治疗中的T&E方案 vs PRN方案：临床选择依据', author:'李医生', role:'student', time:'2024-06-18 11:00', replies:76, lastReply:'2024-06-26 14:00', pinned:false, body:'在湿性AMD和DME的抗VEGF治疗中，T&E和PRN方案各有优劣。请大家分享实际工作中的选择经验。', images:[], replies_list:[]},
+        { id:'P7', title:'【置顶】病例讨论区规则与发帖须知', author:'管理员', role:'teacher', time:'2024-06-01 00:00', replies:35, lastReply:'2024-06-25 08:00', pinned:true, body:'欢迎来到病例讨论区！请在讨论时注意保护患者隐私，所有病例信息需脱敏处理。高质量的讨论将由教师团队点评并计入平时成绩。', images:[], replies_list:[]}
+    ]
+};
+
+// 为每个病例生成对应的讨论帖子
+['B1','B2','B3','B4','B5','A1','A2','A3','A4','R1','R2','R3','C1','C2','C3','C4'].forEach(cid => {
+    if (!postDataByCase[cid]) {
+        postDataByCase[cid] = [
+            { id:'P'+cid+'_1', title:'关于'+cid+'病例的讨论', author:'张教授', role:'teacher', time:'2024-06-25 14:30', replies:12, lastReply:'2024-06-28 09:15', pinned:true, body:'欢迎就本病例进行讨论。请结合病例资料，分享您的诊断思路和治疗建议。', images:[], replies_list:[]}
+        ];
+    }
+});
+
+// ==================== 全局状态 ====================
+let currentTab = 'reasoning';
+let currentLevel = null;
+let currentCase = null;
+let currentCaseId = null;  // 当前选中的病例ID（三个Tab共享）
+let currentStep = 0;
+let reasoningAnswers = {};
+let completedCases = {};
+let currentPost = null;
+let currentCompareCase = null;
+let currentSummaryTab = 'basic';
+
+// ==================== Tab 切换 ====================
+document.getElementById('mainTabs').addEventListener('click', function(e){
+    if(e.target.classList.contains('tab-btn')){
+        document.querySelectorAll('#mainTabs .tab-btn').forEach(b=>b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentTab = e.target.dataset.tab;
+        document.querySelectorAll('.tab-content-inner').forEach(c=>c.classList.remove('active'));
+        document.getElementById('tab-'+currentTab).classList.add('active');
+        // 刷新当前Tab内容
+        if(currentTab==='compare') renderCompareView();
+        if(currentTab==='discussion') renderPostList();
+        if(currentTab==='reasoning') {
+            if(currentCaseId) {
+                document.getElementById('emptyStateReasoning').style.display = 'none';
+                document.getElementById('reasoningContent').style.display = 'flex';
+            }
+        }
+    }
+});
+
+// ==================== 共享病例树渲染 ====================
+function renderSharedCaseTree(){
+    const categories = [
+        { key:'basic', name:'基础病例', desc:'适合初学者 · 典型常见病例', icon:'◇', cls:'basic' },
+        { key:'advanced', name:'进阶病例', desc:'适合有一定基础 · 合并症与不典型表现', icon:'◆', cls:'advanced' },
+        { key:'research', name:'科研病例', desc:'罕见或复杂 · 高难度鉴别诊断', icon:'▲', cls:'research' }
+    ];
+    let html = '';
+    categories.forEach(cat=>{
+        const cases = caseData[cat.key];
+        const doneCount = cases.filter(c=>c.status==='completed').length;
+        const totalCount = cases.length;
+        html += '<div class="tree-category '+cat.cls+'">';
+        html += '<div class="tree-category-header" onclick="toggleCategory(\''+cat.key+'\')">';
+        html += '<div style="display:flex;align-items:center;flex:1;">';
+        html += '<span class="cat-icon">'+cat.icon+'</span>';
+        html += '<span>'+cat.name+'</span>';
+        html += '<span class="cat-badge">'+doneCount+'/'+totalCount+'</span>';
+        html += '</div>';
+        html += '<span class="cat-arrow open" id="arrow_'+cat.key+'">▶</span>';
+        html += '</div>';
+        html += '<div class="tree-sub-items" id="sub_'+cat.key+'">';
+        cases.forEach(c=>{
+            const selClass = (currentCaseId && currentCaseId===c.id)?' selected':'';
+            html += '<div class="tree-case-item'+selClass+'" onclick="openSharedCase(\''+cat.key+'\',\''+c.id+'\')" id="treeItem_'+c.id+'">';
+            html += '<span class="case-dot '+c.status+'"></span>';
+            html += '<span class="case-name">'+c.title+'</span>';
+            html += '<span class="case-badge">'+c.disease+'</span>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+    });
+    document.getElementById('caseTreeBody').innerHTML = html;
+}
+
+function toggleCategory(key){
+    const sub = document.getElementById('sub_'+key);
+    const arrow = document.getElementById('arrow_'+key);
+    if(sub.classList.contains('collapsed')){
+        sub.classList.remove('collapsed');
+        arrow.classList.add('open');
+    }else{
+        sub.classList.add('collapsed');
+        arrow.classList.remove('open');
+    }
+}
+
+function openSharedCase(level, caseId){
+    // 更新全局状态
+    currentCase = caseData[level].find(c=>c.id===caseId);
+    currentCaseId = caseId;
+    currentStep = 0;
+    reasoningAnswers = {};
+    
+    // 更新树状列表选中状态
+    document.querySelectorAll('.tree-case-item').forEach(el=>el.classList.remove('selected'));
+    const targetItem = document.getElementById('treeItem_'+caseId);
+    if(targetItem) targetItem.classList.add('selected');
+    
+    // 根据当前Tab刷新内容
+    if(currentTab === 'reasoning') {
+        document.getElementById('emptyStateReasoning').style.display = 'none';
+        document.getElementById('reasoningContent').style.display = 'flex';
+        document.getElementById('resultPanelNew').style.display = 'none';
+        document.getElementById('wsStatus').textContent = currentCase.status==='completed'?'已完成':'学习中';
+        document.getElementById('caseInfoBar').innerHTML = '<span class="info-label">当前病例：</span><span class="info-text">'+currentCase.title+' — '+currentCase.info+'</span>';
+        renderStepCards();
+    } else if(currentTab === 'compare') {
+        // 找到对应的compareCaseData - 按ID精确匹配，否则按疾病类型匹配
+        currentCompareCase = compareCaseData.find(c => c.id === caseId);
+        if (!currentCompareCase && currentCase) {
+            const disease = currentCase.disease;
+            currentCompareCase = compareCaseData.find(c =>
+                c.title.includes(disease) || c.ai.disease.includes(disease)
+            ) || compareCaseData[0];
+        }
+        if (!currentCompareCase) currentCompareCase = compareCaseData[0];
+        document.getElementById('emptyStateCompare').style.display = 'none';
+        document.getElementById('compareContent').style.display = 'block';
+        selectCompareCase(currentCompareCase.id);
+    } else if(currentTab === 'discussion') {
+        document.getElementById('emptyStateDiscussion').style.display = 'none';
+        document.getElementById('discussionContent').style.display = 'block';
+        renderPostList();
+    }
+}
+
+// ==================== Tab 1: 病例推理实训 ====================
+function renderStepCards(){
+    const steps = [
+        { num:1, title:'总结关键临床特征', hint:'请根据病例信息，提炼出对诊断有决定性意义的关键临床特征。', type:'textarea', key:'features' },
+        { num:2, title:'列出鉴别诊断', hint:'请列出至少2-3个候选诊断，按可能性从高到低排列。', type:'dd', key:'dd' },
+        { num:3, title:'选择必要的辅助检查', hint:'请选择为明确诊断所必需的辅助检查（可多选）。', type:'checks', key:'checks' },
+        { num:4, title:'给出最终诊断', hint:'请选择或输入最终诊断结论。', type:'diagnosis', key:'diagnosis' },
+        { num:5, title:'提出治疗建议', hint:'请给出完整的治疗建议，包括药物、手术、随访计划等。', type:'textarea', key:'treatment' }
+    ];
+
+    let html = '';
+    steps.forEach((s,i)=>{
+        const isCurrent = i===currentStep;
+        const isDone = i<currentStep;
+        let cardCls = 'step-card';
+        if(isCurrent) cardCls += ' current';
+        if(isDone) cardCls += ' done';
+
+        html += '<div class="'+cardCls+'">';
+        html += '<div class="step-card-header">';
+        html += '<span class="step-num-circle">'+(isDone?'✓':s.num)+'</span>';
+        html += '<span class="step-card-title">步骤'+s.num+'：'+s.title+'</span>';
+        html += '<span class="step-required">*</span>';
+        html += '</div>';
+
+        if(isCurrent || isDone){
+            html += '<div class="step-card-body">';
+            if(!isDone){
+                html += '<div class="step-card-hint">'+s.hint+'</div>';
+            }
+            if(s.type==='textarea'){
+                const val = reasoningAnswers[i] || '';
+                html += '<textarea class="step-textarea" id="stepInput_'+i+'" placeholder="请在此输入..." '+(isDone?'disabled':'')+'>'+escHtml(val)+'</textarea>';
+            }else if(s.type==='dd'){
+                const dds = reasoningAnswers[i] || [''];
+                html += '<div id="ddContainer">';
+                dds.forEach((d,di)=>{
+                    html += '<div class="dd-entry"><span class="dd-index">'+(di+1)+'</span><input id="ddInput_'+di+'" value="'+escHtml(d)+'" placeholder="候选诊断 '+(di+1)+'" '+(isDone?'disabled':'')+'><button class="btn-remove-dd" onclick="removeDD_new('+di+')" '+(isDone?'disabled':'')+' '+(dds.length<=1?'style="visibility:hidden"':'')+'>×</button></div>';
+                });
+                html += '</div>';
+                if(!isDone) html += '<button class="btn-add-dd" onclick="addDD_new()">+ 添加候选诊断</button>';
+            }else if(s.type==='checks'){
+                const checks = ['OCT','FFA','视野','眼压','眼底照相','ICGA','房角镜','B超'];
+                const sel = reasoningAnswers[i] || [];
+                html += '<div class="check-grid">';
+                checks.forEach(ch=>{
+                    const checked = sel.includes(ch);
+                    html += '<label class="check-card'+(checked?' selected':'')+'" id="checkCard_'+ch+'"><input type="checkbox" value="'+ch+'" '+(checked?'checked':'')+' '+(isDone?'disabled':'')+' onchange="toggleCheckCard(this)">'+ch+'</label>';
+                });
+                html += '</div>';
+            }else if(s.type==='diagnosis'){
+                html += '<div class="diag-select-wrap"><select id="diagSelectNew" '+(isDone?'disabled':'')+'><option value="">-- 请选择诊断 --</option>';
+                const diagOpts = currentCase.answer.dd;
+                diagOpts.forEach(d=>{ html += '<option value="'+escHtml(d)+'">'+d+'</option>'; });
+                html += '</select></div>';
+                html += '<textarea class="step-textarea" id="diagSupplementNew" placeholder="补充诊断说明（可选）..." style="min-height:60px;" '+(isDone?'disabled':'')+'>'+escHtml(reasoningAnswers[i]||'')+'</textarea>';
+            }
+            if(isDone){
+                html += '<div style="margin-top:8px;font-size:11px;color:#34a853;">✓ 已完成</div>';
+            }
+            html += '</div>';
+        }
+        html += '</div>';
+    });
+
+    document.getElementById('stepCardsContainer').innerHTML = html;
+
+    const btnPrev = document.getElementById('btnPrevStep');
+    const btnNext = document.getElementById('btnNextStep');
+    const btnSubmit = document.getElementById('btnSubmitStep');
+    btnPrev.style.visibility = currentStep===0?'hidden':'visible';
+    if(currentStep>=4){
+        btnNext.style.display = 'none';
+        btnSubmit.style.display = 'inline-flex';
+    }else{
+        btnNext.style.display = 'inline-flex';
+        btnSubmit.style.display = 'none';
+    }
+}
+
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function saveAnswers_new(){
+    if(currentStep===0 || currentStep===4){
+        const el = document.getElementById('stepInput_'+currentStep);
+        if(el) reasoningAnswers[currentStep] = el.value;
+    }
+    if(currentStep===1){
+        const dds = [];
+        document.querySelectorAll('#ddContainer input').forEach(inp=>{ if(inp.value.trim()) dds.push(inp.value.trim()); });
+        reasoningAnswers[currentStep] = dds;
+    }
+    if(currentStep===2){
+        const checks = [];
+        document.querySelectorAll('.check-card input[type=checkbox]:checked').forEach(cb=>checks.push(cb.value));
+        reasoningAnswers[currentStep] = checks;
+    }
+    if(currentStep===3){
+        const sel = document.getElementById('diagSelectNew')?.value || '';
+        const sup = document.getElementById('diagSupplementNew')?.value || '';
+        reasoningAnswers[currentStep] = sel + (sup?' | '+sup:'');
+    }
+}
+
+function addDD_new(){
+    const dds = reasoningAnswers[1] || [''];
+    dds.push('');
+    reasoningAnswers[1] = dds;
+    renderStepCards();
+}
+
+function removeDD_new(idx){
+    const dds = reasoningAnswers[1] || [];
+    dds.splice(idx,1);
+    if(dds.length===0) dds.push('');
+    reasoningAnswers[1] = dds;
+    renderStepCards();
+}
+
+function toggleCheckCard(cb){
+    cb.parentElement.classList.toggle('selected', cb.checked);
+}
+
+function nextStep_new(){
+    saveAnswers_new();
+    if(currentStep<4){ currentStep++; renderStepCards(); }
+}
+
+function prevStep_new(){
+    saveAnswers_new();
+    if(currentStep>0){ currentStep--; renderStepCards(); }
+}
+
+function submitReasoning_new(){
+    saveAnswers_new();
+    const answer = currentCase.answer;
+    let featureScore=0, ddScore=0, checkScore=0, diagScore=0, treatScore=0;
+
+    const feats = (reasoningAnswers[0]||'').toLowerCase();
+    const af = answer.features.toLowerCase();
+    const featWords = af.split(/[,，]/);
+    let featMatch = 0;
+    featWords.forEach(w=>{ if(feats.includes(w.trim())) featMatch++; });
+    featureScore = featWords.length>0?Math.round(featMatch/featWords.length*100):50;
+
+    const dds = reasoningAnswers[1] || [];
+    const answerDD = answer.dd;
+    let ddMatch = 0;
+    dds.forEach(d=>{ if(answerDD.some(a=>d.includes(a)||a.includes(d))) ddMatch++; });
+    ddScore = answerDD.length>0?Math.round(Math.min(ddMatch/answerDD.length,1)*100):50;
+
+    const checks = reasoningAnswers[2] || [];
+    const answerChecks = answer.checks;
+    let checkMatch = 0;
+    checks.forEach(c=>{ if(answerChecks.includes(c)) checkMatch++; });
+    checkScore = answerChecks.length>0?Math.round(checkMatch/answerChecks.length*100):50;
+
+    const diag = (reasoningAnswers[3]||'').toLowerCase();
+    const ad = answer.diagnosis.toLowerCase();
+    diagScore = diag.includes(ad)||ad.includes(diag)?100:(diag.length>5?60:30);
+
+    const treat = (reasoningAnswers[4]||'').toLowerCase();
+    const at = answer.treatment.toLowerCase();
+    const treatWords = at.split(/[,，]/);
+    let treatMatch = 0;
+    treatWords.forEach(w=>{ if(treat.includes(w.trim())) treatMatch++; });
+    treatScore = treatWords.length>0?Math.round(treatMatch/treatWords.length*100):50;
+
+    const totalScore = Math.round((featureScore+ddScore+checkScore+diagScore+treatScore)/5);
+
+    currentCase.status = 'completed';
+    completedCases[currentCase.id] = totalScore;
+    document.getElementById('wsStatus').textContent = '已完成';
+    renderSharedCaseTree();
+
+    const scoreItems = [
+        { name:'诊断准确率', score:diagScore, color:'#1a73e8', comment:diagScore>=90?'诊断准确，与标准答案高度一致':diagScore>=70?'诊断基本正确，存在少量偏差':'诊断存在较大偏差，需加强鉴别诊断能力' },
+        { name:'逻辑完整度', score:Math.round((featureScore+ddScore)/2), color:'#34a853', comment:(featureScore+ddScore)/2>=80?'逻辑清晰，临床特征与鉴别诊断关联紧密':'逻辑完整度有待提高，需强化临床推理训练' },
+        { name:'检查合理性', score:checkScore, color:'#fbbc04', comment:checkScore>=80?'辅助检查选择合理，避免了不必要的检查':checkScore>=60?'检查选择基本合理，存在少量遗漏或冗余':'检查选择需优化，请复习辅助检查的适应症' },
+        { name:'治疗规范性', score:treatScore, color:'#ea4335', comment:treatScore>=80?'治疗方案规范，符合当前临床指南推荐':treatScore>=60?'治疗方案基本可行，细节可进一步优化':'治疗建议不够全面，建议参考最新诊疗指南' }
+    ];
+
+    let resultHtml = '<div class="score-result-panel">';
+    resultHtml += '<div class="score-result-header"><h3>诊断推理评估报告</h3><span class="score-tag-pass">'+(totalScore>=60?'诊断通过':'需重新评估')+'</span></div>';
+    resultHtml += '<div class="score-result-body">';
+    resultHtml += '<div class="score-main-row">';
+    resultHtml += '<div><span class="score-big-number">'+totalScore+'</span><span class="score-big-outof">/100</span></div>';
+    resultHtml += '<div style="flex:1;"><div class="score-big-bar"><div class="score-big-bar-fill" style="width:'+totalScore+'%"></div></div></div>';
+    resultHtml += '</div>';
+    resultHtml += '<div class="score-detail-grid">';
+    scoreItems.forEach(si=>{
+        resultHtml += '<div class="score-detail-item">';
+        resultHtml += '<div class="sd-header"><span class="sd-name">'+si.name+'</span><span class="sd-value" style="color:'+si.color+'">'+si.score+'分</span></div>';
+        resultHtml += '<div class="sd-bar"><div class="sd-bar-fill" style="width:'+si.score+'%;background:'+si.color+'"></div></div>';
+        resultHtml += '<div class="sd-comment">'+si.comment+'</div>';
+        resultHtml += '</div>';
+    });
+    resultHtml += '</div>';
+    resultHtml += '<div class="expert-review"><div class="er-title">专家点评</div><div class="er-content">';
+    if(totalScore>=90) resultHtml += '表现优秀！您在诊断推理过程中展现了扎实的临床功底，对关键特征的把握精准，鉴别诊断思路清晰。建议继续保持并尝试更具挑战性的科研病例。';
+    else if(totalScore>=75) resultHtml += '整体表现良好。您在主要诊断方向上把握准确，但在鉴别诊断的广度和辅助检查的精确选择上还有提升空间。建议多加练习不典型表现的病例。';
+    else if(totalScore>=60) resultHtml += '基本达到要求。推理过程虽然达到及格线，但部分关键环节存在明显漏洞。建议重点复习'+currentCase.disease+'的相关基础知识，然后重新挑战本病例。';
+    else resultHtml += '本次表现有待提高。建议您先回顾'+currentCase.disease+'的基础课程，掌握核心诊断要点后再次尝试，相信会有明显进步。';
+    resultHtml += '</div></div>';
+    resultHtml += '<div style="text-align:right;margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">';
+    resultHtml += '<button class="btn btn-outline" onclick="resetCase()">重新练习</button>';
+    resultHtml += '<button class="btn-report-submit" onclick="generateReasoningReport()">提交报告</button>';
+    resultHtml += '</div></div></div>';
+
+    document.getElementById('resultPanelNew').innerHTML = resultHtml;
+    document.getElementById('resultPanelNew').style.display = 'block';
+    document.getElementById('btnNextStep').style.display = 'none';
+    document.getElementById('btnSubmitStep').style.display = 'none';
+    document.getElementById('btnPrevStep').style.display = 'none';
+    document.getElementById('resultPanelNew').scrollIntoView({ behavior:'smooth' });
+}
+
+function resetCase(){
+    currentCase.status = 'not_started';
+    delete completedCases[currentCase.id];
+    currentStep = 0;
+    reasoningAnswers = {};
+    document.getElementById('resultPanelNew').style.display = 'none';
+    document.getElementById('wsStatus').textContent = '学习中';
+    renderSharedCaseTree();
+    renderStepCards();
+}
+
+// ==================== 学习报告弹窗 ====================
+function generateReasoningReport(){
+    const scoreItems = document.querySelectorAll('#resultPanelNew .score-detail-item');
+    const scores = {};
+    scoreItems.forEach(si=>{
+        const name = si.querySelector('.sd-name').textContent;
+        const valMatch = si.querySelector('.sd-value').textContent.match(/(\d+)/);
+        if(valMatch) scores[name] = parseInt(valMatch[1]);
+    });
+    const totalMatch = document.querySelector('#resultPanelNew .score-big-number');
+    const total = totalMatch?parseInt(totalMatch.textContent):0;
+
+    const now = new Date();
+    const dateStr = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+
+    let html = '<div class="report-content">';
+    html += '<div class="report-header"><h2>病例学习报告</h2><div class="report-subtitle">眼科病例实训系统</div></div>';
+    html += '<div class="report-meta"><div>学员：管理员</div><div>病例：'+currentCase.title+'</div><div>完成时间：'+dateStr+'</div></div>';
+    html += '<div class="report-score-section">';
+    html += '<div class="report-score-big"><div class="big-score">'+total+'</div><div class="big-label">'+(total>=90?'优秀':total>=75?'良好':total>=60?'一般':'需提高')+'</div></div>';
+    html += '<div class="report-score-detail">';
+    for(const [k,v] of Object.entries(scores)){
+        html += '<div class="score-bar-item"><div class="score-bar-header"><span>'+k+'</span><span>'+v+'分</span></div><div class="progress-bar"><div class="progress-bar-fill" style="width:'+v+'%;background:'+(v>=90?'var(--success)':v>=70?'var(--primary)':'var(--warning)')+'"></div></div></div>';
+    }
+    html += '</div></div>';
+    html += '<div class="report-suggest"><h4>下一步学习建议</h4><div class="suggest-grid">';
+    if(total<70){ html += '<div class="suggest-item"><div class="suggest-icon">📚</div><div class="suggest-title">加强基础知识</div><div class="suggest-desc">建议复习'+currentCase.disease+'相关基础课程内容，巩固疾病分类和诊断标准。</div></div>'; }
+    html += '<div class="suggest-item"><div class="suggest-icon">🔍</div><div class="suggest-title">扩大鉴别诊断范围</div><div class="suggest-desc">建议多接触不同类型病例，拓展鉴别诊断思路，注意非典型表现。</div></div>';
+    html += '<div class="suggest-item"><div class="suggest-icon">🎯</div><div class="suggest-title">优化治疗策略</div><div class="suggest-desc">参考最新指南更新治疗知识，关注个体化治疗方案的选择。</div></div>';
+    html += '</div></div>';
+    html += '<div class="report-suggest"><h4>推荐学习资源</h4><ul class="resource-list">';
+    html += '<li><a href="#">'+currentCase.disease+'诊疗指南（2024版） - 中华医学会眼科学分会</a></li>';
+    html += '<li><a href="#">眼科影像诊断学 - 基础课程第三章</a></li>';
+    html += '<li><a href="#">临床病例讨论精选 - 眼科疑难病例解析</a></li>';
+    html += '</ul></div>';
+    html += '<div class="report-actions"><button class="btn btn-outline" onclick="printReport()">打印</button><button class="btn btn-outline" onclick="closeReport()">导出</button><button class="btn btn-primary" onclick="closeReport()">关闭</button></div>';
+    html += '</div>';
+
+    document.getElementById('reportContent').innerHTML = html;
+    document.getElementById('reportOverlay').style.display = 'flex';
+}
+
+function generateCompareReport(){
+    if(!currentCompareCase) return;
+    const now = new Date();
+    const dateStr = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日';
+
+    let html = '<div class="report-content">';
+    html += '<div class="report-header"><h2>AI诊断对比学习报告</h2><div class="report-subtitle">眼科病例实训系统</div></div>';
+    html += '<div class="report-meta"><div>学员：管理员</div><div>病例：'+currentCompareCase.title+'</div><div>完成时间：'+dateStr+'</div></div>';
+    html += '<div class="report-suggest"><h4>病例信息摘要</h4>';
+    html += '<p style="font-size:13px;color:var(--gray-600);">难度等级：'+currentCompareCase.difficulty+' | AI置信度：'+currentCompareCase.ai.confidence+'%</p>';
+    html += '</div>';
+    html += '<div class="report-suggest"><h4>AI诊断 vs 专家诊断对比</h4>';
+    html += '<table class="diff-table"><thead><tr><th>对比项</th><th>AI诊断</th><th>专家诊断</th><th>一致性</th></tr></thead><tbody>';
+    html += '<tr><td>诊断结论</td><td>'+currentCompareCase.ai.disease+'</td><td>'+currentCompareCase.expert.diagnosis+'</td><td><span class="'+(currentCompareCase.ai.disease.includes(currentCompareCase.expert.diagnosis)||currentCompareCase.expert.diagnosis.includes(currentCompareCase.ai.disease)?'match':'mismatch')+'">'+(currentCompareCase.ai.disease.includes(currentCompareCase.expert.diagnosis)||currentCompareCase.expert.diagnosis.includes(currentCompareCase.ai.disease)?'一致 ✓':'存在差异 ✗')+'</span></td></tr>';
+    html += '<tr><td>置信度</td><td>'+currentCompareCase.ai.confidence+'%</td><td>—</td><td>—</td></tr>';
+    html += '</tbody></table></div>';
+    html += '<div class="report-suggest"><h4>关键差异点分析</h4>';
+    html += '<p style="font-size:13px;color:var(--gray-700);">AI诊断与专家诊断在主要结论上基本一致。AI的优势在于快速识别典型病变特征，而专家在综合分析非典型表现和排除罕见病因方面更具优势。建议学习者在掌握典型特征的基础上，关注疾病谱的宽度和鉴别诊断的严谨性。</p>';
+    html += '</div>';
+    html += '<div class="report-suggest"><h4>学习要点总结</h4><div class="suggest-grid">';
+    html += '<div class="suggest-item"><div class="suggest-icon">🤖</div><div class="suggest-title">AI辅助价值</div><div class="suggest-desc">AI可快速提供高置信度诊断参考，尤其适合筛查场景。</div></div>';
+    html += '<div class="suggest-item"><div class="suggest-icon">🧠</div><div class="suggest-title">专家经验不可替代</div><div class="suggest-desc">不典型病例和复杂鉴别诊断仍需临床经验判断。</div></div>';
+    html += '<div class="suggest-item"><div class="suggest-icon">🔄</div><div class="suggest-title">人机协同最优</div><div class="suggest-desc">AI初筛+专家确认是目前最优的临床工作流。</div></div>';
+    html += '</div></div>';
+    html += '<div class="report-actions"><button class="btn btn-outline" onclick="printReport()">打印</button><button class="btn btn-primary" onclick="closeReport()">关闭</button></div>';
+    html += '</div>';
+
+    document.getElementById('reportContent').innerHTML = html;
+    document.getElementById('reportOverlay').style.display = 'flex';
+}
+
+function printReport(){ window.print(); }
+function closeReport(){ document.getElementById('reportOverlay').style.display = 'none'; }
+
+// ==================== Tab 2: AI诊断对比学习 ====================
+function renderCompareView(){
+    if(!currentCaseId) {
+        document.getElementById('emptyStateCompare').style.display = 'block';
+        document.getElementById('compareContent').style.display = 'none';
+        return;
+    }
+    // 找到对应的compareCaseData - 按ID精确匹配，否则按疾病类型匹配
+    currentCompareCase = compareCaseData.find(c => c.id === currentCaseId);
+    if (!currentCompareCase && currentCase) {
+        const disease = currentCase.disease;
+        currentCompareCase = compareCaseData.find(c =>
+            c.title.includes(disease) || c.ai.disease.includes(disease)
+        ) || compareCaseData[0];
+    }
+    if (!currentCompareCase) currentCompareCase = compareCaseData[0];
+    document.getElementById('emptyStateCompare').style.display = 'none';
+    document.getElementById('compareContent').style.display = 'block';
+    selectCompareCase(currentCompareCase.id);
+}
+
+function selectCompareCase(id){
+    currentCompareCase = compareCaseData.find(c=>c.id===id);
+    if(!currentCompareCase) return;
+
+    // 渲染病例资料摘要
+    renderCaseSummary();
+
+    // 置信度颜色分级
+    const conf = currentCompareCase.ai.confidence;
+    let confCls = 'low-conf', barCls = 'low-conf';
+    if(conf >= 90) { confCls = 'high-conf'; barCls = 'high-conf'; }
+    else if(conf >= 70) { confCls = 'medium-conf'; barCls = 'medium-conf'; }
+
+    // ===== AI诊断面板 =====
+    let aiHtml = '<div class="panel-header"><span class="header-icon">🤖</span>AI 诊断结果</div>';
+    aiHtml += '<div class="panel-body">';
+    // 诊断结论
+    aiHtml += '<div class="ai-diagnosis-name">'+currentCompareCase.ai.disease+'</div>';
+    // 置信度进度条
+    aiHtml += '<div class="confidence-module">';
+    aiHtml += '<div class="cf-label-row">';
+    aiHtml += '<span class="cf-title">AI 置信度</span>';
+    aiHtml += '<span class="cf-value '+confCls+'">'+conf+'%</span>';
+    aiHtml += '</div>';
+    aiHtml += '<div class="cf-bar"><div class="cf-bar-fill '+barCls+'" style="width:'+conf+'%;"></div></div>';
+    aiHtml += '</div>';
+    // 病灶检测
+    aiHtml += '<div class="lesion-module">';
+    aiHtml += '<div class="section-label">病灶检测结果</div>';
+    aiHtml += '<div class="lesion-card-list">';
+    const dotClasses = ['red','orange','yellow','gray'];
+    currentCompareCase.ai.lesions.forEach((l,i)=>{
+        // 尝试从病灶描述中提取置信度关键词
+        let confTag = '';
+        if(l.includes('可见') || l.includes('典型')) confTag = '<span class="l-conf-tag">高置信</span>';
+        else if(l.includes('提示') || l.includes('可疑')) confTag = '<span class="l-conf-tag" style="background:#fef7e0;color:#b06000;">中置信</span>';
+        aiHtml += '<div class="lesion-card">';
+        aiHtml += '<span class="l-dot '+dotClasses[i%dotClasses.length]+'"></span>';
+        aiHtml += '<span class="l-name">'+escHtml(l)+'</span>';
+        aiHtml += confTag;
+        aiHtml += '</div>';
+    });
+    aiHtml += '</div></div>';
+    // 推理依据
+    aiHtml += '<div class="reasoning-module">';
+    aiHtml += '<div class="section-label">推理依据</div>';
+    aiHtml += '<ul class="reasoning-list">';
+    const reasoningPoints = currentCompareCase.ai.reasoning.split(/[；;。\n]+/).filter(s=>s.trim().length>5);
+    reasoningPoints.forEach((pt,i)=>{
+        aiHtml += '<li><span class="r-num">'+(i+1)+'</span><span>'+escHtml(pt.trim())+'</span></li>';
+    });
+    if(reasoningPoints.length===0){
+        aiHtml += '<li><span class="r-num">1</span><span>'+escHtml(currentCompareCase.ai.reasoning)+'</span></li>';
+    }
+    aiHtml += '</ul></div>';
+    aiHtml += '</div>'; // panel-body
+    document.getElementById('aiPanel').innerHTML = aiHtml;
+
+    // ===== 专家诊断面板 =====
+    let exHtml = '<div class="panel-header"><span class="header-icon">👨‍⚕️</span>专家诊断结果</div>';
+    exHtml += '<div class="panel-body">';
+    // 诊断结论
+    exHtml += '<div class="expert-diagnosis-name">'+currentCompareCase.expert.diagnosis+'</div>';
+    // 诊断依据
+    exHtml += '<div class="basis-module">';
+    exHtml += '<div class="section-label">诊断依据</div>';
+    exHtml += '<ul class="basis-list">';
+    currentCompareCase.expert.basis.forEach((b,i)=>{
+        exHtml += '<li><span class="b-num">'+(i+1)+'</span><span class="b-text">'+escHtml(b)+'</span></li>';
+    });
+    exHtml += '</ul></div>';
+    // 治疗建议
+    exHtml += '<div class="treatment-module">';
+    exHtml += '<div class="section-label">治疗建议</div>';
+    exHtml += '<ul class="treatment-list">';
+    const treatments = getTreatmentList(id, currentCompareCase);
+    treatments.forEach(t=>{
+        exHtml += '<li><span class="t-check">✓</span><span>'+escHtml(t)+'</span></li>';
+    });
+    exHtml += '</ul></div>';
+    exHtml += '</div>'; // panel-body
+    document.getElementById('expertPanel').innerHTML = exHtml;
+
+    // ===== 底部差异解析 =====
+    let diffHtml = '<div class="diff-title">诊断解析：AI 与专家差异对比</div>';
+    diffHtml += '<table class="diff-table"><thead><tr><th>分析维度</th><th>AI 诊断</th><th>专家诊断</th><th>一致性</th></tr></thead><tbody>';
+    const aiDiag = currentCompareCase.ai.disease;
+    const exDiag = currentCompareCase.expert.diagnosis;
+    const isMatch = aiDiag.includes(exDiag)||exDiag.includes(aiDiag);
+    const matchCls = isMatch?'match':'mismatch';
+    const matchText = isMatch?'一致 ✓':'存在差异 ✗';
+    diffHtml += '<tr><td><strong>主要诊断</strong></td><td>'+escHtml(aiDiag)+'</td><td>'+escHtml(exDiag)+'</td><td><span class="'+matchCls+'">'+matchText+'</span></td></tr>';
+    diffHtml += '<tr><td><strong>置信度/确定性</strong></td><td><span class="'+confCls+'">'+conf+'%（量化评分）</span></td><td>基于临床经验 + 循证医学判断</td><td><span class="match">互补</span></td></tr>';
+    diffHtml += '<tr><td><strong>病灶识别</strong></td><td>自动检测 '+currentCompareCase.ai.lesions.length+' 项特征</td><td>综合影像表现 + 临床体征解读</td><td><span class="match">基本一致</span></td></tr>';
+    diffHtml += '<tr><td><strong>推理方法</strong></td><td>数据驱动特征匹配</td><td>病生理机制推理 + 经验判断</td><td><span class="partial">方法不同，结论相近</span></td></tr>';
+    // 关键差异点高亮
+    if(!isMatch){
+        diffHtml += '<tr class="highlight"><td><strong>关键差异</strong></td><td colspan="3" style="color:#b06000;">AI诊断与专家诊断在主要结论上存在差异，建议重点关注专家诊断中的依据条目，理解临床推理逻辑。</td></tr>';
+    }
+    diffHtml += '</tbody></table>';
+    document.getElementById('diffPanel').innerHTML = diffHtml;
+}
+
+// 获取治疗建议列表（从switch逻辑提取）
+function getTreatmentList(id, compareCase){
+    switch(id){
+        case 'C1': return ['严格控制血糖、血压、血脂（HbA1c＜7%）','抗VEGF治疗（雷珠单抗/阿柏西普），PRN方案','每1-3个月复查OCT，监测黄斑厚度变化','改善生活方式：戒烟限酒、合理饮食、适当运动'];
+        case 'C2': return ['立即降眼压：20%甘露醇250ml快速静滴 + 乙酰唑胺500mg口服','缩瞳：1%毛果芸香碱滴眼液，每15分钟×4次，后改为qid','角膜透明后行激光周边虹膜切开术（LPI）','对侧眼行预防性LPI'];
+        case 'C3': return ['抗VEGF治疗：阿柏西普2mg玻璃体腔注射，T&E方案','首次3次每月注射后根据OCT调整间隔','定期OCT+OCTA监测（每1-2个月）','继续口服AREDS2配方营养补充剂'];
+        case 'C4': return ['控制血管危险因素：严格管理血压、血脂、血糖','阿司匹林100mg qd（排除出血风险后）','停用可能与NAION相关的药物（如PDE-5抑制剂）','低视力康复训练，定期视野+OCT随访（每3个月）'];
+        default: return compareCase.expert.features || ['详见专家诊断依据'];
+    }
+}
+
+// ==================== 病例资料摘要渲染 ====================
+function renderCaseSummary(){
+    if(!currentCompareCase||!currentCompareCase.summary) return;
+    const s = currentCompareCase.summary;
+    document.getElementById('summaryCaseTitle').textContent = '病例资料摘要 — '+currentCompareCase.title;
+    document.getElementById('summaryBadge').textContent = currentCompareCase.difficulty==='科研'?'T3':'T1';
+    switchSummaryTab(currentSummaryTab);
+}
+
+function switchSummaryTab(tabKey){
+    currentSummaryTab = tabKey;
+    document.querySelectorAll('#summaryTabs .summary-tab-btn').forEach(b=>{
+        b.classList.toggle('active', b.dataset.stab===tabKey);
+    });
+    if(!currentCompareCase||!currentCompareCase.summary) return;
+    const s = currentCompareCase.summary.tabs[tabKey];
+    if(!s) return;
+
+    let html = '';
+    switch(tabKey){
+        case 'basic':
+            html += '<div class="summary-form-grid">';
+            html += gf('姓名',s.name,true)+gf('性别',renderGender(s.gender));
+            html += gf('出生日期',s.birthDate)+gf('就诊年龄',s.visitAge+'岁');
+            html += gf('备用联系方式',s.contactAlt)+gf('就诊日期',s.visitDate);
+            html += '</div>';
+            html += '<div class="summary-form-grid" style="margin-top:16px;">';
+            html += gf('患者编号',s.patientId,true)+gf('联系方式',s.contact);
+            html += '</div>';
+            html += '<div class="summary-form-grid full-width" style="margin-top:16px;">';
+            html += gf('初步诊断',s.initialDiagnosis);
+            html += '</div>';
+            break;
+        case 'eyeHistory':
+            html += stb('主诉', s.chiefComplaint);
+            html += stb('现病史', s.presentIllness);
+            html += stb('既往史', s.pastHistory);
+            break;
+        case 'systemicHistory':
+            html += stb('糖尿病情况', s.diabetes);
+            html += stb('高血压情况', s.hypertension);
+            html += stb('其他病史', s.other);
+            html += stb('家族史', s.familyHistory);
+            break;
+        case 'eyeExam':
+            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;">';
+            html += exItem('视力', s.va)+exItem('眼压', s.iop);
+            html += '</div>';
+            html += exItem('裂隙灯检查', s.slitLamp);
+            html += exItem('眼底检查', s.fundus);
+            break;
+        case 'imaging':
+            html += exItem('OCT', s.oct);
+            html += exItem('FFA', s.ffa);
+            if(s.octa) html += exItem('OCTA', s.octa);
+            if(s.icga) html += exItem('ICGA', s.icga);
+            if(s.ubm) html += exItem('UBM', s.ubm);
+            if(s.vf) html += exItem('视野', s.vf);
+            if(s.bcva) html += exItem('BCVA', s.bcva);
+            break;
+    }
+    document.getElementById('summaryTabContent').innerHTML = html;
+}
+
+function gf(label, value, required){
+    const req = required?'<span class="required">*</span>':'';
+    return '<div class="summary-field"><div class="sf-label">'+label+req+'</div><div class="sf-value">'+value+'</div></div>';
+}
+function renderGender(g){ return '<div class="sf-value gender-options"><label><input type="radio" '+(g==='男'?'checked':'')+' disabled>男</label><label><input type="radio" '+(g==='女'?'checked':'')+' disabled>女</label></div>'; }
+function stb(label, content){ return '<div class="summary-text-block"><div class="stb-label">'+label+'</div><div class="stb-content">'+content+'</div></div>'; }
+function exItem(label, value){ return '<div class="summary-exam-item"><span class="exam-label">'+label+'</span><span class="exam-value">'+value+'</span></div>'; }
+
+// ==================== Tab 3: 病例讨论（新版样式） ====================
+function renderPostList(sortBy){
+    sortBy = sortBy || 'latest_reply';
+    if(!currentCaseId) {
+        document.getElementById('emptyStateDiscussion').style.display = 'block';
+        document.getElementById('discussionContent').style.display = 'none';
+        return;
+    }
+    document.getElementById('emptyStateDiscussion').style.display = 'none';
+    document.getElementById('discussionContent').style.display = 'block';
+    document.getElementById('discussionListView').style.display = 'block';
+    document.getElementById('postDetailView').style.display = 'none';
+    document.getElementById('newDiscussionForm').style.display = 'none';
+
+    // 获取当前病例的讨论帖子
+    let posts = postDataByCase[currentCaseId] || postDataByCase['all'];
+    if(!posts || posts.length === 0) posts = postDataByCase['all'];
+
+    if(sortBy==='latest_reply') posts = [...posts].sort((a,b)=>new Date(b.lastReply)-new Date(a.lastReply));
+    else posts = [...posts].sort((a,b)=>new Date(b.time)-new Date(a.time));
+
+    const pinned = posts.filter(p=>p.pinned);
+    const normal = posts.filter(p=>!p.pinned);
+
+    let html = '';
+    [...pinned, ...normal].forEach(p=>{
+        const isTeacher = p.role === 'teacher';
+        const cardClass = 'post-card' + (isTeacher?' teacher-post':' student-post') + (p.pinned?' pinned-post':'');
+        html += '<div class="'+cardClass+'" onclick="viewPost(\''+p.id+'\')">';
+        html += '<div class="post-card-header">';
+        html += '<div class="post-card-avatar '+(isTeacher?'teacher-av':'student-av')+'">'+(isTeacher?'教':p.author[0])+'</div>';
+        html += '<div>';
+        html += '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">';
+        html += '<span class="post-card-author">'+p.author+'</span>';
+        html += '<span class="role-badge '+(isTeacher?'teacher':'student')+'">'+(isTeacher?'教师':'学生')+'</span>';
+        if(p.pinned) html += '<span class="pin-badge">置顶</span>';
+        html += '</div>';
+        html += '</div>';
+        html += '<span class="post-card-time">'+p.time+'</span>';
+        html += '</div>';
+        html += '<div class="post-card-body">'+p.title+'</div>';
+        html += '<div class="post-card-actions">';
+        html += '<span style="font-size:12px;color:var(--gray-500);">'+p.replies+' 条回复</span>';
+        html += '<span style="font-size:12px;color:var(--gray-400);">最后回复：'+p.lastReply+'</span>';
+        html += '<span class="action-btn">♻️ 回复</span>';
+        html += '<span class="action-btn">⋯ 更多</span>';
+        html += '</div></div>';
+    });
+
+    document.getElementById('postCardList').innerHTML = html;
+    document.getElementById('discStatus').textContent = '共 '+posts.length+' 条讨论';
+}
+
+function sortPosts(sortBy){ renderPostList(sortBy); }
+
+function viewPost(id){
+    // 获取当前病例的讨论帖子
+    let posts = postDataByCase[currentCaseId] || postDataByCase['all'];
+    currentPost = posts.find(p=>p.id===id);
+    if(!currentPost) return;
+    document.getElementById('discussionListView').style.display = 'none';
+    document.getElementById('postDetailView').style.display = 'block';
+
+    let html = '<div class="post-full-card">';
+    html += '<div class="full-header">';
+    html += '<div class="post-card-avatar '+(currentPost.role==='teacher'?'teacher-av':'student-av')+'">'+(currentPost.role==='teacher'?'教':currentPost.author[0])+'</div>';
+    html += '<div><strong>'+currentPost.author+'</strong>&nbsp;'+(currentPost.role==='teacher'?'<span class="role-badge teacher">教师</span>':'<span class="role-badge student">学生</span>')+'</div>';
+    html += '<span style="font-size:12px;color:var(--gray-400);margin-left:auto;">'+currentPost.time+'</span>';
+    html += '</div>';
+    html += '<h3 style="font-size:17px;margin-bottom:10px;">'+currentPost.title+'</h3>';
+    html += '<div class="full-body">'+currentPost.body+'</div>';
+    if(currentPost.images&&currentPost.images.length>0){
+        html += '<div class="full-images">';
+        currentPost.images.forEach(img=>{ html += '<img src="'+img+'" alt="附件图片">'; });
+        html += '</div>';
+    }
+    html += '</div>';
+    document.getElementById('postDetailContent').innerHTML = html;
+
+    let replyHtml = '<div class="reply-title">回复（'+currentPost.replies+'）</div>';
+    if(currentPost.replies_list){
+        currentPost.replies_list.forEach(r=>{
+            replyHtml += '<div class="reply-card"><div class="reply-header"><span class="reply-author">'+r.author+'</span>'+(r.role==='teacher'?'<span class="role-badge teacher" style="font-size:10px;">教师</span>':'')+'<span class="reply-time">'+r.time+'</span></div><div class="reply-body">'+r.body+'</div></div>';
+            if(r.nested_replies){
+                r.nested_replies.forEach(nr=>{
+                    replyHtml += '<div class="reply-card nested-reply"><div class="reply-header"><span class="reply-author">'+nr.author+'</span>'+(nr.role==='teacher'?'<span class="role-badge teacher" style="font-size:10px;">教师</span>':'')+'<span class="reply-time">'+nr.time+'</span></div><div class="reply-body">'+nr.body+'</div></div>';
+                });
+            }
+        });
+    }
+    document.getElementById('replyList').innerHTML = replyHtml;
+}
+
+function backToDiscussion(){
+    currentPost = null;
+    renderPostList();
+}
+
+function submitReply(){
+    const input = document.getElementById('replyInput');
+    if(!input.value.trim()) return;
+    const now = new Date();
+    const timeStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    let posts = postDataByCase[currentCaseId] || postDataByCase['all'];
+    const post = posts.find(p=>p.id===currentPost.id);
+    if(!post) return;
+    if(!post.replies_list) post.replies_list = [];
+    post.replies_list.push({author:'管理员', role:'student', time:timeStr, body:input.value.trim()});
+    post.replies++;
+    input.value = '';
+    viewPost(currentPost.id);
+}
+
+function showNewDiscussion(){
+    document.getElementById('discussionListView').style.display = 'none';
+    document.getElementById('newDiscussionForm').style.display = 'block';
+}
+
+function cancelNewDiscussion(){
+    document.getElementById('newDiscussionForm').style.display = 'none';
+    document.getElementById('discussionListView').style.display = 'block';
+}
+
+function publishPost(){
+    const title = document.getElementById('newPostTitle').value.trim();
+    const body = document.getElementById('newPostBody').value.trim();
+    if(!title||!body) return alert('请填写标题和内容');
+    const now = new Date();
+    const timeStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    const newPost = {id:'P'+Date.now(), title:title, author:'管理员', role:'student', time:timeStr, replies:0, lastReply:timeStr, pinned:false, body:body, images:[], replies_list:[]};
+    
+    if(!postDataByCase[currentCaseId]) postDataByCase[currentCaseId] = [];
+    postDataByCase[currentCaseId].unshift(newPost);
+    
+    document.getElementById('newPostTitle').value = '';
+    document.getElementById('newPostBody').value = '';
+    document.getElementById('newDiscussionForm').style.display = 'none';
+    renderPostList();
+}
+
+function quickPublish(){
+    const input = document.getElementById('quickPostInput');
+    if(!input.value.trim()) return;
+    const now = new Date();
+    const timeStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    const newPost = {id:'P'+Date.now(), title:input.value.trim().substring(0,30), author:'管理员', role:'student', time:timeStr, replies:0, lastReply:timeStr, pinned:false, body:input.value.trim(), images:[], replies_list:[]};
+    
+    if(!postDataByCase[currentCaseId]) postDataByCase[currentCaseId] = [];
+    postDataByCase[currentCaseId].unshift(newPost);
+    
+    input.value = '';
+    renderPostList();
+}
+
+// 工具函数
+function escHtml(str){ if(!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Common JS
+function navigateTo(url) { window.location.href = url; }
+function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+
+document.getElementById('reportOverlay').addEventListener('click', function(e){
+    if(e.target===this) closeReport();
+});
+
+// 初始化
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        var user = JSON.parse(localStorage.getItem('life_med_user'));
+        if (user && user.name) {
+            document.getElementById('headerUserName').textContent = user.name;
+        }
+    } catch(e) {}
+
+    var path = window.location.pathname.replace(/\\/g, '/');
+    var currentPage = path.split('/').pop();
+    var menuItems = document.querySelectorAll('.sidebar .menu-item');
+    menuItems.forEach(function(item) {
+        var href = item.getAttribute('href');
+        if (href && (href === currentPage || href.endsWith('/' + currentPage))) {
+            item.classList.add('active');
+        }
+    });
+
+    renderSharedCaseTree();
+    // 默认选中第一个病例
+    openSharedCase('basic', 'B1');
+    renderPostList();
+});
+
+</script></body></html>

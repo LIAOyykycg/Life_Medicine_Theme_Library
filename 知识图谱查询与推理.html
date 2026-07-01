@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>知识图谱查询与推理</title>
+<style>
+/* ===== 生命医学主题库 - 通用样式 ===== */
+:root {
+    --primary: #1a73e8;
+    --primary-dark: #1557b0;
+    --primary-light: #e8f0fe;
+    --success: #34a853;
+    --warning: #fbbc04;
+    --danger: #ea4335;
+    --gray-50: #f8f9fa;
+    --gray-100: #f5f7fa;
+    --gray-200: #e8ecf0;
+    --gray-300: #dadce0;
+    --gray-400: #bdc1c6;
+    --gray-500: #9aa0a6;
+    --gray-600: #80868b;
+    --gray-700: #5f6368;
+    --gray-800: #3c4043;
+    --gray-900: #202124;
+    --text: #333333;
+    --text-secondary: #999999;
+    --bg: #ffffff;
+    --sidebar-width: 220px;
+    --header-height: 56px;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+    --transition: all 0.2s ease;
+
+    --node-disease: #e74c3c;
+    --node-treatment: #3498db;
+    --node-drug: #2ecc71;
+    --node-surgery: #e67e22;
+    --node-basic-disease: #9b59b6;
+    --node-inferred: #95a5a6;
+    --edge-defined: #95a5a6;
+    --edge-inferred: #e67e22;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-size: 14px; color: var(--text); background: var(--gray-50); min-height: 100vh; line-height: 1.6; overflow: hidden; }
+.header { height: var(--header-height); background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%); color: #fff; display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.header .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 40px; }
+.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; transition: var(--transition); }
+.header .header-nav a:hover, .header .header-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
+.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: var(--transition); }
+.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
+.header .header-right .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: var(--transition); }
+.header .header-right .btn-logout:hover { background: rgba(255,255,255,0.35); }
+.sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--gray-200); overflow-y: auto; z-index: 999; padding: 8px 0; }
+.sidebar .menu-group { margin-bottom: 4px; }
+.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.sidebar .menu-item { display: flex; align-items: center; padding: 10px 20px; color: var(--gray-700); text-decoration: none; font-size: 13px; transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+.sidebar .menu-item:hover { background: var(--gray-50); color: var(--primary); }
+.sidebar .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.sidebar .menu-item .menu-icon { width: 20px; margin-right: 10px; text-align: center; font-size: 14px; }
+.main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); height: calc(100vh - var(--header-height)); display: flex; flex-direction: column; overflow: hidden; }
+
+/* ===== 知识图谱专属样式 ===== */
+.kg-header { padding: 16px 24px 12px; background: #fff; border-bottom: 1px solid var(--gray-200); flex-shrink: 0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.kg-header .breadcrumb { font-size: 13px; color: var(--gray-600); margin-right: auto; }
+.kg-header .breadcrumb a { color: var(--primary); text-decoration: none; }
+.kg-header .breadcrumb span.sep { color: var(--gray-400); margin: 0 4px; }
+.kg-search { display: flex; align-items: center; background: #fff; border: 1px solid var(--gray-300); border-radius: 8px; overflow: hidden; transition: var(--transition); }
+.kg-search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.kg-search input { border: none; padding: 8px 14px; font-size: 13px; font-family: inherit; outline: none; width: 240px; color: var(--gray-800); }
+.kg-search input::placeholder { color: var(--gray-400); }
+.kg-search .search-icon { padding: 0 8px 0 12px; color: var(--gray-500); font-size: 14px; }
+.kg-search button { background: var(--primary); color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-family: inherit; cursor: pointer; transition: var(--transition); }
+.kg-search button:hover { background: var(--primary-dark); }
+.kg-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-700); cursor: pointer; user-select: none; }
+.kg-toggle input { accent-color: var(--primary); }
+
+.kg-body { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+.kg-graph-area { flex: 1; position: relative; background: #fafbfc; overflow: hidden; cursor: grab; min-width: 0; }
+.kg-graph-area:active { cursor: grabbing; }
+.kg-graph-area svg { display: block; width: 100%; height: 100%; }
+.kg-graph-area.dragging { cursor: grabbing; }
+
+.kg-legend { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.95); border-radius: 8px; padding: 12px 14px; box-shadow: var(--shadow); font-size: 12px; z-index: 10; border: 1px solid var(--gray-200); }
+.kg-legend .legend-title { font-weight: 600; color: var(--gray-700); margin-bottom: 8px; font-size: 12px; }
+.kg-legend .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.kg-legend .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.kg-legend .legend-dot.disease { background: var(--node-disease); }
+.kg-legend .legend-dot.treatment { background: var(--node-treatment); }
+.kg-legend .legend-dot.drug { background: var(--node-drug); }
+.kg-legend .legend-dot.surgery { background: var(--node-surgery); }
+.kg-legend .legend-dot.basic-disease { background: var(--node-basic-disease); }
+.kg-legend .legend-line { width: 16px; height: 2px; border-radius: 1px; flex-shrink: 0; }
+.kg-legend .legend-line.defined { background: var(--edge-defined); }
+.kg-legend .legend-line.inferred { background: none; border-top: 2px dashed var(--edge-inferred); height: 0; }
+
+/* SVG 节点和边样式 */
+.kg-node { cursor: pointer; transition: opacity 0.2s; }
+.kg-node text { font-size: 11px; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #333; text-anchor: middle; pointer-events: none; user-select: none; }
+.kg-edge { cursor: pointer; }
+.kg-edge line { stroke-linecap: round; }
+.kg-edge.defined line { stroke: #b0b8c1; stroke-width: 1.5; }
+.kg-edge.inferred line { stroke: var(--edge-inferred); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.kg-edge text { font-size: 10px; font-family: 'Inter', 'PingFang SC', sans-serif; fill: #666; text-anchor: middle; pointer-events: none; user-select: none; }
+.kg-edge:hover line { stroke-width: 2.5; }
+.kg-node.highlighted circle { stroke: #ff9800; stroke-width: 3; }
+.kg-node.dimmed { opacity: 0.25; }
+.kg-edge.dimmed { opacity: 0.15; }
+
+.kg-node.disease circle { fill: #e74c3c; }
+.kg-node.treatment circle { fill: #3498db; }
+.kg-node.drug circle { fill: #2ecc71; }
+.kg-node.surgery circle { fill: #e67e22; }
+.kg-node.basic-disease circle { fill: #9b59b6; }
+.kg-node.inferred-node circle { fill: #bdc3c7; stroke: #95a5a6; stroke-width: 2; stroke-dasharray: 4 3; }
+.kg-node.core circle { stroke: #2c3e50; stroke-width: 3; }
+
+.edge-tooltip { position: absolute; background: rgba(44,62,80,0.92); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 20; white-space: nowrap; opacity: 0; transition: opacity 0.15s; }
+.edge-tooltip.visible { opacity: 1; }
+
+.kg-detail-panel { width: 340px; flex-shrink: 0; background: #fff; border-left: 1px solid var(--gray-200); overflow-y: auto; display: flex; flex-direction: column; }
+.kg-detail-panel .detail-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; }
+.kg-detail-panel .detail-header h3 { font-size: 15px; color: var(--gray-900); font-weight: 600; }
+.kg-detail-panel .detail-close { background: none; border: none; font-size: 20px; color: var(--gray-500); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+.kg-detail-panel .detail-close:hover { background: var(--gray-50); color: var(--gray-700); }
+.kg-detail-panel .detail-body { padding: 20px; }
+.kg-detail-panel .detail-type-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-bottom: 12px; }
+.kg-detail-panel .detail-type-badge.disease { background: #fce8e6; color: #c0392b; }
+.kg-detail-panel .detail-type-badge.treatment { background: #e8f0fe; color: #1a73e8; }
+.kg-detail-panel .detail-type-badge.drug { background: #e6f4ea; color: #137333; }
+.kg-detail-panel .detail-type-badge.surgery { background: #fef3e8; color: #b06000; }
+.kg-detail-panel .detail-type-badge.basic-disease { background: #f3e8fd; color: #6c3483; }
+.kg-detail-panel .detail-name { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+.kg-detail-panel .detail-eng { font-size: 12px; color: var(--gray-500); margin-bottom: 16px; }
+.kg-detail-panel .detail-field { margin-bottom: 14px; }
+.kg-detail-panel .detail-field-label { font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; font-weight: 600; }
+.kg-detail-panel .detail-field-value { font-size: 13px; color: var(--gray-800); }
+.kg-detail-panel .detail-relations { margin-top: 8px; }
+.kg-detail-panel .detail-relations .rel-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; background: var(--gray-50); border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
+.kg-detail-panel .detail-relations .rel-type { color: var(--primary); font-weight: 500; }
+.kg-detail-panel .detail-relations .rel-target { color: var(--gray-800); cursor: pointer; }
+.kg-detail-panel .detail-relations .rel-target:hover { color: var(--primary); text-decoration: underline; }
+.kg-detail-panel .detail-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--gray-400); font-size: 13px; text-align: center; padding: 40px 20px; }
+.kg-detail-panel .detail-empty .empty-icon { font-size: 40px; margin-bottom: 12px; }
+.kg-detail-panel .btn-detail { display: inline-block; margin-top: 12px; padding: 8px 18px; background: var(--primary-light); color: var(--primary); border-radius: 6px; font-size: 12px; text-decoration: none; font-weight: 500; cursor: pointer; border: none; font-family: inherit; }
+.kg-detail-panel .btn-detail:hover { background: #d2e3fc; }
+
+.kg-zoom-controls { position: absolute; bottom: 16px; right: 16px; display: flex; flex-direction: column; gap: 4px; z-index: 10; }
+.kg-zoom-controls button { width: 32px; height: 32px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; cursor: pointer; font-size: 16px; color: var(--gray-700); display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+.kg-zoom-controls button:hover { background: var(--gray-50); }
+.kg-zoom-controls button:active { background: var(--gray-100); }
+
+.search-result-toast { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 8px 20px; border-radius: 20px; font-size: 13px; z-index: 20; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.search-result-toast.visible { opacity: 1; }
+
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+.kg-node.pulse-anim { animation: pulse 0.6s ease-in-out 4; transform-origin: center; }
+
+@media (max-width: 1024px) {
+    .sidebar { width: 60px; }
+    .sidebar .menu-item span { display: none; }
+    .sidebar .menu-group-title { display: none; }
+    .main-content { margin-left: 60px; }
+    .kg-detail-panel { width: 280px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a>
+    <div class="header-nav">
+        <a href="眼底图像输入.html">AI筛查</a>
+        <a href="临床数据开放共享.html">数据平台</a>
+        <a href="基础课程.html">AI教育</a>
+        <a href="临床决策支撑.html">专家系统</a>
+        <a href="数据采集工具（确认）.html">数据工具</a>
+    </div>
+    <div class="header-right">
+        <span class="user-info" id="headerUserName">管理员</span>
+        <button class="btn-logout" onclick="logout()">退出</button>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <div class="menu-group"><div class="menu-group-title">开放数据平台</div>
+        <a class="menu-item" href="临床数据开放共享.html">临床数据开放共享</a>
+        <a class="menu-item" href="科技文献检索推荐.html">科技文献检索推荐</a>
+        <a class="menu-item" href="智能教学服务.html">智能教学服务</a>
+        <a class="menu-item active" href="知识图谱查询与推理.html">知识图谱查询与推理</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="kg-header">
+        <div class="breadcrumb">
+            <a href="#">开放数据平台</a><span class="sep">&gt;</span>知识图谱查询与推理
+        </div>
+        <div class="kg-search">
+            <span class="search-icon">&#128269;</span>
+            <input id="searchInput" type="text" placeholder="输入疾病/药物/治疗方法名称..." onkeydown="if(event.key==='Enter')searchEntity()">
+            <button onclick="searchEntity()">搜索</button>
+        </div>
+        <label class="kg-toggle">
+            <input type="checkbox" id="toggleInferred" checked onchange="toggleInferredEdges()">
+            显示推理关系
+        </label>
+    </div>
+
+    <div class="kg-body">
+        <div class="kg-graph-area" id="graphArea">
+            <div class="kg-legend">
+                <div class="legend-title">图例</div>
+                <div class="legend-item"><span class="legend-dot disease"></span> 疾病</div>
+                <div class="legend-item"><span class="legend-dot treatment"></span> 治疗方法</div>
+                <div class="legend-item"><span class="legend-dot drug"></span> 药物</div>
+                <div class="legend-item"><span class="legend-dot surgery"></span> 手术</div>
+                <div class="legend-item"><span class="legend-dot basic-disease"></span> 基础疾病</div>
+                <div class="legend-item" style="margin-top:4px;"><span class="legend-line defined"></span> 已定义关系</div>
+                <div class="legend-item"><span class="legend-line inferred"></span> 推理关系</div>
+            </div>
+            <div class="kg-zoom-controls">
+                <button onclick="zoomIn()" title="放大">+</button>
+                <button onclick="zoomOut()" title="缩小">&#8722;</button>
+                <button onclick="resetView()" title="重置视图">&#8634;</button>
+            </div>
+            <div class="search-result-toast" id="searchToast"></div>
+            <div class="edge-tooltip" id="edgeTooltip"></div>
+            <svg id="kgSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+
+        <div class="kg-detail-panel" id="detailPanel">
+            <div class="detail-empty" id="detailEmpty">
+                <div class="empty-icon">&#128269;</div>
+                <p>点击图谱中的节点<br>查看实体详情</p>
+            </div>
+            <div id="detailContent" style="display:none;flex-direction:column;height:100%;">
+                <div class="detail-header">
+                    <h3>实体详情</h3>
+                    <button class="detail-close" onclick="clearSelection()" title="关闭">&times;</button>
+                </div>
+                <div class="detail-body" id="detailBody"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== Mock 知识图谱数据 =====
+var graphData = {
+    nodes: [
+        { id: 'dr', name: '糖尿病视网膜病变', engName: 'Diabetic Retinopathy (DR)', type: 'disease', icd: 'E11.301+H36.0', alias: '糖网病、糖尿病性视网膜病变', prevalence: '24.7%~37.5%（中国糖尿病人群）', severity: '非增殖期、增殖期', isCore: true },
+        { id: 'amd', name: '年龄相关性黄斑变性', engName: 'Age-related Macular Degeneration (AMD)', type: 'disease', icd: 'H35.30', alias: '老年性黄斑变性', prevalence: '8.7%（中国50岁以上人群）', severity: '干性、湿性' },
+        { id: 'glaucoma', name: '青光眼', engName: 'Glaucoma', type: 'disease', icd: 'H40.9', alias: '绿风内障', prevalence: '2.1%（中国40岁以上人群）', severity: '开角型、闭角型' },
+        { id: 'hr', name: '高血压视网膜病变', engName: 'Hypertensive Retinopathy', type: 'disease', icd: 'H35.03', alias: '高血压性眼底病变', prevalence: '与高血压患病率相关', severity: 'I-IV级' },
+        { id: 'cataract', name: '白内障', engName: 'Cataract', type: 'disease', icd: 'H26.9', alias: '晶体混浊', prevalence: '47.8%（中国60岁以上人群）', severity: '初发期、膨胀期、成熟期、过熟期' },
+        { id: 'rvo', name: '视网膜静脉阻塞', engName: 'Retinal Vein Occlusion (RVO)', type: 'disease', icd: 'H34.81', alias: '视网膜静脉栓塞', prevalence: '1.6%（中国40岁以上人群）', severity: '中央型、分支型' },
+        { id: 'dme', name: '糖尿病黄斑水肿', engName: 'Diabetic Macular Edema (DME)', type: 'disease', icd: 'E11.311+H36.0', alias: 'DME', prevalence: '约30%DR患者合并DME', severity: '局灶性、弥漫性' },
+        { id: 'anti-vegf', name: '抗VEGF药物治疗', engName: 'Anti-VEGF Therapy', type: 'treatment' },
+        { id: 'laser', name: '激光光凝治疗', engName: 'Laser Photocoagulation', type: 'treatment' },
+        { id: 'glucose-ctrl', name: '血糖控制', engName: 'Blood Glucose Control', type: 'treatment' },
+        { id: 'bp-ctrl', name: '血压控制', engName: 'Blood Pressure Control', type: 'treatment' },
+        { id: 'steroid', name: '糖皮质激素治疗', engName: 'Corticosteroid Therapy', type: 'treatment' },
+        { id: 'ranibizumab', name: '雷珠单抗', engName: 'Ranibizumab (Lucentis)', type: 'drug' },
+        { id: 'aflibercept', name: '阿柏西普', engName: 'Aflibercept (Eylea)', type: 'drug' },
+        { id: 'conbercept', name: '康柏西普', engName: 'Conbercept', type: 'drug' },
+        { id: 'dexamethasone', name: '地塞米松植入剂', engName: 'Dexamethasone Implant', type: 'drug' },
+        { id: 'metformin', name: '二甲双胍', engName: 'Metformin', type: 'drug' },
+        { id: 'insulin', name: '胰岛素', engName: 'Insulin', type: 'drug' },
+        { id: 'timolol', name: '噻吗洛尔', engName: 'Timolol', type: 'drug' },
+        { id: 'latanoprost', name: '拉坦前列素', engName: 'Latanoprost', type: 'drug' },
+        { id: 'vitrectomy', name: '玻璃体切割术', engName: 'Vitrectomy', type: 'surgery' },
+        { id: 'phaco', name: '白内障超声乳化术', engName: 'Phacoemulsification', type: 'surgery' },
+        { id: 'trabeculectomy', name: '小梁切除术', engName: 'Trabeculectomy', type: 'surgery' },
+        { id: 'diabetes', name: '2型糖尿病', engName: 'Type 2 Diabetes Mellitus', type: 'basic-disease' },
+        { id: 'hypertension', name: '高血压', engName: 'Hypertension', type: 'basic-disease' },
+        { id: 'hyperlipidemia', name: '高脂血症', engName: 'Hyperlipidemia', type: 'basic-disease' },
+    ],
+    edges: [
+        { from: 'dr', to: 'anti-vegf', label: '治疗', type: 'defined' },
+        { from: 'dr', to: 'laser', label: '治疗', type: 'defined' },
+        { from: 'dr', to: 'steroid', label: '治疗', type: 'defined' },
+        { from: 'dr', to: 'glucose-ctrl', label: '基础治疗', type: 'defined' },
+        { from: 'dr', to: 'vitrectomy', label: '手术治疗', type: 'defined' },
+        { from: 'dr', to: 'dme', label: '并发', type: 'defined' },
+        { from: 'dr', to: 'diabetes', label: '属于并发症', type: 'defined' },
+        { from: 'diabetes', to: 'dr', label: '导致', type: 'defined' },
+        { from: 'diabetes', to: 'metformin', label: '基础用药', type: 'defined' },
+        { from: 'diabetes', to: 'insulin', label: '用药', type: 'defined' },
+        { from: 'anti-vegf', to: 'ranibizumab', label: '包含药物', type: 'defined' },
+        { from: 'anti-vegf', to: 'aflibercept', label: '包含药物', type: 'defined' },
+        { from: 'anti-vegf', to: 'conbercept', label: '包含药物', type: 'defined' },
+        { from: 'steroid', to: 'dexamethasone', label: '包含药物', type: 'defined' },
+        { from: 'amd', to: 'anti-vegf', label: '一线治疗', type: 'defined' },
+        { from: 'amd', to: 'laser', label: '治疗', type: 'defined' },
+        { from: 'amd', to: 'vitrectomy', label: '手术治疗', type: 'defined' },
+        { from: 'glaucoma', to: 'trabeculectomy', label: '手术治疗', type: 'defined' },
+        { from: 'glaucoma', to: 'timolol', label: '用药', type: 'defined' },
+        { from: 'glaucoma', to: 'latanoprost', label: '用药', type: 'defined' },
+        { from: 'glaucoma', to: 'laser', label: '激光治疗', type: 'defined' },
+        { from: 'hr', to: 'hypertension', label: '由基础疾病导致', type: 'defined' },
+        { from: 'hr', to: 'bp-ctrl', label: '基础治疗', type: 'defined' },
+        { from: 'hypertension', to: 'hr', label: '导致', type: 'defined' },
+        { from: 'cataract', to: 'phaco', label: '手术治疗', type: 'defined' },
+        { from: 'rvo', to: 'anti-vegf', label: '治疗', type: 'defined' },
+        { from: 'rvo', to: 'laser', label: '治疗', type: 'defined' },
+        { from: 'rvo', to: 'hypertension', label: '危险因素', type: 'defined' },
+        { from: 'rvo', to: 'hyperlipidemia', label: '危险因素', type: 'defined' },
+        { from: 'dme', to: 'anti-vegf', label: '一线治疗', type: 'defined' },
+        { from: 'dme', to: 'steroid', label: '二线治疗', type: 'defined' },
+        { from: 'dme', to: 'laser', label: '辅助治疗', type: 'defined' },
+        { from: 'dr', to: 'hypertension', label: '推理：共病风险', type: 'inferred' },
+        { from: 'dr', to: 'hyperlipidemia', label: '推理：代谢综合征', type: 'inferred' },
+        { from: 'diabetes', to: 'amd', label: '推理：代谢关联', type: 'inferred' },
+        { from: 'diabetes', to: 'cataract', label: '推理：高血糖诱因', type: 'inferred' },
+        { from: 'hypertension', to: 'glaucoma', label: '推理：血管机制', type: 'inferred' },
+        { from: 'diabetes', to: 'rvo', label: '推理：血管病变', type: 'inferred' },
+        { from: 'hyperlipidemia', to: 'rvo', label: '推理：脂代谢异常', type: 'inferred' },
+    ]
+};
+
+var nodes = [];
+var edges = [];
+var selectedNodeId = null;
+var highlightedNodeId = null;
+var transform = { x: 0, y: 0, scale: 1 };
+var isDragging = false;
+var dragStart = { x: 0, y: 0 };
+var nodeDragging = null;
+var showInferred = true;
+
+var graphArea = document.getElementById('graphArea');
+var svg = document.getElementById('kgSvg');
+var tooltip = document.getElementById('edgeTooltip');
+var searchToast = document.getElementById('searchToast');
+var detailEmpty = document.getElementById('detailEmpty');
+var detailContent = document.getElementById('detailContent');
+var detailBody = document.getElementById('detailBody');
+
+var nodeRadius = 26;
+var coreNodeRadius = 32;
+
+function calculateLayout() {
+    var centerX = 520, centerY = 340;
+    var positions = {};
+    positions['dr'] = { x: centerX, y: centerY };
+    positions['amd'] = { x: centerX - 260, y: centerY - 80 };
+    positions['glaucoma'] = { x: centerX + 80, y: centerY - 220 };
+    positions['hr'] = { x: centerX + 200, y: centerY - 100 };
+    positions['cataract'] = { x: centerX - 180, y: centerY + 180 };
+    positions['rvo'] = { x: centerX + 160, y: centerY + 160 };
+    positions['dme'] = { x: centerX - 120, y: centerY - 180 };
+    positions['anti-vegf'] = { x: centerX - 120, y: centerY + 80 };
+    positions['laser'] = { x: centerX + 220, y: centerY + 50 };
+    positions['glucose-ctrl'] = { x: centerX + 300, y: centerY - 20 };
+    positions['bp-ctrl'] = { x: centerX + 300, y: centerY + 100 };
+    positions['steroid'] = { x: centerX + 100, y: centerY + 170 };
+    positions['ranibizumab'] = { x: centerX - 220, y: centerY + 30 };
+    positions['aflibercept'] = { x: centerX - 200, y: centerY + 130 };
+    positions['conbercept'] = { x: centerX - 80, y: centerY + 140 };
+    positions['dexamethasone'] = { x: centerX + 160, y: centerY + 220 };
+    positions['metformin'] = { x: centerX + 360, y: centerY - 80 };
+    positions['insulin'] = { x: centerX + 380, y: centerY - 20 };
+    positions['timolol'] = { x: centerX + 60, y: centerY - 290 };
+    positions['latanoprost'] = { x: centerX + 140, y: centerY - 300 };
+    positions['vitrectomy'] = { x: centerX - 300, y: centerY + 200 };
+    positions['phaco'] = { x: centerX - 280, y: centerY + 120 };
+    positions['trabeculectomy'] = { x: centerX + 160, y: centerY - 240 };
+    positions['diabetes'] = { x: centerX + 350, y: centerY - 160 };
+    positions['hypertension'] = { x: centerX + 320, y: centerY + 200 };
+    positions['hyperlipidemia'] = { x: centerX + 260, y: centerY + 270 };
+
+    nodes = graphData.nodes.map(function(n) {
+        return {
+            id: n.id, name: n.name, engName: n.engName, type: n.type,
+            icd: n.icd, alias: n.alias, prevalence: n.prevalence, severity: n.severity, isCore: n.isCore,
+            x: positions[n.id] ? positions[n.id].x : centerX + (Math.random() - 0.5) * 200,
+            y: positions[n.id] ? positions[n.id].y : centerY + (Math.random() - 0.5) * 200,
+            r: n.isCore ? coreNodeRadius : nodeRadius,
+            isInferredNode: false
+        };
+    });
+
+    edges = graphData.edges.map(function(e) { return { from: e.from, to: e.to, label: e.label, type: e.type }; });
+}
+
+function renderGraph() {
+    svg.innerHTML = '';
+
+    var NS = 'http://www.w3.org/2000/svg';
+    var mainG = document.createElementNS(NS, 'g');
+    mainG.setAttribute('transform', 'translate(' + transform.x + ',' + transform.y + ') scale(' + transform.scale + ')');
+    mainG.setAttribute('id', 'mainG');
+    svg.appendChild(mainG);
+
+    var defs = document.createElementNS(NS, 'defs');
+    ['defined', 'inferred'].forEach(function(etype) {
+        var marker = document.createElementNS(NS, 'marker');
+        marker.setAttribute('id', 'arrow-' + etype);
+        marker.setAttribute('viewBox', '0 0 10 10');
+        marker.setAttribute('refX', '15');
+        marker.setAttribute('refY', '5');
+        marker.setAttribute('markerWidth', '6');
+        marker.setAttribute('markerHeight', '6');
+        marker.setAttribute('orient', 'auto-start-reverse');
+        var path = document.createElementNS(NS, 'path');
+        path.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
+        path.setAttribute('fill', etype === 'defined' ? '#95a5a6' : '#e67e22');
+        marker.appendChild(path);
+        defs.appendChild(marker);
+    });
+    mainG.appendChild(defs);
+
+    // 渲染边
+    edges.forEach(function(edge) {
+        if (edge.type === 'inferred' && !showInferred) return;
+        var fromNode = nodes.find(function(n) { return n.id === edge.from; });
+        var toNode = nodes.find(function(n) { return n.id === edge.to; });
+        if (!fromNode || !toNode) return;
+
+        var g = document.createElementNS(NS, 'g');
+        g.classList.add('kg-edge', edge.type);
+        g.setAttribute('data-from', edge.from);
+        g.setAttribute('data-to', edge.to);
+        g.setAttribute('data-type', edge.type);
+
+        var dx = toNode.x - fromNode.x;
+        var dy = toNode.y - fromNode.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var fromR = fromNode.r + 3;
+        var toR = toNode.r + 3;
+        var x1 = fromNode.x + (dx / dist) * fromR;
+        var y1 = fromNode.y + (dy / dist) * fromR;
+        var x2 = toNode.x - (dx / dist) * toR;
+        var y2 = toNode.y - (dy / dist) * toR;
+
+        var line = document.createElementNS(NS, 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('marker-end', 'url(#arrow-' + edge.type + ')');
+        g.appendChild(line);
+
+        var midX = (x1 + x2) / 2;
+        var midY = (y1 + y2) / 2;
+        var text = document.createElementNS(NS, 'text');
+        text.setAttribute('x', midX);
+        text.setAttribute('y', midY);
+        text.setAttribute('dy', '-0.3em');
+        text.textContent = edge.label;
+        g.appendChild(text);
+
+        g.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showEdgeTooltip(e, edge);
+        });
+        g.addEventListener('mouseenter', function(e) {
+            onEdgeMouseEnter(e, edge);
+        });
+        g.addEventListener('mouseleave', function() {
+            tooltip.classList.remove('visible');
+        });
+
+        mainG.appendChild(g);
+    });
+
+    // 渲染节点
+    nodes.forEach(function(node) {
+        var g = document.createElementNS(NS, 'g');
+        g.classList.add('kg-node', node.type);
+        if (node.isCore) g.classList.add('core');
+        g.setAttribute('data-id', node.id);
+        g.setAttribute('transform', 'translate(' + node.x + ',' + node.y + ')');
+
+        if (selectedNodeId === node.id) g.classList.add('highlighted');
+        if (node.id === highlightedNodeId) g.classList.add('pulse-anim');
+
+        var circle = document.createElementNS(NS, 'circle');
+        circle.setAttribute('r', node.r);
+        g.appendChild(circle);
+
+        var nameText = node.name;
+        var maxChars = node.r > 28 ? 5 : 4;
+        var lines = [];
+        for (var i = 0; i < nameText.length; i += maxChars) {
+            lines.push(nameText.substring(i, i + maxChars));
+        }
+        lines.forEach(function(line, idx) {
+            var text = document.createElementNS(NS, 'text');
+            text.setAttribute('y', (idx - (lines.length - 1) / 2) * 14 + 3);
+            text.setAttribute('fill', '#fff');
+            text.setAttribute('font-weight', '600');
+            text.setAttribute('font-size', node.r > 28 ? '11px' : '10px');
+            text.textContent = line;
+            g.appendChild(text);
+        });
+
+        g.addEventListener('click', function(e) {
+            e.stopPropagation();
+            selectNode(node);
+        });
+        g.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+            nodeDragging = node;
+        });
+
+        mainG.appendChild(g);
+    });
+
+    // 选中节点置顶
+    var allNodes = mainG.querySelectorAll('.kg-node');
+    allNodes.forEach(function(g) {
+        if (g.classList.contains('highlighted')) {
+            mainG.appendChild(g);
+        }
+    });
+}
+
+// 画布平移
+graphArea.addEventListener('mousedown', function(e) {
+    if (e.target === graphArea || e.target === svg || e.target.tagName === 'svg') {
+        isDragging = true;
+        dragStart = { x: e.clientX - transform.x, y: e.clientY - transform.y };
+        graphArea.classList.add('dragging');
+    }
+});
+
+window.addEventListener('mousemove', function(e) {
+    if (isDragging && !nodeDragging) {
+        transform.x = e.clientX - dragStart.x;
+        transform.y = e.clientY - dragStart.y;
+        renderGraph();
+    }
+    if (nodeDragging) {
+        var sc = transform.scale;
+        nodeDragging.x += e.movementX / sc;
+        nodeDragging.y += e.movementY / sc;
+        renderGraph();
+    }
+});
+
+window.addEventListener('mouseup', function() {
+    isDragging = false;
+    nodeDragging = null;
+    graphArea.classList.remove('dragging');
+});
+
+// 滚轮缩放
+graphArea.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var rect = graphArea.getBoundingClientRect();
+    var mouseX = e.clientX - rect.left;
+    var mouseY = e.clientY - rect.top;
+    var oldScale = transform.scale;
+    var newScale = Math.max(0.3, Math.min(3, oldScale - e.deltaY * 0.001));
+    transform.x = mouseX - (mouseX - transform.x) * (newScale / oldScale);
+    transform.y = mouseY - (mouseY - transform.y) * (newScale / oldScale);
+    transform.scale = newScale;
+    renderGraph();
+}, { passive: false });
+
+function selectNode(node) {
+    selectedNodeId = node.id;
+    highlightedNodeId = null;
+    renderGraph();
+    showDetail(node);
+    highlightRelated(node.id);
+}
+
+function highlightRelated(nodeId) {
+    var allEdges = document.querySelectorAll('.kg-edge');
+    var allNodes = document.querySelectorAll('.kg-node');
+    var relatedIds = {};
+    relatedIds[nodeId] = true;
+    edges.forEach(function(e) {
+        if (e.from === nodeId || e.to === nodeId) {
+            if (e.type !== 'inferred' || showInferred) {
+                relatedIds[e.from] = true;
+                relatedIds[e.to] = true;
+            }
+        }
+    });
+    allNodes.forEach(function(g) {
+        var id = g.getAttribute('data-id');
+        if (!relatedIds[id]) g.classList.add('dimmed');
+        else g.classList.remove('dimmed');
+    });
+    allEdges.forEach(function(g) {
+        var from = g.getAttribute('data-from');
+        var to = g.getAttribute('data-to');
+        if (from === nodeId || to === nodeId) g.classList.remove('dimmed');
+        else g.classList.add('dimmed');
+    });
+}
+
+function clearSelection() {
+    selectedNodeId = null;
+    highlightedNodeId = null;
+    detailContent.style.display = 'none';
+    detailEmpty.style.display = 'flex';
+    var allEdges = document.querySelectorAll('.kg-edge');
+    var allNodes = document.querySelectorAll('.kg-node');
+    allNodes.forEach(function(g) { g.classList.remove('dimmed', 'highlighted', 'pulse-anim'); });
+    allEdges.forEach(function(g) { g.classList.remove('dimmed'); });
+    renderGraph();
+}
+
+function showDetail(node) {
+    detailEmpty.style.display = 'none';
+    detailContent.style.display = 'flex';
+    var typeNames = { disease: '疾病', treatment: '治疗方法', drug: '药物', surgery: '手术', 'basic-disease': '基础疾病' };
+    var typeClass = node.type;
+
+    var relatedEdges = edges.filter(function(e) {
+        return (e.from === node.id || e.to === node.id) && (e.type !== 'inferred' || showInferred);
+    });
+    var relationsHtml = relatedEdges.map(function(e) {
+        var isOutgoing = e.from === node.id;
+        var targetId = isOutgoing ? e.to : e.from;
+        var targetNode = nodes.find(function(n) { return n.id === targetId; });
+        var direction = isOutgoing ? '→' : '←';
+        var relLabel = e.type === 'inferred' ? '推理：' + e.label : e.label;
+        return '<div class="rel-item"><span>' + direction + ' <span class="rel-type">' + relLabel + '</span></span><span class="rel-target" onclick="jumpToNode(\'' + targetId + '\')">' + (targetNode ? targetNode.name : targetId) + '</span></div>';
+    }).join('');
+
+    var icdRow = node.icd ? '<div class="detail-field"><div class="detail-field-label">ICD编码</div><div class="detail-field-value">' + node.icd + '</div></div>' : '';
+    var aliasRow = node.alias ? '<div class="detail-field"><div class="detail-field-label">别名</div><div class="detail-field-value">' + node.alias + '</div></div>' : '';
+    var prevalenceRow = node.prevalence ? '<div class="detail-field"><div class="detail-field-label">患病率</div><div class="detail-field-value">' + node.prevalence + '</div></div>' : '';
+    var severityRow = node.severity ? '<div class="detail-field"><div class="detail-field-label">严重程度分级</div><div class="detail-field-value">' + node.severity + '</div></div>' : '';
+
+    detailBody.innerHTML =
+        '<span class="detail-type-badge ' + typeClass + '">' + (typeNames[node.type] || node.type) + '</span>' +
+        '<div class="detail-name">' + node.name + '</div>' +
+        '<div class="detail-eng">' + (node.engName || '') + '</div>' +
+        icdRow + aliasRow + prevalenceRow + severityRow +
+        '<div class="detail-field"><div class="detail-field-label">关联实体 (' + relatedEdges.length + ')</div>' +
+        '<div class="detail-relations">' + (relationsHtml || '<div style="color:var(--gray-400);font-size:12px;">暂无关联</div>') + '</div></div>' +
+        '<button class="btn-detail" onclick="highlightNodeAndCenter(\'' + node.id + '\')">在图谱中定位</button>';
+}
+
+function jumpToNode(nodeId) {
+    var node = nodes.find(function(n) { return n.id === nodeId; });
+    if (node) { selectNode(node); centerOnNode(node); }
+}
+
+function highlightNodeAndCenter(nodeId) {
+    var node = nodes.find(function(n) { return n.id === nodeId; });
+    if (node) {
+        selectedNodeId = node.id;
+        highlightedNodeId = node.id;
+        centerOnNode(node);
+        renderGraph();
+        highlightRelated(node.id);
+        setTimeout(function() { highlightedNodeId = null; renderGraph(); }, 2000);
+    }
+}
+
+function searchEntity() {
+    var query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+    if (!query) return;
+    var matched = null;
+    for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i];
+        if (n.name.toLowerCase().indexOf(query) !== -1 ||
+            (n.engName && n.engName.toLowerCase().indexOf(query) !== -1) ||
+            (n.alias && n.alias.toLowerCase().indexOf(query) !== -1)) {
+            matched = n;
+            break;
+        }
+    }
+    if (matched) {
+        selectedNodeId = matched.id;
+        highlightedNodeId = matched.id;
+        centerOnNode(matched);
+        renderGraph();
+        highlightRelated(matched.id);
+        showDetail(matched);
+        showSearchToast('已定位到：' + matched.name);
+        setTimeout(function() { highlightedNodeId = null; renderGraph(); }, 2500);
+    } else {
+        showSearchToast('未找到匹配实体，请尝试其他关键词');
+    }
+}
+
+function showSearchToast(msg) {
+    searchToast.textContent = msg;
+    searchToast.classList.add('visible');
+    clearTimeout(searchToast._timeout);
+    searchToast._timeout = setTimeout(function() { searchToast.classList.remove('visible'); }, 2000);
+}
+
+function centerOnNode(node) {
+    var rect = graphArea.getBoundingClientRect();
+    var centerX = rect.width / 2;
+    var centerY = rect.height / 2;
+    transform.x = centerX - node.x * transform.scale;
+    transform.y = centerY - node.y * transform.scale;
+}
+
+function onEdgeMouseEnter(e, edge) {
+    var rect = graphArea.getBoundingClientRect();
+    tooltip.innerHTML = '<strong>' + edge.label + '</strong><br><span style="opacity:0.8;">' + (edge.type === 'inferred' ? '推理关系' : '已定义关系') + '</span>';
+    tooltip.style.left = (e.clientX - rect.left + 14) + 'px';
+    tooltip.style.top = (e.clientY - rect.top - 30) + 'px';
+    tooltip.classList.add('visible');
+}
+
+function showEdgeTooltip(e, edge) {
+    onEdgeMouseEnter(e, edge);
+    setTimeout(function() { tooltip.classList.remove('visible'); }, 2000);
+}
+
+function zoomIn() { transform.scale = Math.min(3, transform.scale * 1.2); renderGraph(); }
+function zoomOut() { transform.scale = Math.max(0.3, transform.scale / 1.2); renderGraph(); }
+
+function resetView() {
+    transform = { x: 0, y: 0, scale: 1 };
+    selectedNodeId = null;
+    highlightedNodeId = null;
+    detailContent.style.display = 'none';
+    detailEmpty.style.display = 'flex';
+    document.getElementById('searchInput').value = '';
+    renderGraph();
+}
+
+function toggleInferredEdges() {
+    showInferred = document.getElementById('toggleInferred').checked;
+    renderGraph();
+    if (selectedNodeId) highlightRelated(selectedNodeId);
+}
+
+function navigateTo(url) { window.location.href = url; }
+function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        var user = JSON.parse(localStorage.getItem('life_med_user'));
+        if (user && user.name) document.getElementById('headerUserName').textContent = user.name;
+    } catch(e) {}
+    calculateLayout();
+    renderGraph();
+    window.addEventListener('resize', function() { renderGraph(); });
+});
+</script>
+</body>
+</html>

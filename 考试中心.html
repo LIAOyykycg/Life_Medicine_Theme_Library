@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>考试中心</title>
+<style>
+/* ===== 生命医学主题库 - 考试中心重构样式 ===== */
+:root {
+    --primary: #3B82F6;
+    --primary-dark: #2563EB;
+    --primary-light: #EFF6FF;
+    --primary-bg: #DBEAFE;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --warning: #F59E0B;
+    --warning-light: #FFFBEB;
+    --danger: #EF4444;
+    --danger-light: #FEE2E2;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+    --text: #111827;
+    --text-secondary: #6B7280;
+    --bg: #F8FAFC;
+    --sidebar-width: 220px;
+    --header-height: 56px;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+    --transition: all 0.2s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ===== 顶部导航 ===== */
+.header {
+    height: var(--header-height);
+    background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 40px; }
+.header .header-nav a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: var(--transition);
+}
+.header .header-nav a:hover, .header .header-nav a.active {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+}
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
+.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: var(--transition); }
+.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
+.header .header-right .btn-logout {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: var(--transition);
+}
+.header .header-right .btn-logout:hover { background: rgba(255,255,255,0.35); }
+
+/* ===== 左侧菜单 ===== */
+.sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+    background: #fff;
+    border-right: 1px solid var(--gray-200);
+    overflow-y: auto;
+    z-index: 999;
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar .menu-group { margin-bottom: 4px; }
+.sidebar .menu-group-title {
+    padding: 12px 20px 6px;
+    font-size: 11px;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+.sidebar .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: var(--gray-700);
+    text-decoration: none;
+    font-size: 13px;
+    transition: var(--transition);
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+.sidebar .menu-item:hover { background: var(--gray-50); color: var(--primary); }
+.sidebar .menu-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-left-color: var(--primary);
+    font-weight: 600;
+}
+.sidebar .menu-item .menu-icon { width: 20px; margin-right: 10px; text-align: center; font-size: 14px; }
+
+.sidebar .sidebar-progress {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid var(--gray-200);
+}
+.sidebar .sidebar-progress .progress-title { font-size: 12px; color: var(--gray-700); font-weight: 600; margin-bottom: 8px; }
+.sidebar .sidebar-progress .progress-percent { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.sidebar .sidebar-progress .progress-bar-outer { height: 8px; background: var(--gray-200); border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+.sidebar .sidebar-progress .progress-bar-inner { height: 100%; background: var(--success); border-radius: 6px; transition: width 0.4s ease; }
+.sidebar .sidebar-progress .btn-continue {
+    display: block; width: 100%; padding: 8px 0; background: var(--primary); color: #fff;
+    border: none; border-radius: 6px; font-size: 13px; font-family: inherit; font-weight: 500;
+    cursor: pointer; text-align: center; text-decoration: none; transition: var(--transition);
+}
+.sidebar .sidebar-progress .btn-continue:hover { background: var(--primary-dark); }
+
+.sidebar .sidebar-user {
+    padding: 12px 20px; border-top: 1px solid var(--gray-200);
+    display: flex; align-items: center; gap: 10px;
+}
+.sidebar .sidebar-user .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--primary);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+}
+.sidebar .sidebar-user .user-name { font-size: 13px; font-weight: 500; color: var(--gray-900); }
+.sidebar .sidebar-user .user-icons { margin-left: auto; display: flex; gap: 8px; color: var(--gray-400); font-size: 14px; }
+
+/* ===== 主内容区 ===== */
+.main-content {
+    margin-left: var(--sidebar-width);
+    margin-top: var(--header-height);
+    padding: 24px;
+    min-height: calc(100vh - var(--header-height));
+}
+
+.breadcrumb {
+    font-size: 13px; color: var(--gray-500); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 6px;
+}
+.breadcrumb .back-link { color: var(--primary); text-decoration: none; font-size: 13px; margin-right: 8px; }
+.breadcrumb .back-link:hover { text-decoration: underline; }
+.breadcrumb .sep { color: var(--gray-300); margin: 0 4px; }
+.breadcrumb a { color: var(--primary); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+.content-card {
+    background: #fff; border-radius: 12px; border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow); overflow: hidden;
+}
+
+/* ===== Tab ===== */
+.content-tabs { display: flex; border-bottom: 1px solid var(--gray-200); padding: 0 24px; gap: 0; }
+.content-tab {
+    padding: 14px 24px; background: none; border: none;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    cursor: pointer; font-size: 15px; font-family: inherit;
+    color: var(--gray-400); transition: var(--transition); font-weight: 500;
+}
+.content-tab:hover { color: var(--gray-600); }
+.content-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* ===== 筛选区 ===== */
+.filter-section {
+    padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center;
+    gap: 12px; border-bottom: 1px solid var(--gray-100);
+}
+.filter-status-group { display: flex; gap: 6px; }
+.filter-status-btn {
+    padding: 6px 14px; border: 1px solid var(--gray-200); background: #fff;
+    border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit;
+    color: var(--gray-500); transition: var(--transition); white-space: nowrap;
+}
+.filter-status-btn:hover { border-color: var(--primary); color: var(--primary); }
+.filter-status-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.filter-course-select {
+    padding: 6px 32px 6px 12px; border: 1px solid var(--gray-300);
+    border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--gray-700);
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 10px center;
+    appearance: none; cursor: pointer; outline: none; min-width: 130px;
+}
+.filter-course-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.search-box { position: relative; margin-left: auto; }
+.search-box input {
+    padding: 6px 12px 6px 34px; border: 1px solid var(--gray-300);
+    border-radius: 6px; font-size: 13px; font-family: inherit; width: 220px;
+    outline: none; transition: var(--transition);
+}
+.search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.search-box input::placeholder { color: var(--gray-400); }
+.search-box .search-icon {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--gray-400); font-size: 14px; pointer-events: none;
+}
+
+/* ===== 表格 ===== */
+.table-section { padding: 0 24px 16px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+table thead th {
+    background: var(--gray-50); padding: 12px 16px; text-align: left;
+    font-weight: 600; color: var(--gray-700); border-bottom: 1px solid var(--gray-200);
+    white-space: nowrap; font-size: 14px;
+}
+table thead th:last-child { text-align: center; }
+table tbody td {
+    padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-800); vertical-align: middle;
+}
+table tbody td:last-child { text-align: center; }
+table tbody tr:hover { background: var(--gray-50); }
+
+.status-tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 500; white-space: nowrap;
+}
+.status-tag.in-progress { background: var(--warning-light); color: #D97706; }
+.status-tag.not-started { background: var(--gray-100); color: var(--gray-400); }
+.status-tag.passed { background: var(--success-light); color: #059669; }
+.status-tag.failed { background: var(--danger-light); color: #DC2626; }
+
+.action-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: nowrap; }
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 6px 14px; border: none; border-radius: 6px;
+    font-size: 13px; font-family: inherit; font-weight: 500;
+    cursor: pointer; transition: var(--transition);
+    text-decoration: none; white-space: nowrap;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-warning { background: var(--warning); color: #fff; }
+.btn-warning:hover { background: #D97706; }
+.btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
+.btn-outline:hover { background: var(--gray-50); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #DC2626; }
+
+/* ===== 分页 ===== */
+.pagination-section { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px 20px; }
+.pagination-info { font-size: 12px; color: var(--gray-500); }
+.pagination-controls { display: flex; align-items: center; gap: 4px; }
+.pagination-controls button {
+    min-width: 32px; height: 32px; padding: 0 8px;
+    border: 1px solid var(--gray-300); background: #fff;
+    border-radius: 6px; cursor: pointer; font-size: 13px;
+    font-family: inherit; color: var(--gray-700); transition: var(--transition);
+    display: flex; align-items: center; justify-content: center;
+}
+.pagination-controls button:hover:not(:disabled):not(.active) {
+    background: var(--primary-light); border-color: var(--primary); color: var(--primary);
+}
+.pagination-controls button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.pagination-controls button:disabled { opacity: 0.4; cursor: not-allowed; }
+.pagination-controls .page-ellipsis { padding: 0 4px; color: var(--gray-400); font-size: 13px; }
+.page-size-select {
+    padding: 5px 28px 5px 10px; border: 1px solid var(--gray-300);
+    border-radius: 6px; font-size: 12px; font-family: inherit; color: var(--gray-700);
+    appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 8px center;
+    cursor: pointer; outline: none;
+}
+
+/* ===== 弹窗通用 ===== */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); z-index: 2000; display: none;
+    align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+    background: #fff; border-radius: 12px; box-shadow: var(--shadow-lg);
+    width: 90%; max-height: 85vh; overflow-y: auto; animation: slideUp 0.25s;
+}
+
+/* ========================================================
+   考试页面（全屏视图，替代列表视图）
+   ======================================================== */
+#examView {
+    background: #E8F4FD; min-height: calc(100vh - var(--header-height) - 48px);
+    border-radius: 12px; overflow: hidden; display: none;
+}
+.exam-top-bar {
+    background: #fff; padding: 14px 24px; display: flex; align-items: center;
+    gap: 24px; border-bottom: 1px solid var(--gray-200);
+    border-radius: 12px 12px 0 0; flex-wrap: wrap;
+}
+.exam-top-bar .exam-name-display {
+    font-size: 16px; font-weight: 600; color: var(--gray-900);
+    white-space: nowrap; display: flex; align-items: center; gap: 8px;
+}
+.exam-top-bar .exam-name-display .back-icon {
+    cursor: pointer; color: var(--gray-500); font-size: 18px;
+    transition: var(--transition);
+}
+.exam-top-bar .exam-name-display .back-icon:hover { color: var(--primary); }
+.exam-progress-wrap {
+    flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px;
+}
+.exam-progress-wrap .progress-label {
+    font-size: 12px; color: var(--gray-500); white-space: nowrap;
+}
+.exam-progress-wrap .progress-bar-outer {
+    flex: 1; height: 8px; background: var(--gray-200); border-radius: 6px; overflow: hidden;
+}
+.exam-progress-wrap .progress-bar-inner {
+    height: 100%; background: var(--primary); border-radius: 6px; transition: width 0.3s;
+}
+.exam-progress-wrap .progress-pct { font-size: 12px; color: var(--gray-500); white-space: nowrap; }
+.exam-timer-display {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 15px; font-weight: 700; color: #D97706;
+    background: var(--warning-light); padding: 5px 14px; border-radius: 20px;
+    white-space: nowrap;
+}
+.exam-timer-display .timer-icon { font-size: 16px; }
+.exam-submit-btn {
+    padding: 8px 20px; background: var(--success); color: #fff;
+    border: none; border-radius: 8px; font-size: 14px; font-family: inherit;
+    font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap;
+}
+.exam-submit-btn:hover { background: #059669; }
+.exam-body {
+    display: flex; gap: 0; min-height: calc(100vh - var(--header-height) - 200px);
+}
+.exam-question-area {
+    flex: 1; padding: 24px; overflow-y: auto;
+}
+.exam-question-card {
+    background: #fff; border-radius: 10px; padding: 24px;
+    border: 1px solid var(--gray-200); margin-bottom: 16px;
+}
+.question-type-tag {
+    display: inline-block; padding: 2px 12px; border-radius: 10px;
+    font-size: 12px; font-weight: 500; color: var(--primary);
+    background: var(--primary-light); margin-bottom: 12px;
+}
+.question-stem {
+    font-size: 15px; font-weight: 500; color: var(--gray-900);
+    margin-bottom: 20px; line-height: 1.8;
+}
+.option-list { display: flex; flex-direction: column; gap: 8px; }
+.option-item-exam {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; border: 1px solid var(--gray-200);
+    border-radius: 8px; cursor: pointer; transition: var(--transition);
+    font-size: 14px;
+}
+.option-item-exam:hover { border-color: var(--primary); background: #F0F7FF; }
+.option-item-exam.selected { border-color: var(--primary); background: var(--primary-light); }
+.option-radio-circle {
+    width: 22px; height: 22px; border: 2px solid var(--gray-300);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 11px; color: var(--gray-400); font-weight: 700;
+    transition: var(--transition);
+}
+.option-item-exam.selected .option-radio-circle {
+    border-color: var(--primary); background: var(--primary); color: #fff;
+}
+.exam-bottom-bar {
+    background: #fff; padding: 12px 24px; display: flex;
+    align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--gray-200);
+}
+.exam-bottom-bar .btn-mark {
+    border: 1px solid #A855F7; color: #A855F7; background: #fff;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: inherit;
+    cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px;
+}
+.exam-bottom-bar .btn-mark:hover { background: #F5F0FF; }
+.exam-bottom-bar .btn-mark.marked { background: #F5F0FF; border-color: #7C3AED; color: #7C3AED; }
+
+/* 题号导航面板 */
+.exam-nav-panel {
+    width: 240px; background: #fff; border-left: 1px solid var(--gray-200);
+    padding: 20px 16px; overflow-y: auto;
+}
+.exam-nav-panel .nav-title { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 12px; }
+.exam-nav-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; font-size: 11px; color: var(--gray-500); }
+.exam-nav-legend .legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.legend-dot.answered { background: var(--success); }
+.legend-dot.unanswered { background: var(--gray-200); }
+.legend-dot.current { background: var(--primary); }
+.legend-dot.marked { background: #A855F7; }
+.exam-nav-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    margin-bottom: 16px;
+}
+.exam-nav-num {
+    width: 100%; aspect-ratio: 1/1; min-height: 32px;
+    border: 1px solid var(--gray-300); background: #fff;
+    border-radius: 6px; cursor: pointer; font-size: 12px;
+    font-family: inherit; display: flex; align-items: center;
+    justify-content: center; transition: var(--transition);
+}
+.exam-nav-num:hover { border-color: var(--primary); }
+.exam-nav-num.answered { background: var(--success-light); color: var(--success); border-color: var(--success); font-weight: 600; }
+.exam-nav-num.current { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
+.exam-nav-num.marked { border-color: #A855F7; color: #A855F7; }
+.exam-nav-num.marked.answered { background: #F5F0FF; border-color: #7C3AED; color: #7C3AED; }
+.exam-nav-stats { font-size: 12px; color: var(--gray-500); line-height: 2; }
+.exam-nav-stats .stat-item { display: flex; align-items: center; gap: 6px; }
+
+/* ========================================================
+   报告弹窗（图1样式，宽弹窗）
+   ======================================================== */
+#reportModal .modal {
+    max-width: 1050px; width: 95%; border-radius: 16px; overflow: hidden;
+}
+.report-gradient-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #2563eb 100%);
+    color: #fff; padding: 28px 32px 24px;
+}
+.report-top-row {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 12px;
+}
+.report-top-row .report-back-btn {
+    color: rgba(255,255,255,0.8); cursor: pointer; font-size: 13px;
+    display: flex; align-items: center; gap: 4px; transition: var(--transition);
+}
+.report-top-row .report-back-btn:hover { color: #fff; }
+.report-top-row .report-actions { display: flex; gap: 10px; align-items: center; }
+.report-actions .btn-download {
+    background: rgba(255,255,255,0.2); color: #fff; border: none;
+    padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px;
+    font-family: inherit; transition: var(--transition); display: flex; align-items: center; gap: 4px;
+}
+.report-actions .btn-download:hover { background: rgba(255,255,255,0.35); }
+.report-actions .btn-back-center {
+    background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3);
+    padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px;
+    font-family: inherit; transition: var(--transition);
+}
+.report-actions .btn-back-center:hover { background: rgba(255,255,255,0.25); }
+.report-user-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.25); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+}
+.report-exam-title {
+    font-size: 20px; font-weight: 700; margin-bottom: 4px;
+}
+.report-exam-meta {
+    font-size: 12px; color: rgba(255,255,255,0.75); margin-bottom: 14px;
+}
+.report-pass-badge {
+    display: inline-block; padding: 4px 16px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; margin-bottom: 16px;
+}
+.report-pass-badge.pass { background: #8B5CF6; color: #fff; }
+.report-pass-badge.fail { background: #F87171; color: #fff; }
+.report-score-row {
+    display: flex; gap: 20px; flex-wrap: wrap;
+}
+.report-score-item {
+    text-align: center; min-width: 100px;
+}
+.report-score-item .score-num {
+    font-size: 32px; font-weight: 700; line-height: 1.2;
+}
+.report-score-item .score-label {
+    font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px;
+}
+.report-body-content { padding: 24px 32px; }
+.report-stats-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-bottom: 24px; }
+.report-stats-grid .stats-col h4 {
+    font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 14px;
+}
+.type-score-list { display: flex; flex-direction: column; gap: 12px; }
+.type-score-item { display: flex; align-items: center; gap: 12px; }
+.type-color-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.type-info { width: 140px; font-size: 12px; color: var(--gray-600); flex-shrink: 0; }
+.type-info .type-name { font-weight: 500; }
+.type-info .type-count { color: var(--gray-400); }
+.type-bar-wrap { flex: 1; height: 8px; background: var(--gray-100); border-radius: 6px; overflow: hidden; }
+.type-bar-inner { height: 100%; border-radius: 6px; transition: width 0.5s; }
+.type-score-val { font-size: 13px; font-weight: 600; width: 70px; text-align: right; white-space: nowrap; }
+
+.answer-donut-area { display: flex; align-items: center; gap: 24px; }
+.donut-wrap { position: relative; width: 130px; height: 130px; flex-shrink: 0; }
+.donut-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.donut-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center;
+}
+.donut-center .donut-pct { font-size: 24px; font-weight: 700; color: var(--gray-900); }
+.donut-center .donut-sub { font-size: 11px; color: var(--gray-500); }
+.donut-legend { font-size: 12px; line-height: 2; color: var(--gray-600); }
+
+.report-detail-section { margin-top: 8px; }
+.report-detail-section h4 { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 12px; }
+.report-detail-table { width: 100%; border-collapse: collapse; }
+.report-detail-table th {
+    background: var(--gray-50); padding: 8px 10px; border: 1px solid var(--gray-200);
+    font-size: 12px; font-weight: 600; color: var(--gray-700); text-align: center;
+}
+.report-detail-table td {
+    padding: 7px 10px; border: 1px solid var(--gray-200);
+    font-size: 12px; text-align: center; color: var(--gray-700);
+}
+.report-detail-table .correct-row { background: #F0FDF4; }
+.report-detail-table .wrong-row { background: #FEF2F2; }
+
+.report-history-section { margin-top: 20px; }
+.report-history-section h4 { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 12px; }
+.report-history-table { width: 100%; border-collapse: collapse; }
+.report-history-table th {
+    background: var(--gray-50); padding: 8px 10px; border: 1px solid var(--gray-200);
+    font-size: 12px; font-weight: 600; color: var(--gray-700); text-align: center;
+}
+.report-history-table td {
+    padding: 7px 10px; border: 1px solid var(--gray-200);
+    font-size: 12px; text-align: center; color: var(--gray-700);
+}
+.report-footer { padding: 16px 32px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ========================================================
+   交卷确认弹窗（图3样式）
+   ======================================================== */
+#confirmSubmitModal .modal { max-width: 500px; }
+.confirm-body { padding: 32px 32px 24px; text-align: center; }
+.confirm-warn-icon {
+    width: 56px; height: 56px; border-radius: 50%; background: #FEF3C7;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px; font-size: 26px; color: #D97706;
+}
+.confirm-title { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.confirm-subtitle { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
+.confirm-stats-box {
+    background: var(--gray-50); border-radius: 10px; padding: 16px 24px;
+    display: flex; justify-content: center; gap: 32px; margin-bottom: 16px;
+}
+.confirm-stat { text-align: center; font-size: 13px; }
+.confirm-stat .stat-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+.confirm-stat .stat-val { font-weight: 700; font-size: 18px; display: block; margin-top: 2px; }
+.confirm-warn-box {
+    background: #FEF2F2; border-radius: 8px; padding: 12px 16px;
+    text-align: left; font-size: 12px; color: #DC2626; margin-bottom: 24px;
+    display: flex; align-items: flex-start; gap: 8px;
+}
+.confirm-btns { display: flex; justify-content: center; gap: 12px; }
+.confirm-btns .btn-back-exam {
+    padding: 10px 32px; background: #fff; border: 1px solid var(--gray-300);
+    color: var(--gray-700); border-radius: 8px; font-size: 14px;
+    font-family: inherit; cursor: pointer; transition: var(--transition);
+}
+.confirm-btns .btn-back-exam:hover { background: var(--gray-50); }
+.confirm-btns .btn-confirm-submit {
+    padding: 10px 32px; background: #DC2626; color: #fff;
+    border: none; border-radius: 8px; font-size: 14px;
+    font-family: inherit; cursor: pointer; font-weight: 600; transition: var(--transition);
+}
+.confirm-btns .btn-confirm-submit:hover { background: #B91C1C; }
+
+/* 动画 */
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* 响应式 */
+@media (max-width: 1024px) {
+    .sidebar { width: 60px; }
+    .sidebar .menu-item span { display: none; }
+    .sidebar .menu-group-title { display: none; }
+    .sidebar .sidebar-progress { display: none; }
+    .sidebar .sidebar-user .user-name, .sidebar .sidebar-user .user-icons { display: none; }
+    .main-content { margin-left: 60px; }
+    .filter-section { flex-direction: column; align-items: flex-start; }
+    .search-box { margin-left: 0; }
+    .exam-body { flex-direction: column; }
+    .exam-nav-panel { width: 100%; border-left: none; border-top: 1px solid var(--gray-200); }
+    .exam-nav-grid { grid-template-columns: repeat(10, 1fr); }
+}
+
+.menu-item.has-submenu { position: relative; cursor: pointer; }
+.menu-item .arrow { margin-left: auto; font-size: 10px; transition: transform 0.2s; }
+.menu-item.expanded .arrow { transform: rotate(90deg); }
+.submenu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.submenu.open { max-height: 280px; }
+.submenu .menu-item { padding-left: 50px; font-size: 12px; }
+.submenu .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+</style>
+</head>
+<body>
+<!-- ===== 顶部导航 ===== -->
+<div class="header">
+    <a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学管理系统</a>
+    <div class="header-nav">
+        <a href="眼底图像输入.html">AI筛查</a>
+        <a href="临床数据开放共享.html">数据平台</a>
+        <a href="基础课程.html">AI教育</a>
+        <a href="临床决策支撑.html">专家系统</a>
+        <a href="数据采集工具（确认）.html">数据工具</a>
+    </div>
+    <div class="header-right">
+        <span class="user-info" id="headerUserName">管理员</span>
+        <button class="btn-logout" onclick="logout()">退出</button>
+    </div>
+</div>
+
+<!-- ===== 左侧菜单 ===== -->
+<div class="sidebar" id="sidebar">
+    <div class="menu-group">
+        <div class="menu-group-title">AI教育平台</div>
+        <a class="menu-item" href="基础课程.html">
+            <span class="menu-icon">📖</span>基础课程
+        </a>
+        <a class="menu-item" href="案例教学.html">
+            <span class="menu-icon">📋</span>案例教学
+        </a>
+        <div class="menu-item has-submenu" onclick="toggleSubmenu(this)">
+            <span class="menu-icon">🔧</span>技能实践
+            <span class="arrow">▶</span>
+        </div>
+        <div class="submenu">
+            <a class="menu-item" href="虚拟临床技能实训.html">虚拟临床技能实训</a>
+            <a class="menu-item" href="经典病例诊断实训.html">经典病例诊断实训</a>
+            <a class="menu-item" href="疑难病例分析与学术研讨.html">疑难病例分析与学术研讨</a>
+            <a class="menu-item" href="读片与病例大赛系统.html">读片与病例大赛系统</a>
+            <a class="menu-item" href="数据标注与AI实训.html">数据标注与AI实训</a>
+        </div>
+        <a class="menu-item active" href="考试中心.html">
+            <span class="menu-icon">📝</span>考试中心
+        </a>
+        <a class="menu-item" href="个人中心与能力评估.html">
+            <span class="menu-icon">👤</span>个人中心与能力评估
+        </a>
+    </div>
+
+    <div class="sidebar-progress">
+        <div class="progress-title">总体学习进度</div>
+        <div class="progress-percent">已完成 45%</div>
+        <div class="progress-bar-outer">
+            <div class="progress-bar-inner" style="width:45%;"></div>
+        </div>
+        <a href="基础课程.html" class="btn-continue">继续学习</a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="user-avatar">张</div>
+        <div class="user-name">张教授</div>
+        <div class="user-icons">🔔 ⚙</div>
+    </div>
+</div>
+
+<!-- ===== 主内容区 ===== -->
+<div class="main-content">
+    <!-- 面包屑 -->
+    <div class="breadcrumb" id="breadcrumbBar">
+        <a href="javascript:history.back()" class="back-link">← 返回</a>
+        <span class="sep">|</span>
+        <a href="#">AI教育平台</a>
+        <span class="sep">/</span>
+        <span>考试中心</span>
+    </div>
+
+    <!-- ========== 列表视图 ========== -->
+    <div id="listView">
+        <div class="content-card">
+            <div class="content-tabs">
+                <button class="content-tab active" onclick="switchTab('main','stage')">阶段测评</button>
+                <button class="content-tab" onclick="switchTab('main','comprehensive')">综合考核</button>
+            </div>
+
+            <div id="tab-stage" class="tab-panel" style="display:block;">
+                <div class="filter-section">
+                    <div class="filter-status-group">
+                        <button class="filter-status-btn active" onclick="filterStatus('all',this)">全部</button>
+                        <button class="filter-status-btn" onclick="filterStatus('not-started',this)">未开始</button>
+                        <button class="filter-status-btn" onclick="filterStatus('in-progress',this)">进行中</button>
+                        <button class="filter-status-btn" onclick="filterStatus('passed',this)">已通过</button>
+                        <button class="filter-status-btn" onclick="filterStatus('failed',this)">未通过</button>
+                    </div>
+                    <select class="filter-course-select" id="courseFilter" onchange="applyFilters()">
+                        <option value="all">全部课程</option>
+                        <option value="糖尿病视网膜病变诊疗规范（第2阶段）">糖尿病视网膜病变诊疗规范（第2阶段）</option>
+                        <option value="青光眼临床诊疗与进展（第3阶段）">青光眼临床诊疗与进展（第3阶段）</option>
+                        <option value="眼科学基础（第1阶段）">眼科学基础（第1阶段）</option>
+                        <option value="角膜病临床诊疗（第4阶段）">角膜病临床诊疗（第4阶段）</option>
+                        <option value="视光学理论与应用（第2阶段）">视光学理论与应用（第2阶段）</option>
+                    </select>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="搜索测评名称" oninput="applyFilters()">
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>测评名称</th>
+                                    <th>对应课程</th>
+                                    <th>状态</th>
+                                    <th>总分</th>
+                                    <th>最佳成绩</th>
+                                    <th>考试次数</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="examTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pagination-section">
+                    <div class="pagination-info">共计 <span id="totalCount">12</span> 条，<span id="stagePageInfo">第 1/2 页</span></div>
+                    <div class="pagination-controls" id="stagePaginationControls"></div>
+                </div>
+            </div>
+
+            <div id="tab-comprehensive" class="tab-panel" style="display:none;">
+                <div class="filter-section">
+                    <div class="filter-status-group">
+                        <button class="filter-status-btn active">全部</button>
+                        <button class="filter-status-btn">未开始</button>
+                        <button class="filter-status-btn">进行中</button>
+                        <button class="filter-status-btn">已通过</button>
+                        <button class="filter-status-btn">未通过</button>
+                    </div>
+                    <select class="filter-course-select"><option>全部课程</option></select>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="搜索考核名称">
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>考核名称</th>
+                                    <th>对应课程</th>
+                                    <th>状态</th>
+                                    <th>总分</th>
+                                    <th>最佳成绩</th>
+                                    <th>考试次数</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comprehensiveTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="pagination-section">
+                    <div class="pagination-info">共计 <span id="compTotalCount">3</span> 条，<span id="compPageInfo">第 1/1 页</span></div>
+                    <div class="pagination-controls" id="compPaginationControls"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 考试页面视图 ========== -->
+    <div id="examView">
+        <div class="exam-top-bar">
+            <div class="exam-name-display">
+                <span class="back-icon" onclick="exitExam()" title="返回列表">←</span>
+                <span id="examViewTitle">2024年第一季度知识考核</span>
+            </div>
+            <div class="exam-progress-wrap">
+                <span class="progress-label">当前第 <strong id="examCurrentQ">1</strong> 题 / 共 <strong id="examTotalQ">50</strong> 题</span>
+                <div class="progress-bar-outer">
+                    <div class="progress-bar-inner" id="examProgressBar" style="width:2%;"></div>
+                </div>
+                <span class="progress-pct">已完成 <strong id="examProgressPct">2%</strong></span>
+            </div>
+            <div class="exam-timer-display">
+                <span class="timer-icon">⏱</span>
+                <span id="examTimerText">01:30:00</span>
+            </div>
+            <button class="exam-submit-btn" onclick="confirmSubmit()">交卷</button>
+        </div>
+        <div class="exam-body">
+            <div class="exam-question-area" id="examQuestionArea"></div>
+            <div class="exam-nav-panel" id="examNavPanel"></div>
+        </div>
+        <div class="exam-bottom-bar">
+            <button class="btn btn-outline" onclick="prevQuestion()">← 上一题</button>
+            <button class="btn-mark" id="btnMark" onclick="toggleMark()">🏷 标记待查</button>
+            <button class="btn btn-primary" onclick="nextQuestion()">下一题 →</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 交卷确认弹窗（图3） ===== -->
+<div class="modal-overlay" id="confirmSubmitModal">
+    <div class="modal">
+        <div class="confirm-body">
+            <div class="confirm-warn-icon">⚠</div>
+            <div class="confirm-title">确认交卷？</div>
+            <div class="confirm-subtitle">交卷后将无法继续答题，请确认你的作答情况：</div>
+            <div class="confirm-stats-box">
+                <div class="confirm-stat">
+                    <span class="stat-dot" style="background:#10B981;"></span>已完成题目
+                    <span class="stat-val" style="color:#10B981;" id="csAnswered">0</span>
+                </div>
+                <div class="confirm-stat">
+                    <span class="stat-dot" style="background:#F59E0B;"></span>未完成题目
+                    <span class="stat-val" style="color:#F59E0B;" id="csUnanswered">0</span>
+                </div>
+                <div class="confirm-stat">
+                    <span class="stat-dot" style="background:#A855F7;"></span>标记待查
+                    <span class="stat-val" style="color:#A855F7;" id="csMarked">0</span>
+                </div>
+            </div>
+            <div class="confirm-warn-box" id="confirmWarnBox">
+                <span>⚠</span>
+                <span id="confirmWarnText"></span>
+            </div>
+            <div class="confirm-btns">
+                <button class="btn-back-exam" onclick="closeModal('confirmSubmitModal')">返回答题</button>
+                <button class="btn-confirm-submit" onclick="doSubmitExam()">确认交卷</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 考试成绩报告弹窗（图1样式） ===== -->
+<div class="modal-overlay" id="reportModal">
+    <div class="modal">
+        <div class="report-gradient-header">
+            <div class="report-top-row">
+                <span class="report-back-btn" onclick="closeModal('reportModal')">← 关闭报告</span>
+                <div class="report-actions">
+                    <button class="btn-download" onclick="alert('报告下载功能')">⬇ 下载报告</button>
+                    <button class="btn-back-center" onclick="closeModal('reportModal');switchToListView();">返回考试中心</button>
+                    <div class="report-user-avatar">张</div>
+                </div>
+            </div>
+            <div class="report-exam-title" id="reportExamName">2026年眼科医师资格考试-专业知识</div>
+            <div class="report-exam-meta" id="reportExamMeta">考试时间：2026-04-12 14:30-16:30 | 用时：1小时22分钟</div>
+            <span class="report-pass-badge pass" id="reportPassBadge">恭喜您！考试通过</span>
+            <div class="report-score-row">
+                <div class="report-score-item">
+                    <div class="score-num" id="reportTotalScore">86</div>
+                    <div class="score-label">总分</div>
+                </div>
+                <div class="report-score-item">
+                    <div class="score-num" id="reportAccuracy">86%</div>
+                    <div class="score-label">正确率</div>
+                </div>
+                <div class="report-score-item">
+                    <div class="score-num" id="reportRank">24/328</div>
+                    <div class="score-label">排名</div>
+                </div>
+                <div class="report-score-item">
+                    <div class="score-num" id="reportBeat">93%</div>
+                    <div class="score-label">击败考生</div>
+                </div>
+            </div>
+        </div>
+        <div class="report-body-content">
+            <div class="report-stats-grid">
+                <div class="stats-col">
+                    <h4>题型得分分析</h4>
+                    <div class="type-score-list" id="typeScoreList"></div>
+                </div>
+                <div class="stats-col">
+                    <h4>答题统计</h4>
+                    <div class="answer-donut-area">
+                        <div class="donut-wrap">
+                            <svg viewBox="0 0 36 36">
+                                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#FEE2E2" stroke-width="4"></circle>
+                                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#10B981" stroke-width="4"
+                                    stroke-dasharray="86 14" stroke-dashoffset="0" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="donut-center">
+                                <div class="donut-pct" id="donutPct">86%</div>
+                                <div class="donut-sub">正确率</div>
+                            </div>
+                        </div>
+                        <div class="donut-legend" id="donutLegend">
+                            <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981;margin-right:6px;"></span>答对 <strong id="donutCorrect">43</strong> 题</div>
+                            <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#EF4444;margin-right:6px;"></span>答错 <strong id="donutWrong">7</strong> 题</div>
+                            <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#A855F7;margin-right:6px;"></span>标记复查 <strong id="donutMarked">3</strong> 题</div>
+                            <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B82F6;margin-right:6px;"></span>总题数 <strong>50</strong> 题</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 逐题详情 -->
+            <div class="report-detail-section">
+                <h4>逐题详情</h4>
+                <div style="overflow-x:auto;">
+                    <table class="report-detail-table">
+                        <thead>
+                            <tr>
+                                <th>题号</th><th>题型</th><th>正确答案</th><th>你的答案</th><th>结果</th><th>得分</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportDetailBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 历史成绩对比 -->
+            <div class="report-history-section" id="reportHistorySection" style="display:none;">
+                <h4>历史成绩对比</h4>
+                <div style="overflow-x:auto;">
+                    <table class="report-history-table">
+                        <thead>
+                            <tr><th>考试时间</th><th>得分</th><th>正确率</th><th>用时</th><th>结果</th></tr>
+                        </thead>
+                        <tbody id="reportHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="report-footer">
+            <button class="btn btn-outline" onclick="closeModal('reportModal');switchToListView();">关闭</button>
+            <button class="btn btn-warning" id="reportReExamBtn" onclick="reExam()">重新考试</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// 子菜单展开/收起
+function toggleSubmenu(el) {
+    el.classList.toggle('expanded');
+    el.nextElementSibling.classList.toggle('open');
+}
+
+// ===== 题目数据 =====
+var examQuestions = [{"q": "糖尿病视网膜病变的早期微血管改变不包括以下哪项？", "options": ["微血管瘤形成", "毛细血管基底膜增厚", "周细胞丢失", "视网膜新生血管", "毛细血管闭锁"], "answer": 3, "type": "单选题", "score": 2}, {"q": "糖尿病视网膜病变NPDR的最早期临床表现是？", "options": ["硬性渗出", "棉绒斑", "微血管瘤", "视网膜内微血管异常(IRMA)", "静脉串珠"], "answer": 2, "type": "单选题", "score": 2}, {"q": "PDR的高危特征不包括？", "options": ["视盘新生血管(NVD)", "视网膜前或玻璃体积血", "NVD≥1/4-1/3视盘面积", "IRMA", "NVD伴玻璃体积血"], "answer": 3, "type": "单选题", "score": 2}, {"q": "糖尿病黄斑水肿(DME)的一线治疗是？", "options": ["全视网膜光凝(PRP)", "抗VEGF玻璃体腔注射", "局部视网膜光凝", "玻璃体切割术", "口服糖皮质激素"], "answer": 1, "type": "单选题", "score": 2}, {"q": "关于DR筛查，以下哪项正确？", "options": ["1型糖尿病患者确诊后立即开始", "2型糖尿病患者确诊5年后开始", "妊娠糖尿病无需筛查", "每年一次散瞳眼底检查", "OCT可替代眼底检查"], "answer": 3, "type": "单选题", "score": 2}, {"q": "下列哪项不是DR的危险因素？", "options": ["糖尿病病程", "高血糖", "高血压", "高尿酸血症", "血脂异常"], "answer": 3, "type": "单选题", "score": 2}, {"q": "ETDRS定义的临床显著性黄斑水肿(CSME)标准不包括？", "options": ["距黄斑中心500μm内的视网膜增厚", "距黄斑中心500μm内的硬性渗出伴邻近视网膜增厚", "≥1PD的视网膜增厚，部分位于黄斑中心1DD内", "OCT显示CMT≥300μm"], "answer": 3, "type": "单选题", "score": 2}, {"q": "全视网膜光凝(PRP)的适应证是？", "options": ["轻度NPDR", "中度NPDR", "重度NPDR", "高危PDR", "任何伴有DME的DR"], "answer": 3, "type": "单选题", "score": 2}, {"q": "关于糖尿病视网膜病变，以下哪项错误？", "options": ["DR是工作年龄人群致盲的主要原因之一", "严格的血糖控制可降低DR发生和进展风险", "DR早期可出现明显视力下降", "抗VEGF治疗可逆转部分DR改变", "激光光凝可降低严重视力丧失风险"], "answer": 2, "type": "单选题", "score": 2}, {"q": "DR患者出现突发视力下降，最可能的原因是？", "options": ["白内障进展", "玻璃体积血", "黄斑水肿缓慢加重", "屈光不正", "青光眼"], "answer": 1, "type": "单选题", "score": 2}, {"q": "FFA在DR评估中的主要作用是？", "options": ["测量黄斑厚度", "评估视网膜缺血范围和新生血管渗漏", "测量眼压", "评估视神经", "测量角膜曲率"], "answer": 1, "type": "单选题", "score": 2}, {"q": "以下哪项属于重度NPDR（4-2-1规则）？", "options": ["仅有微血管瘤", "4个象限内严重视网膜出血", "1个象限内静脉串珠", "轻度IRMA", "棉绒斑"], "answer": 1, "type": "单选题", "score": 2}, {"q": "妊娠期DR的管理，错误的是？", "options": ["妊娠可加速DR进展", "妊娠前应进行DR筛查", "妊娠期间每3个月复查一次", "妊娠期PRP绝对禁忌", "严格控制血糖和血压"], "answer": 3, "type": "单选题", "score": 2}, {"q": "OCT在DR管理中的主要价值是？", "options": ["诊断DR分期", "评估黄斑水肿及治疗后反应", "替代FFA检查", "测量视网膜血流量", "评估激光光斑效果"], "answer": 1, "type": "单选题", "score": 2}, {"q": "以下关于IRMA的描述，正确的是？", "options": ["IRMA即视网膜新生血管", "IRMA位于视网膜内，不突破内界膜", "IRMA必然伴有明显渗漏", "IRMA等同于NVE", "IRMA无需特别关注"], "answer": 1, "type": "单选题", "score": 2}, {"q": "原发性开角型青光眼(POAG)的典型视野缺损是？", "options": ["中心暗点", "弓形暗点(Bjerrum)", "鼻侧阶梯", "生理盲点扩大", "管状视野"], "answer": 1, "type": "单选题", "score": 3}, {"q": "正常眼压范围是？", "options": ["5-15 mmHg", "10-21 mmHg", "15-25 mmHg", "8-18 mmHg", "12-28 mmHg"], "answer": 1, "type": "单选题", "score": 3}, {"q": "POAG的一线治疗药物是？", "options": ["β受体阻滞剂", "前列腺素类似物", "α2受体激动剂", "碳酸酐酶抑制剂", "缩瞳剂"], "answer": 1, "type": "单选题", "score": 3}, {"q": "急性闭角型青光眼的典型症状不包括？", "options": ["剧烈眼痛", "视力骤降", "虹视", "恶心呕吐", "缓慢进行性视野缺损"], "answer": 4, "type": "单选题", "score": 3}, {"q": "以下哪项检查对青光眼诊断最重要？", "options": ["视力检查", "裂隙灯检查", "眼压+前房角镜+视盘+视野", "OCT黄斑", "FFA"], "answer": 2, "type": "单选题", "score": 3}, {"q": "正常眼压性青光眼(NTG)的特征是？", "options": ["眼压始终>30mmHg", "眼压始终<21mmHg但存在青光眼性损害", "眼压波动极大", "仅见于年轻人", "必须伴有高度近视"], "answer": 1, "type": "单选题", "score": 3}, {"q": "关于视盘评估，以下哪项提示青光眼性损伤？", "options": ["C/D<0.3", "双眼C/D差<0.2", "盘沿宽度ISNT规则破坏", "视盘大小对称", "无出血"], "answer": 2, "type": "单选题", "score": 3}, {"q": "SLT（选择性激光小梁成形术）的作用机制是？", "options": ["增加房水外流", "减少房水生成", "缩瞳", "扩张睫状体", "破坏睫状体"], "answer": 0, "type": "单选题", "score": 3}, {"q": "OCT在青光眼评估中主要测量？", "options": ["角膜厚度", "RNFL厚度和神经节细胞复合体", "玻璃体混浊", "晶状体密度", "房水深度"], "answer": 1, "type": "单选题", "score": 3}, {"q": "以下哪种情况是POAG的危险因素？", "options": ["年龄<40岁", "低眼压", "中央角膜厚度较薄", "近视<-1.0D", "家族史阴性"], "answer": 2, "type": "单选题", "score": 3}, {"q": "Goldmann压平眼压计的测量原理依赖于？", "options": ["Schiotz原理", "Imbert-Fick定律", "Pascal原理", "动态轮廓测量", "回弹测量"], "answer": 1, "type": "单选题", "score": 3}, {"q": "青光眼滤过手术后最常见的早期并发症是？", "options": ["低眼压", "滤过泡渗漏", "恶性青光眼", "眼内炎", "持续性高眼压"], "answer": 0, "type": "单选题", "score": 3}, {"q": "关于先天性青光眼，下列哪项错误？", "options": ["通常1岁内发病", "典型三联征：畏光、流泪、眼睑痉挛", "角膜直径<10mm", "Haab纹（Descemet膜破裂）", "首选手术治疗"], "answer": 2, "type": "单选题", "score": 3}, {"q": "干性AMD的特征性改变是？", "options": ["脉络膜新生血管(CNV)", "玻璃膜疣和地图状萎缩", "视网膜下积液", "视网膜出血", "黄斑水肿"], "answer": 1, "type": "单选题", "score": 2}, {"q": "湿性AMD的诊断金标准是？", "options": ["眼底照相", "OCT", "FFA+ICGA", "视野检查", "眼压测量"], "answer": 2, "type": "单选题", "score": 2}, {"q": "抗VEGF治疗湿性AMD，目前最常用的给药方案是？", "options": ["每月固定注射", "PRN（按需）", "T&E（治疗并延长）", "每季度一次", "单次注射"], "answer": 2, "type": "单选题", "score": 2}, {"q": "以下哪项不是AMD的危险因素？", "options": ["年龄>50岁", "吸烟", "高血压", "高度近视", "家族史"], "answer": 3, "type": "单选题", "score": 2}, {"q": "OCT上湿性AMD的典型表现不包括？", "options": ["视网膜下液", "视网膜内液", "PED（色素上皮脱离）", "玻璃膜疣仅有", "视网膜下高反射物质(SHRM)"], "answer": 3, "type": "单选题", "score": 2}, {"q": "AREDS2配方中不包括？", "options": ["维生素C", "维生素E", "叶黄素/玉米黄质", "锌", "β-胡萝卜素（被去除）"], "answer": 4, "type": "单选题", "score": 2}, {"q": "PCV（息肉状脉络膜血管病变）最常见于哪类人群？", "options": ["白种人", "亚洲人", "非洲人", "拉丁裔", "所有人种同等"], "answer": 1, "type": "单选题", "score": 2}, {"q": "玻璃膜疣的组织病理学位置是？", "options": ["视网膜神经上皮层内", "视网膜色素上皮与Bruch膜之间", "脉络膜内", "视网膜下腔", "玻璃体腔内"], "answer": 1, "type": "单选题", "score": 2}, {"q": "AMD患者出现视物变形，最可能的原因是？", "options": ["玻璃体混浊", "白内障", "黄斑区CNV或水肿", "青光眼", "视神经炎"], "answer": 2, "type": "单选题", "score": 2}, {"q": "关于地图状萎缩(GA)，以下哪项正确？", "options": ["GA是湿性AMD的特征", "GA由RPE和光感受器萎缩导致", "抗VEGF对GA疗效显著", "GA不影响中心视力", "GA多见于年轻人"], "answer": 1, "type": "单选题", "score": 2}, {"q": "角膜内皮细胞密度低于多少时，内眼术后角膜失代偿风险显著增加？", "options": ["3000/mm²", "2000/mm²", "1500/mm²", "1000/mm²", "500/mm²"], "answer": 3, "type": "单选题", "score": 2}, {"q": "细菌性角膜炎最常见的致病菌是？", "options": ["金黄色葡萄球菌", "铜绿假单胞菌", "肺炎链球菌", "表皮葡萄球菌", "淋球菌"], "answer": 3, "type": "单选题", "score": 2}, {"q": "圆锥角膜的典型地形图表现是？", "options": ["对称性蝴蝶结", "下方陡峭不对称", "均匀平整", "规则散光", "中央平坦"], "answer": 1, "type": "单选题", "score": 2}, {"q": "单纯疱疹病毒性角膜炎最常见的形式是？", "options": ["上皮型（树枝状）", "基质型", "内皮型", "神经营养性", "盘状"], "answer": 0, "type": "单选题", "score": 2}, {"q": "角膜移植术，穿透性角膜移植(PK)和DMEK的区别是？", "options": ["PK移植全层，DMEK仅移植内皮-Descemet膜", "PK是板层移植", "DMEK移植全层", "两者无区别", "PK仅移植内皮"], "answer": 0, "type": "单选题", "score": 2}, {"q": "Fuchs角膜内皮营养不良的典型体征是？", "options": ["角膜上皮铁线", "角膜guttata（滴状赘疣）", "角膜新生血管", "K-F环", "带状角膜病变"], "answer": 1, "type": "单选题", "score": 2}, {"q": "真菌性角膜炎的典型体征包括？", "options": ["树枝状溃疡", "卫星灶和羽毛状边缘", "角膜后沉着物(KP)", "前房积脓仅见于细菌性", "角膜内皮斑"], "answer": 1, "type": "单选题", "score": 2}, {"q": "OCT检查中，正常黄斑中心凹厚度(CMT)约为？", "options": ["100-150μm", "170-220μm", "250-300μm", "300-350μm", ">400μm"], "answer": 1, "type": "单选题", "score": 1}, {"q": "视网膜中央动脉阻塞(CRAO)的抢救时间窗是？", "options": ["24小时内", "12小时内", "6小时内", "90-120分钟内", "无时间窗限制"], "answer": 3, "type": "单选题", "score": 1}, {"q": "关于葡萄膜炎，以下哪项错误？", "options": ["前葡萄膜炎最常见", "可伴有全身免疫性疾病", "激素是主要治疗手段", "葡萄膜炎从不影响后节", "可导致继发性青光眼"], "answer": 3, "type": "单选题", "score": 1}, {"q": "视网膜脱离的典型前驱症状是？", "options": ["视力渐进性下降", "闪光感和飞蚊症增多", "眼痛", "眼红", "分泌物增多"], "answer": 1, "type": "单选题", "score": 1}, {"q": "下列关于儿童弱视治疗的描述，正确的是？", "options": ["任何年龄均可有效治疗", "遮盖疗法是主要手段之一", "弱视治疗越晚越好", "屈光矫正不是必需的", "手术治疗是首选"], "answer": 1, "type": "单选题", "score": 1}];
+
+// ===== Mock 考试数据 =====
+var examData = [
+    { id: 1, name: '糖尿病视网膜病变阶段测1', course: '糖尿病视网膜病变诊疗规范（第2阶段）', status: 'in-progress', totalScore: 100, bestScore: 78, examCount: '1/3次', history: [{time:'2026-06-15',score:78,rate:'78%',duration:'52分钟',result:'未通过'}] },
+    { id: 2, name: '青光眼阶段测评', course: '青光眼临床诊疗与进展（第3阶段）', status: 'not-started', totalScore: 100, bestScore: null, examCount: '0/2次', history: [] },
+    { id: 3, name: '眼科基础理论阶段测评', course: '眼科学基础（第1阶段）', status: 'passed', totalScore: 100, bestScore: 92, examCount: '2/2次', history: [{time:'2026-05-20',score:86,rate:'86%',duration:'48分钟',result:'通过'},{time:'2026-06-10',score:92,rate:'92%',duration:'42分钟',result:'通过'}] },
+    { id: 4, name: '角膜病诊疗阶段测评', course: '角膜病临床诊疗（第4阶段）', status: 'failed', totalScore: 100, bestScore: 72, examCount: '1/3次', history: [{time:'2026-06-18',score:72,rate:'72%',duration:'55分钟',result:'未通过'}] },
+    { id: 5, name: '视光学基础阶段测评', course: '视光学理论与应用（第2阶段）', status: 'not-started', totalScore: 100, bestScore: null, examCount: '0/2次', history: [] },
+    { id: 6, name: '视光学高级阶段测评', course: '视光学理论与应用（第3阶段）', status: 'not-started', totalScore: 100, bestScore: null, examCount: '0/3次', history: [] },
+    { id: 7, name: '眼病理学阶段测评', course: '眼科学基础（第2阶段）', status: 'passed', totalScore: 100, bestScore: 95, examCount: '2/2次', history: [{time:'2026-04-15',score:88,rate:'88%',duration:'50分钟',result:'通过'},{time:'2026-05-28',score:95,rate:'95%',duration:'40分钟',result:'通过'}] },
+    { id: 8, name: '青光眼激光治疗阶段测评', course: '青光眼临床诊疗与进展（第4阶段）', status: 'in-progress', totalScore: 100, bestScore: 65, examCount: '1/3次', history: [{time:'2026-06-05',score:65,rate:'65%',duration:'60分钟',result:'未通过'}] },
+    { id: 9, name: '角膜移植术阶段测评', course: '角膜病临床诊疗（第5阶段）', status: 'not-started', totalScore: 100, bestScore: null, examCount: '0/2次', history: [] },
+    { id: 10, name: '糖尿病黄斑水肿阶段测评', course: '糖尿病视网膜病变诊疗规范（第3阶段）', status: 'failed', totalScore: 100, bestScore: 58, examCount: '2/3次', history: [{time:'2026-05-10',score:52,rate:'52%',duration:'65分钟',result:'未通过'},{time:'2026-06-20',score:58,rate:'58%',duration:'58分钟',result:'未通过'}] },
+    { id: 11, name: '眼底荧光血管造影判读', course: '糖尿病视网膜病变诊疗规范（第4阶段）', status: 'passed', totalScore: 100, bestScore: 88, examCount: '1/2次', history: [{time:'2026-06-12',score:88,rate:'88%',duration:'45分钟',result:'通过'}] },
+    { id: 12, name: 'OCT读片阶段测评', course: '眼科学基础（第3阶段）', status: 'in-progress', totalScore: 100, bestScore: 80, examCount: '1/3次', history: [{time:'2026-06-22',score:80,rate:'80%',duration:'50分钟',result:'通过'}] }
+];
+
+// 综合考核数据
+var comprehensiveData = [
+    { id: 101, name: '眼科综合能力考核', course: '眼科学综合（第5阶段）', status: 'not-started', totalScore: 150, bestScore: null, examCount: '0/2次', history: [] },
+    { id: 102, name: 'AI辅助诊断综合测评', course: 'AI医学影像综合应用', status: 'passed', totalScore: 120, bestScore: 108, examCount: '1/2次', history: [{time:'2026-06-08',score:108,rate:'90%',duration:'75分钟',result:'通过'}] },
+    { id: 103, name: '眼底病诊疗综合考核', course: '糖尿病视网膜病变诊疗规范（全阶段）', status: 'failed', totalScore: 150, bestScore: 82, examCount: '1/3次', history: [{time:'2026-06-15',score:82,rate:'55%',duration:'90分钟',result:'未通过'}] }
+];
+
+var currentStatusFilter = 'all';
+var currentExamId = null;
+var currentQuestion = 0;
+var userAnswers = {};
+var markedQuestions = {};
+var examTimerInterval = null;
+var examSeconds = 5400;
+var currentTab = 'stage';
+
+// ===== 分页状态 =====
+var stagePageSize = 10;
+var compPageSize = 10;
+var currentStagePage = 1;
+var currentCompPage = 1;
+var filteredStageData = [];
+var filteredCompData = [];
+
+// ===== 渲染阶段测评表格（带分页） =====
+function renderTable(data, page) {
+    page = page || 1;
+    filteredStageData = data;
+    currentStagePage = page;
+    var start = (page - 1) * stagePageSize;
+    var end = start + stagePageSize;
+    var pageData = data.slice(start, end);
+
+    var tbody = document.getElementById('examTableBody');
+    var html = '';
+    if (pageData.length === 0) {
+        html = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-400);">暂无数据</td></tr>';
+    }
+    for (var i = 0; i < pageData.length; i++) {
+        var item = pageData[i];
+        var statusHtml = getStatusHtml(item.status);
+        var actionHtml = getActionHtml(item);
+        var bestStr = item.bestScore !== null ? item.bestScore + '分' : '-';
+        html += '<tr>';
+        html += '<td>' + item.name + '</td>';
+        html += '<td>' + item.course + '</td>';
+        html += '<td>' + statusHtml + '</td>';
+        html += '<td>' + item.totalScore + '分</td>';
+        html += '<td>' + bestStr + '</td>';
+        html += '<td>' + item.examCount + '</td>';
+        html += '<td>' + actionHtml + '</td>';
+        html += '</tr>';
+    }
+    tbody.innerHTML = html;
+    document.getElementById('totalCount').textContent = data.length;
+
+    var totalPages = Math.ceil(data.length / stagePageSize);
+    if (totalPages < 1) totalPages = 1;
+    document.getElementById('stagePageInfo').textContent = '第 ' + page + '/' + totalPages + ' 页';
+    renderStagePagination(page, totalPages);
+}
+
+function renderStagePagination(currentPage, totalPages) {
+    var container = document.getElementById('stagePaginationControls');
+    if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+    var html = '';
+    html += '<button ' + (currentPage === 1 ? 'disabled' : '') + ' onclick="goStagePage(' + (currentPage - 1) + ')">&lt;</button>';
+
+    var startPage = Math.max(1, currentPage - 3);
+    var endPage = Math.min(totalPages, startPage + 6);
+    if (endPage - startPage < 6) {
+        startPage = Math.max(1, endPage - 6);
+    }
+
+    if (startPage > 1) {
+        html += '<button onclick="goStagePage(1)">1</button>';
+        if (startPage > 2) html += '<span class="page-ellipsis">...</span>';
+    }
+
+    for (var p = startPage; p <= endPage; p++) {
+        html += '<button ' + (p === currentPage ? 'class="active"' : '') + ' onclick="goStagePage(' + p + ')">' + p + '</button>';
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += '<span class="page-ellipsis">...</span>';
+        html += '<button onclick="goStagePage(' + totalPages + ')">' + totalPages + '</button>';
+    }
+
+    html += '<button ' + (currentPage === totalPages ? 'disabled' : '') + ' onclick="goStagePage(' + (currentPage + 1) + ')">&gt;</button>';
+    container.innerHTML = html;
+}
+
+function goStagePage(page) {
+    if (page < 1 || page > Math.ceil(filteredStageData.length / stagePageSize)) return;
+    renderTable(filteredStageData, page);
+}
+
+function getStatusHtml(status) {
+    var map = {
+        'in-progress': '<span class="status-tag in-progress">进行中</span>',
+        'not-started': '<span class="status-tag not-started">未开始</span>',
+        'passed': '<span class="status-tag passed">已通过</span>',
+        'failed': '<span class="status-tag failed">未通过</span>'
+    };
+    return map[status] || '';
+}
+
+function getActionHtml(item) {
+    if (item.status === 'not-started') {
+        return '<button class="btn btn-primary" onclick="startExam(' + item.id + ')">开始考试</button>';
+    } else if (item.status === 'in-progress') {
+        return '<div class="action-btns"><button class="btn btn-outline" onclick="viewReport(' + item.id + ')">查看报告</button><button class="btn btn-primary" onclick="startExam(' + item.id + ')">继续考试</button></div>';
+    } else {
+        return '<div class="action-btns"><button class="btn btn-outline" onclick="viewReport(' + item.id + ')">查看报告</button><button class="btn btn-warning" onclick="startExam(' + item.id + ')">重新考试</button></div>';
+    }
+}
+
+// 渲染综合考核表格（带分页）
+function renderComprehensiveTable(page) {
+    page = page || 1;
+    filteredCompData = comprehensiveData;
+    currentCompPage = page;
+    var start = (page - 1) * compPageSize;
+    var end = start + compPageSize;
+    var pageData = comprehensiveData.slice(start, end);
+
+    var tbody = document.getElementById('comprehensiveTableBody');
+    var html = '';
+    if (pageData.length === 0) {
+        html = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-400);">暂无数据</td></tr>';
+    }
+    for (var i = 0; i < pageData.length; i++) {
+        var item = pageData[i];
+        var bestStr = item.bestScore !== null ? item.bestScore + '分' : '-';
+        html += '<tr>';
+        html += '<td>' + item.name + '</td>';
+        html += '<td>' + item.course + '</td>';
+        html += '<td>' + getStatusHtml(item.status) + '</td>';
+        html += '<td>' + item.totalScore + '分</td>';
+        html += '<td>' + bestStr + '</td>';
+        html += '<td>' + item.examCount + '</td>';
+        html += '<td>' + getActionHtml(item) + '</td>';
+        html += '</tr>';
+    }
+    tbody.innerHTML = html;
+    document.getElementById('compTotalCount').textContent = comprehensiveData.length;
+
+    var totalPages = Math.ceil(comprehensiveData.length / compPageSize);
+    if (totalPages < 1) totalPages = 1;
+    document.getElementById('compPageInfo').textContent = '第 ' + page + '/' + totalPages + ' 页';
+    renderCompPagination(page, totalPages);
+}
+
+function renderCompPagination(currentPage, totalPages) {
+    var container = document.getElementById('compPaginationControls');
+    if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+    var html = '';
+    html += '<button ' + (currentPage === 1 ? 'disabled' : '') + ' onclick="goCompPage(' + (currentPage - 1) + ')">&lt;</button>';
+
+    var startPage = Math.max(1, currentPage - 3);
+    var endPage = Math.min(totalPages, startPage + 6);
+    if (endPage - startPage < 6) {
+        startPage = Math.max(1, endPage - 6);
+    }
+
+    if (startPage > 1) {
+        html += '<button onclick="goCompPage(1)">1</button>';
+        if (startPage > 2) html += '<span class="page-ellipsis">...</span>';
+    }
+
+    for (var p = startPage; p <= endPage; p++) {
+        html += '<button ' + (p === currentPage ? 'class="active"' : '') + ' onclick="goCompPage(' + p + ')">' + p + '</button>';
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += '<span class="page-ellipsis">...</span>';
+        html += '<button onclick="goCompPage(' + totalPages + ')">' + totalPages + '</button>';
+    }
+
+    html += '<button ' + (currentPage === totalPages ? 'disabled' : '') + ' onclick="goCompPage(' + (currentPage + 1) + ')">&gt;</button>';
+    container.innerHTML = html;
+}
+
+function goCompPage(page) {
+    if (page < 1 || page > Math.ceil(comprehensiveData.length / compPageSize)) return;
+    renderComprehensiveTable(page);
+}
+
+// ===== 筛选 =====
+function filterStatus(status, btn) {
+    currentStatusFilter = status;
+    var btns = document.querySelectorAll('#tab-stage .filter-status-btn');
+    for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+    btn.classList.add('active');
+    applyFilters();
+}
+
+function applyFilters() {
+    var courseVal = document.getElementById('courseFilter').value;
+    var searchVal = document.getElementById('searchInput').value.toLowerCase();
+    var filtered = examData.filter(function(item) {
+        if (currentStatusFilter !== 'all' && item.status !== currentStatusFilter) return false;
+        if (courseVal !== 'all' && item.course !== courseVal) return false;
+        if (searchVal && item.name.toLowerCase().indexOf(searchVal) === -1) return false;
+        return true;
+    });
+    renderTable(filtered, 1);
+}
+
+// ===== Tab 切换 =====
+function switchTab(group, name) {
+    currentTab = name;
+    var tabs = document.querySelectorAll('.content-tab');
+    for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('active'); }
+    var targetTab = document.querySelector('.content-tab[onclick*="' + name + '"]');
+    if (targetTab) targetTab.classList.add('active');
+    document.getElementById('tab-stage').style.display = (name === 'stage') ? 'block' : 'none';
+    document.getElementById('tab-comprehensive').style.display = (name === 'comprehensive') ? 'block' : 'none';
+}
+
+// ===== 视图切换 =====
+function switchToExamView() {
+    document.getElementById('listView').style.display = 'none';
+    document.getElementById('examView').style.display = 'block';
+    document.getElementById('breadcrumbBar').innerHTML = '<span class="back-link" onclick="exitExam()" style="cursor:pointer;">← 返回考试列表</span> <span class="sep">|</span> <span>考试中心</span> <span class="sep">/</span> <span>考试中</span>';
+}
+
+function switchToListView() {
+    document.getElementById('examView').style.display = 'none';
+    document.getElementById('listView').style.display = 'block';
+    document.getElementById('breadcrumbBar').innerHTML = '<a href="javascript:history.back()" class="back-link">← 返回</a><span class="sep">|</span><a href="#">AI教育平台</a><span class="sep">/</span><span>考试中心</span>';
+    if (examTimerInterval) { clearInterval(examTimerInterval); examTimerInterval = null; }
+}
+
+function exitExam() {
+    if (confirm('确定要退出考试吗？您的答题进度将被保存。')) {
+        if (examTimerInterval) { clearInterval(examTimerInterval); examTimerInterval = null; }
+        // 保存进度
+        var item = findExamById(currentExamId);
+        if (item && Object.keys(userAnswers).length > 0) {
+            item.status = 'in-progress';
+        }
+        switchToListView();
+        refreshAllTables();
+    }
+}
+
+function findExamById(id) {
+    var found = examData.find(function(e) { return e.id === id; });
+    if (!found) found = comprehensiveData.find(function(e) { return e.id === id; });
+    return found;
+}
+
+// ===== 考试页面 =====
+function startExam(id) {
+    currentExamId = id;
+    currentQuestion = 0;
+    userAnswers = {};
+    markedQuestions = {};
+    examSeconds = 5400; // 90分钟
+
+    var item = findExamById(id);
+    var examName = item ? item.name : '阶段测评';
+
+    document.getElementById('examViewTitle').textContent = examName;
+    document.getElementById('examTotalQ').textContent = examQuestions.length;
+    switchToExamView();
+    renderQuestion();
+    renderNavPanel();
+    startTimer();
+    updateProgress();
+}
+
+function renderQuestion() {
+    var q = examQuestions[currentQuestion];
+    var area = document.getElementById('examQuestionArea');
+    var labels = ['A', 'B', 'C', 'D', 'E'];
+    var html = '<div class="exam-question-card">';
+    html += '<span class="question-type-tag">' + q.type + '（' + q.score + '分）</span>';
+    html += '<div class="question-stem">' + (currentQuestion + 1) + '. ' + q.q + '</div>';
+    html += '<div class="option-list">';
+    for (var i = 0; i < q.options.length; i++) {
+        var selCls = (userAnswers[currentQuestion] === i) ? ' selected' : '';
+        html += '<div class="option-item-exam' + selCls + '" onclick="selectAnswer(' + i + ',this)">';
+        html += '<span class="option-radio-circle">' + labels[i] + '</span>';
+        html += '<span>' + q.options[i] + '</span>';
+        html += '</div>';
+    }
+    html += '</div></div>';
+    area.innerHTML = html;
+    document.getElementById('examCurrentQ').textContent = currentQuestion + 1;
+}
+
+function selectAnswer(optIndex, el) {
+    userAnswers[currentQuestion] = optIndex;
+    var items = el.parentElement.querySelectorAll('.option-item-exam');
+    for (var i = 0; i < items.length; i++) { items[i].classList.remove('selected'); }
+    el.classList.add('selected');
+    renderNavPanel();
+    updateProgress();
+}
+
+function renderNavPanel() {
+    var panel = document.getElementById('examNavPanel');
+    var total = examQuestions.length;
+    var answered = Object.keys(userAnswers).length;
+    var marked = Object.keys(markedQuestions).length;
+    var html = '<div class="nav-title">题号导航</div>';
+    html += '<div class="exam-nav-legend">';
+    html += '<div class="legend-item"><span class="legend-dot answered"></span>已完成</div>';
+    html += '<div class="legend-item"><span class="legend-dot unanswered"></span>未完成</div>';
+    html += '<div class="legend-item"><span class="legend-dot current"></span>当前题</div>';
+    html += '<div class="legend-item"><span class="legend-dot marked"></span>标记</div>';
+    html += '</div>';
+    html += '<div class="exam-nav-grid">';
+    for (var i = 0; i < total; i++) {
+        var cls = '';
+        if (i === currentQuestion) cls += ' current';
+        if (userAnswers[i] !== undefined) cls += ' answered';
+        if (markedQuestions[i]) cls += ' marked';
+        html += '<button class="exam-nav-num' + cls + '" onclick="jumpToQuestion(' + i + ')">' + (i + 1) + '</button>';
+    }
+    html += '</div>';
+    html += '<div class="exam-nav-stats">';
+    html += '<div class="stat-item"><span class="legend-dot answered" style="display:inline-block;"></span> 已完成题目 <strong>' + answered + '</strong> / ' + total + '</div>';
+    html += '<div class="stat-item"><span class="legend-dot unanswered" style="display:inline-block;"></span> 未完成题目 <strong>' + (total - answered) + '</strong> / ' + total + '</div>';
+    html += '<div class="stat-item"><span class="legend-dot marked" style="display:inline-block;"></span> 标记题目 <strong>' + marked + '</strong> / ' + total + '</div>';
+    html += '</div>';
+    panel.innerHTML = html;
+}
+
+function jumpToQuestion(index) {
+    currentQuestion = index;
+    renderQuestion();
+    renderNavPanel();
+    updateProgress();
+    updateMarkBtn();
+}
+
+function prevQuestion() {
+    if (currentQuestion > 0) { currentQuestion--; renderQuestion(); renderNavPanel(); updateProgress(); updateMarkBtn(); }
+}
+
+function nextQuestion() {
+    if (currentQuestion < examQuestions.length - 1) { currentQuestion++; renderQuestion(); renderNavPanel(); updateProgress(); updateMarkBtn(); }
+}
+
+function toggleMark() {
+    if (markedQuestions[currentQuestion]) {
+        delete markedQuestions[currentQuestion];
+    } else {
+        markedQuestions[currentQuestion] = true;
+    }
+    renderNavPanel();
+    updateMarkBtn();
+}
+
+function updateMarkBtn() {
+    var btn = document.getElementById('btnMark');
+    if (markedQuestions[currentQuestion]) {
+        btn.classList.add('marked');
+        btn.innerHTML = '🏷 已标记';
+    } else {
+        btn.classList.remove('marked');
+        btn.innerHTML = '🏷 标记待查';
+    }
+}
+
+function updateProgress() {
+    var answered = Object.keys(userAnswers).length;
+    var total = examQuestions.length;
+    var pct = Math.round(answered / total * 100);
+    document.getElementById('examProgressBar').style.width = pct + '%';
+    document.getElementById('examProgressPct').textContent = pct + '%';
+}
+
+// ===== 倒计时 =====
+function startTimer() {
+    if (examTimerInterval) clearInterval(examTimerInterval);
+    updateTimerDisplay();
+    examTimerInterval = setInterval(function() {
+        examSeconds--;
+        updateTimerDisplay();
+        if (examSeconds <= 0) {
+            clearInterval(examTimerInterval);
+            doSubmitExam();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    var h = Math.floor(examSeconds / 3600);
+    var m = Math.floor((examSeconds % 3600) / 60);
+    var s = examSeconds % 60;
+    var pad = function(n) { return (n < 10 ? '0' : '') + n; };
+    document.getElementById('examTimerText').textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+}
+
+// ===== 交卷确认 =====
+function confirmSubmit() {
+    var answered = Object.keys(userAnswers).length;
+    var total = examQuestions.length;
+    var marked = Object.keys(markedQuestions).length;
+    var unanswered = total - answered;
+
+    document.getElementById('csAnswered').textContent = answered + '题';
+    document.getElementById('csUnanswered').textContent = unanswered + '题';
+    document.getElementById('csMarked').textContent = marked + '题';
+
+    var warnText = '你还有 ' + unanswered + ' 道题目未作答';
+    if (marked > 0) warnText += '，' + marked + ' 道标记的题目未检查';
+    warnText += '，交卷后将无法修改答案，是否确认提交？';
+    document.getElementById('confirmWarnText').textContent = warnText;
+
+    document.getElementById('confirmSubmitModal').classList.add('show');
+}
+
+function doSubmitExam() {
+    if (examTimerInterval) { clearInterval(examTimerInterval); examTimerInterval = null; }
+    document.getElementById('confirmSubmitModal').classList.remove('show');
+    document.getElementById('examView').style.display = 'none';
+    document.getElementById('listView').style.display = 'block';
+    document.getElementById('breadcrumbBar').innerHTML = '<a href="javascript:history.back()" class="back-link">← 返回</a><span class="sep">|</span><a href="#">AI教育平台</a><span class="sep">/</span><span>考试中心</span>';
+
+    gradeExamAndShowReport();
+}
+
+// ===== 评分 & 报告 =====
+function gradeExamAndShowReport() {
+    var total = examQuestions.length;
+    var totalScore = 0;
+    var earnedScore = 0;
+    var correct = 0;
+    var wrong = 0;
+
+    // 按题型统计
+    var typeStats = {};
+    var detailRows = [];
+
+    for (var i = 0; i < total; i++) {
+        var q = examQuestions[i];
+        totalScore += q.score;
+        var isCorrect = (userAnswers[i] === q.answer);
+        if (isCorrect) { correct++; earnedScore += q.score; } else { wrong++; }
+
+        if (!typeStats[q.type]) {
+            typeStats[q.type] = { totalQ: 0, correctQ: 0, totalScore: 0, earnedScore: 0 };
+        }
+        typeStats[q.type].totalQ++;
+        typeStats[q.type].totalScore += q.score;
+        if (isCorrect) { typeStats[q.type].correctQ++; typeStats[q.type].earnedScore += q.score; }
+
+        detailRows.push({
+            num: i + 1,
+            type: q.type,
+            correctAns: ['A','B','C','D','E'][q.answer],
+            userAns: userAnswers[i] !== undefined ? ['A','B','C','D','E'][userAnswers[i]] : '未作答',
+            isCorrect: isCorrect,
+            score: isCorrect ? q.score : 0
+        });
+    }
+
+    var accuracy = Math.round(correct / total * 100);
+    var passed = accuracy >= 60;
+    var duration = Math.floor((5400 - examSeconds) / 60);
+    var rank = Math.floor(Math.random() * 300) + 20;
+    var beat = Math.round(Math.random() * 10 + 85);
+
+    // 更新考试数据
+    var item = findExamById(currentExamId);
+    if (item) {
+        var countParts = item.examCount.split('/');
+        var currentCount = parseInt(countParts[0]) + 1;
+        var maxCount = parseInt(countParts[1]);
+        item.examCount = currentCount + '/' + maxCount + '次';
+        if (item.bestScore === null || earnedScore > item.bestScore) {
+            item.bestScore = earnedScore;
+        }
+        item.status = passed ? 'passed' : 'failed';
+        // 添加历史记录
+        var now = new Date();
+        var timeStr = now.getFullYear() + '-' + (now.getMonth()+1).toString().padStart(2,'0') + '-' + now.getDate().toString().padStart(2,'0');
+        item.history = item.history || [];
+        item.history.push({
+            time: timeStr,
+            score: earnedScore,
+            rate: accuracy + '%',
+            duration: duration + '分钟',
+            result: passed ? '通过' : '未通过'
+        });
+    }
+
+    // 渲染报告弹窗
+    document.getElementById('reportExamName').textContent = (item ? item.name : '阶段测评') + ' - 成绩报告';
+
+    var examDate = new Date().toLocaleString('zh-CN');
+    document.getElementById('reportExamMeta').textContent = '交卷时间：' + examDate + ' | 用时：' + duration + '分钟';
+
+    var badge = document.getElementById('reportPassBadge');
+    if (passed) {
+        badge.className = 'report-pass-badge pass';
+        badge.textContent = '恭喜您！考试通过';
+    } else {
+        badge.className = 'report-pass-badge fail';
+        badge.textContent = '很遗憾，未通过考试';
+    }
+
+    // 分数按108分制显示
+    var displayScore = earnedScore;
+    document.getElementById('reportTotalScore').textContent = displayScore + '/' + totalScore;
+    document.getElementById('reportAccuracy').textContent = accuracy + '%';
+    document.getElementById('reportRank').textContent = rank + '/328';
+    document.getElementById('reportBeat').textContent = beat + '%';
+
+    // 题型得分分析
+    var typeColors = { '单选题': '#3B82F6', '多选题': '#8B5CF6', '判断题': '#10B981', '案例分析题': '#F59E0B' };
+    var typeList = document.getElementById('typeScoreList');
+    var typeHtml = '';
+    for (var t in typeStats) {
+        var ts = typeStats[t];
+        var color = typeColors[t] || '#6B7280';
+        var barPct = ts.totalScore > 0 ? Math.round(ts.earnedScore / ts.totalScore * 100) : 0;
+        typeHtml += '<div class="type-score-item">';
+        typeHtml += '<span class="type-color-dot" style="background:' + color + ';"></span>';
+        typeHtml += '<div class="type-info"><div class="type-name">' + t + '</div><div class="type-count">' + ts.totalQ + '题，' + ts.totalScore + '分</div></div>';
+        typeHtml += '<div class="type-bar-wrap"><div class="type-bar-inner" style="width:' + barPct + '%;background:' + color + ';"></div></div>';
+        typeHtml += '<div class="type-score-val">' + ts.earnedScore + '/' + ts.totalScore + '分</div>';
+        typeHtml += '</div>';
+    }
+    typeList.innerHTML = typeHtml;
+
+    // 饼图
+    var donutPct = accuracy;
+    document.getElementById('donutPct').textContent = donutPct + '%';
+    document.getElementById('donutCorrect').textContent = correct;
+    document.getElementById('donutWrong').textContent = wrong;
+    document.getElementById('donutMarked').textContent = Object.keys(markedQuestions).length;
+    // 更新SVG
+    var dashVal = Math.round(donutPct * 100 / 100);
+    var dashRemain = 100 - dashVal;
+    var svgCircle = document.querySelector('#reportModal .donut-wrap svg circle:last-child');
+    if (svgCircle) {
+        svgCircle.setAttribute('stroke-dasharray', dashVal + ' ' + dashRemain);
+    }
+
+    // 逐题详情
+    var detailBody = document.getElementById('reportDetailBody');
+    var detailHtml = '';
+    for (var i = 0; i < detailRows.length; i++) {
+        var row = detailRows[i];
+        var rowClass = row.isCorrect ? 'correct-row' : 'wrong-row';
+        var resultText = row.isCorrect ? '✅ 正确' : '❌ 错误';
+        if (row.userAns === '未作答') resultText = '⚠ 未作答';
+        detailHtml += '<tr class="' + rowClass + '">';
+        detailHtml += '<td>' + row.num + '</td>';
+        detailHtml += '<td>' + row.type + '</td>';
+        detailHtml += '<td>' + row.correctAns + '</td>';
+        detailHtml += '<td>' + row.userAns + '</td>';
+        detailHtml += '<td>' + resultText + '</td>';
+        detailHtml += '<td>' + row.score + '分</td>';
+        detailHtml += '</tr>';
+    }
+    detailBody.innerHTML = detailHtml;
+
+    // 历史对比
+    var histSection = document.getElementById('reportHistorySection');
+    var histBody = document.getElementById('reportHistoryBody');
+    if (item && item.history && item.history.length > 1) {
+        histSection.style.display = 'block';
+        var histHtml = '';
+        for (var j = 0; j < item.history.length; j++) {
+            var h = item.history[j];
+            histHtml += '<tr>';
+            histHtml += '<td>' + h.time + '</td>';
+            histHtml += '<td>' + h.score + '分</td>';
+            histHtml += '<td>' + h.rate + '</td>';
+            histHtml += '<td>' + h.duration + '</td>';
+            histHtml += '<td>' + h.result + '</td>';
+            histHtml += '</tr>';
+        }
+        histBody.innerHTML = histHtml;
+    } else {
+        histSection.style.display = 'none';
+    }
+
+    // 重新考试按钮
+    document.getElementById('reportReExamBtn').style.display = 'inline-flex';
+
+    document.getElementById('reportModal').classList.add('show');
+
+    // 刷新列表
+    refreshAllTables();
+}
+
+function viewReport(id) {
+    currentExamId = id;
+    var item = findExamById(id);
+    if (!item) return;
+
+    // 模拟报告数据
+    document.getElementById('reportExamName').textContent = item.name + ' - 成绩报告';
+    document.getElementById('reportExamMeta').textContent = '最近考试时间：' + (item.history && item.history.length > 0 ? item.history[item.history.length - 1].time : '未考试');
+    document.getElementById('reportPassBadge').className = 'report-pass-badge ' + (item.status === 'passed' ? 'pass' : 'fail');
+    document.getElementById('reportPassBadge').textContent = item.status === 'passed' ? '恭喜您！考试通过' : (item.status === 'failed' ? '很遗憾，未通过考试' : '尚未完成考试');
+
+    var score = item.bestScore || 0;
+    var totalScore = item.totalScore;
+    var accuracy = totalScore > 0 ? Math.round(score / totalScore * 100) : 0;
+    document.getElementById('reportTotalScore').textContent = score + '/' + totalScore;
+    document.getElementById('reportAccuracy').textContent = accuracy + '%';
+    document.getElementById('reportRank').textContent = (Math.floor(Math.random() * 200) + 50) + '/328';
+    document.getElementById('reportBeat').textContent = (Math.round(Math.random() * 15 + 80)) + '%';
+
+    // 简化的题型分析
+    var typeList = document.getElementById('typeScoreList');
+    typeList.innerHTML = '<div style="padding:14px;background:#F9FAFB;border-radius:8px;font-size:13px;color:#6B7280;text-align:center;">详细题型分析请参加考试后查看</div>';
+
+    document.getElementById('donutPct').textContent = accuracy + '%';
+    document.getElementById('donutCorrect').textContent = '-';
+    document.getElementById('donutWrong').textContent = '-';
+    document.getElementById('donutMarked').textContent = '-';
+    var svgCircle = document.querySelector('#reportModal .donut-wrap svg circle:last-child');
+    if (svgCircle) svgCircle.setAttribute('stroke-dasharray', accuracy + ' ' + (100 - accuracy));
+
+    document.getElementById('reportDetailBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#9CA3AF;">详细答题记录请参加考试后查看</td></tr>';
+
+    // 历史对比
+    var histSection = document.getElementById('reportHistorySection');
+    var histBody = document.getElementById('reportHistoryBody');
+    if (item.history && item.history.length > 0) {
+        histSection.style.display = 'block';
+        var histHtml = '';
+        for (var j = 0; j < item.history.length; j++) {
+            var h = item.history[j];
+            histHtml += '<tr><td>' + h.time + '</td><td>' + h.score + '分</td><td>' + h.rate + '</td><td>' + h.duration + '</td><td>' + h.result + '</td></tr>';
+        }
+        histBody.innerHTML = histHtml;
+    } else {
+        histSection.style.display = 'none';
+    }
+
+    document.getElementById('reportReExamBtn').style.display = 'inline-flex';
+    document.getElementById('reportModal').classList.add('show');
+}
+
+function reExam() {
+    closeModal('reportModal');
+    startExam(currentExamId);
+}
+
+function refreshAllTables() {
+    renderTable(examData, currentStagePage);
+    renderComprehensiveTable(currentCompPage);
+}
+
+// ===== 通用弹窗 =====
+function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+}
+
+// 遮罩点击关闭
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay') && e.target.id !== 'examView') {
+        e.target.classList.remove('show');
+    }
+});
+
+// ===== 通用 =====
+function logout() {
+    if (confirm('确定要退出登录吗？')) {
+        localStorage.removeItem('life_med_user');
+        window.location.href = 'login.html';
+    }
+}
+
+// ===== 初始化 =====
+document.addEventListener('DOMContentLoaded', function() {
+    renderTable(examData, 1);
+    renderComprehensiveTable(1);
+
+    try {
+        var user = JSON.parse(localStorage.getItem('life_med_user'));
+        if (user && user.name) {
+            document.getElementById('headerUserName').textContent = user.name;
+        }
+    } catch(e) {}
+});
+</script>
+</body>
+</html>

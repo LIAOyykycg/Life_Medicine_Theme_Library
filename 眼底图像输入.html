@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>眼底图像输入</title>
+<style>
+:root {
+  --primary: #165dff;
+  --primary-2: #0f9a83;
+  --primary-soft: #e8f3ff;
+  --success: #00b42a;
+  --warning: #f59a23;
+  --danger: #f53f3f;
+  --bg: #eef3fb;
+  --panel: #ffffff;
+  --panel-soft: #f7fbff;
+  --line: #e4ebf5;
+  --line-strong: #d5deeb;
+  --text: #1d2533;
+  --muted: #5d6b82;
+  --soft: #7c8ba1;
+  --shadow: 0 14px 40px rgba(41, 76, 131, 0.12);
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --font: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); }
+body { font-size: 14px; line-height: 1.6; }
+button { font: inherit; border: 0; cursor: pointer; }
+input, select, textarea { font: inherit; outline: none; }
+
+/* Header */
+.header {
+  height: 58px; display: flex; align-items: center; padding: 0 24px;
+  background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%);
+  color: #fff; position: sticky; top: 0; z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header .logo { color: #fff; text-decoration: none; font-size: 17px; font-weight: 800; letter-spacing: 1px; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 32px; }
+.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 8px; font-size: 13px; transition: .18s; }
+.header .header-nav a:hover, .header .header-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 13px; }
+.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: .18s; }
+.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
+.header .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: .18s; font-weight: 600; }
+.header .btn-logout:hover { background: rgba(255,255,255,0.35); }
+
+/* Sidebar */
+.sidebar {
+  position: fixed; top: 58px; left: 0; width: 220px;
+  height: calc(100vh - 58px); background: #fff; border-right: 1px solid var(--line);
+  overflow-y: auto; z-index: 999; padding: 8px 0;
+}
+.sidebar .menu-group { margin-bottom: 4px; }
+.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--soft); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.sidebar .menu-item { display: flex; align-items: center; padding: 9px 20px; color: var(--muted); text-decoration: none; font-size: 13px; transition: .18s; border-left: 3px solid transparent; }
+.sidebar .menu-item:hover { background: var(--panel-soft); color: var(--primary); }
+.sidebar .menu-item.active { background: var(--primary-soft); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+
+/* Main Content */
+.main-content { margin-left: 220px; margin-top: 0; padding: 24px; min-height: calc(100vh - 58px); }
+.breadcrumb { font-size: 13px; color: var(--muted); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.breadcrumb a { color: var(--primary); text-decoration: none; }
+.page-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 20px; }
+
+/* Buttons */
+.btn {
+  min-height: 36px; padding: 0 14px; border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-weight: 700; transition: .16s ease; text-decoration: none;
+}
+.btn:hover { filter: brightness(1.03); }
+.btn.primary { color: #fff; background: linear-gradient(90deg, var(--primary), var(--primary-2)); box-shadow: 0 10px 20px rgba(22, 93, 255, .18); }
+.btn.secondary { color: var(--muted); background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.btn.danger { color: #fff; background: linear-gradient(90deg, #f45b5b, #e73d3d); }
+.btn.small { min-height: 30px; padding: 0 10px; font-size: 12px; border-radius: 8px; }
+.btn.lg { min-height: 44px; padding: 0 20px; font-size: 15px; }
+
+/* Tags */
+.tag {
+  min-height: 22px; padding: 0 8px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700;
+}
+.tag.blue { color: var(--primary); background: var(--primary-soft); }
+.tag.success { color: var(--success); background: #e8ffea; }
+.tag.warning { color: var(--warning); background: #fff4df; }
+.tag.danger { color: var(--danger); background: #ffecec; }
+.tag.gray { color: var(--soft); background: #f0f3f8; }
+
+/* Cards & Panels */
+.card { background: #fff; border-radius: var(--radius-lg); box-shadow: 0 10px 24px rgba(61, 102, 150, .08); padding: 20px; margin-bottom: 16px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.card-title { font-size: 16px; font-weight: 800; color: var(--text); }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.stat {
+  padding: 14px 16px; border-radius: 12px; background: var(--panel-soft);
+  box-shadow: inset 0 0 0 1px #e8eef8;
+}
+.stat span { display: block; color: var(--soft); font-size: 12px; }
+.stat strong { display: block; margin-top: 6px; font-size: 20px; line-height: 1.2; color: var(--text); }
+
+/* Tables */
+.table-wrap { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table thead th {
+  padding: 11px 12px; background: var(--panel-soft); color: var(--soft); font-size: 12px; text-align: left;
+  border-bottom: 1px solid var(--line); font-weight: 600;
+}
+.data-table tbody td { padding: 11px 12px; border-bottom: 1px solid #f0f4f9; vertical-align: middle; }
+.data-table tbody tr { transition: .14s; }
+.data-table tbody tr:hover { background: #f9fcff; }
+.data-table tbody tr.active { background: #eef7ff; }
+.row-main { display: flex; flex-direction: column; gap: 2px; }
+.row-main strong { font-size: 13px; }
+.row-main span { color: var(--soft); font-size: 12px; }
+
+/* Toolbar */
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.toolbar .search-shell {
+  display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 12px;
+  border: 1px solid var(--line); border-radius: 10px; background: #fff; min-width: 220px;
+}
+.toolbar .search-shell input { width: 100%; border: 0; background: transparent; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Steps */
+.steps { display: flex; margin-bottom: 20px; }
+.step { flex: 1; text-align: center; position: relative; font-size: 12px; color: var(--soft); }
+.step::before { content: ''; position: absolute; top: 15px; left: 50%; right: -50%; height: 2px; background: var(--line); z-index: 0; }
+.step:last-child::before { display: none; }
+.step .step-circle { width: 32px; height: 32px; border-radius: 50%; background: #e8edf5; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; position: relative; z-index: 1; }
+.step.active .step-circle { background: var(--primary); color: #fff; }
+.step.active { color: var(--primary); font-weight: 700; }
+.step.done .step-circle { background: var(--success); color: #fff; }
+.step.done { color: var(--success); }
+.step.done::before { background: var(--success); }
+
+/* Upload Zone */
+.upload-zone {
+  border: 1.5px dashed #b5c7e6; border-radius: 16px; min-height: 200px; display: flex; align-items: center; justify-content: center;
+  text-align: center; background: linear-gradient(180deg, #f8fbff 0%, #f3f7fd 100%); color: var(--muted); cursor: pointer; transition: .18s;
+}
+.upload-zone:hover { border-color: var(--primary); background: var(--primary-soft); }
+.upload-zone .plus {
+  width: 44px; height: 44px; margin: 0 auto 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: #e8f3ff; color: var(--primary); font-size: 24px; font-weight: 400;
+}
+.upload-zone .upload-hint { color: var(--soft); font-size: 12px; margin-top: 6px; }
+
+/* Forms */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.form-group input, .form-group select { width: 100%; padding: 9px 13px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; background: #fff; color: var(--text); }
+.form-group input:focus, .form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(22,93,255,.1); }
+.form-row { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+
+/* Report Box */
+.report-box { padding: 14px 16px; border-radius: 12px; background: var(--panel-soft); box-shadow: inset 0 0 0 1px #e8eef8; margin-bottom: 10px; }
+.report-box p { margin: 0; color: var(--muted); }
+.report-box strong { color: var(--text); }
+
+/* Alerts */
+.alert { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
+.alert-info { background: #e8f3ff; color: #1a56db; border: 1px solid #d2e3fc; }
+.alert-success { background: #e8ffea; color: #137333; border: 1px solid #ceead6; }
+.alert-warning { background: #fff4df; color: #b06000; border: 1px solid #feefc3; }
+.alert-danger { background: #ffecec; color: #c5221f; border: 1px solid #f5c6c2; }
+
+/* Result Grid */
+.result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.result-card { padding: 14px; border-radius: 12px; background: #f8fbff; box-shadow: inset 0 0 0 1px #e8eef8; }
+.result-card .result-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.result-card .result-status { display: inline-block; margin-bottom: 6px; }
+.result-card .result-desc { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.result-card .result-tips { margin-top: 8px; font-size: 12px; color: var(--soft); }
+
+/* Preview */
+.preview-shell { border-radius: 14px; overflow: hidden; background: #0b0b0b; margin-bottom: 14px; }
+.preview-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; background: #f7f9fd; border: 1px solid var(--line); border-bottom: 0; border-radius: 14px 14px 0 0;
+}
+.preview-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.preview-stage { aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; position: relative; }
+.tab-pill {
+  height: 30px; padding: 0 12px; border-radius: 999px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700;
+}
+.tab-pill.active { color: #fff; background: linear-gradient(90deg, var(--primary), var(--primary-2)); }
+
+/* Timeline */
+.timeline { display: grid; gap: 8px; margin-bottom: 14px; }
+.timeline-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #fbfdff; box-shadow: inset 0 0 0 1px #edf2f9; }
+.timeline-item .dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; background: #b9c7da; flex: 0 0 auto; }
+.timeline-item.success .dot { background: var(--success); }
+.timeline-item.warning .dot { background: var(--warning); }
+.timeline-item.danger .dot { background: var(--danger); }
+.timeline-item strong { display: block; font-size: 13px; }
+.timeline-item span { display: block; color: var(--soft); font-size: 12px; margin-top: 2px; }
+
+/* Modal — 参照原型图设计 */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.45); z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: .22s ease;
+}
+.modal-overlay.show { opacity: 1; visibility: visible; }
+.modal-dialog {
+  background: #fff; border-radius: 8px;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.15);
+  width: 92%; max-width: 420px; max-height: 88vh;
+  display: flex; flex-direction: column;
+  transform: translateY(12px); transition: .22s ease;
+}
+.modal-overlay.show .modal-dialog { transform: translateY(0); }
+
+/* Modal Header — 参考原型标题栏 */
+.modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 18px 20px 14px; border-bottom: 1px solid #E4E4E7;
+  background: #fff; border-radius: 8px 8px 0 0; flex-shrink: 0;
+}
+.modal-header .header-text { display: flex; flex-direction: column; gap: 4px; }
+.modal-header .modal-title { font-size: 18px; font-weight: 700; color: #323233; line-height: 1.3; }
+.modal-header .modal-subtitle { font-size: 12px; color: #909399; }
+.modal-close-text {
+  font-size: 12px; color: #909399; cursor: pointer; border: 0; background: transparent;
+  padding: 2px 4px; transition: .16s; white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+}
+.modal-close-text:hover { color: #323233; }
+
+/* Modal Body */
+.modal-body { padding: 16px 20px; overflow-y: auto; flex: 1 1 auto; }
+
+/* Status Tag — 参考原型胶囊标签 */
+.status-tag {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 100px;
+  background: #E8F8EB; color: #07C160;
+  font-size: 12px; font-weight: 600; margin-bottom: 14px;
+}
+
+/* Info Grid — 参考原型 2x2 卡片布局 */
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 16px;
+}
+.info-card {
+  background: #FAFAFA; border-radius: 4px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.info-card .info-label { font-size: 12px; color: #909399; }
+.info-card .info-value { font-size: 14px; color: #323233; font-weight: 700; line-height: 1.4; }
+
+/* Image Card — 参考原型图片卡片 */
+.image-card {
+  background: #fff; border-radius: 4px;
+  border: 1px solid #F0F0F0; margin-bottom: 12px; overflow: hidden;
+}
+.image-card .image-card-title {
+  font-size: 13px; font-weight: 700; color: #323233;
+  padding: 10px 14px 0;
+}
+.image-card img {
+  display: block; width: 100%; padding: 10px 14px;
+  border-radius: 0; box-shadow: none;
+}
+.image-card:last-child { margin-bottom: 0; }
+
+/* Modal Footer — 参考原型底部按钮区 */
+.modal-footer {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px 18px; border-top: 1px solid #F0F0F0;
+  flex-shrink: 0; border-radius: 0 0 8px 8px;
+}
+.btn-download {
+  height: 44px; padding: 0 24px; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-weight: 600; font-size: 15px; cursor: pointer; border: 0;
+  color: #fff; background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, .25); transition: .18s;
+  white-space: nowrap;
+}
+.btn-download:hover { filter: brightness(1.05); }
+.btn-download .dl-icon {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid #fff; border-top: 0; border-radius: 0 0 2px 2px; position: relative;
+}
+.btn-download .dl-icon::after {
+  content: ''; position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+  width: 2px; height: 6px; background: #fff;
+}
+.btn-outline {
+  height: 44px; padding: 0 20px; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-weight: 600; font-size: 15px; cursor: pointer;
+  border: 1px solid #DCDEE0; background: #fff; color: #606266; transition: .18s;
+  white-space: nowrap;
+}
+.btn-outline:hover { border-color: #3b82f6; color: #3b82f6; background: #f0f7ff; }
+
+/* Toast Notification — 参考原型Toast设计 */
+.toast-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.35); z-index: 10001;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: .2s ease;
+}
+.toast-overlay.show { opacity: 1; visibility: visible; }
+.toast-box {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px; background: #fff; border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 420px; width: 88%;
+  transform: translateY(8px); transition: .2s ease;
+}
+.toast-overlay.show .toast-box { transform: translateY(0); }
+.toast-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 auto; font-size: 16px; font-weight: 700;
+}
+.toast-icon.success { background: #E8F5E9; color: #4caf50; }
+.toast-icon.error { background: #FFEBEE; color: #f44336; }
+.toast-text { flex: 1; }
+.toast-text .toast-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 4px; }
+.toast-text .toast-desc { font-size: 14px; color: #999; line-height: 1.4; }
+.toast-close-btn {
+  width: 24px; height: 24px; border-radius: 4px; background: transparent;
+  color: #999; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer; border: 0; transition: .16s; flex-shrink: 0;
+  align-self: flex-start;
+}
+.toast-close-btn:hover { color: #666; }
+
+@media (max-width: 1024px) {
+  .sidebar { width: 60px; }
+  .sidebar .menu-item span { display: none; }
+  .sidebar .menu-group-title { display: none; }
+  .main-content { margin-left: 60px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .result-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .header { height: auto; flex-wrap: wrap; padding: 12px 16px; gap: 8px; }
+  .header .header-nav { margin-left: 0; }
+  .sidebar { display: none; }
+  .main-content { margin-left: 0; padding: 14px; }
+  .stats { grid-template-columns: 1fr; }
+  .form-row { flex-direction: column; }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="header">
+<a href="index.html" class="logo">生命医学管理系统</a>
+<div class="header-nav">
+<a href="眼底图像输入.html" class="active">AI筛查</a>
+<a href="临床数据开放共享.html">数据平台</a>
+<a href="基础课程.html">AI教育</a>
+<a href="临床决策支撑.html">专家系统</a>
+<a href="数据采集工具（确认）.html">数据工具</a>
+</div>
+<div class="header-right"><span class="user-info" id="headerUserName">管理员</span><button class="btn-logout" onclick="logout()">退出</button></div></div>
+<div class="sidebar" id="sidebar">
+<div class="menu-group"><div class="menu-group-title">AI眼底疾病筛查</div>
+<a class="menu-item" href="眼底图像输入.html" class="active">眼底图像输入</a>
+<a class="menu-item" href="图像质量质控.html">图像质量质控</a>
+<a class="menu-item" href="常见疾病筛查.html">常见疾病筛查</a>
+<a class="menu-item" href="多任务联合筛查.html">多任务联合筛查</a>
+<a class="menu-item" href="输出筛查报告.html">输出筛查报告</a></div></div><div class="main-content">
+<div class="breadcrumb"><a href="index.html">首页</a><span>&rsaquo;</span><a href="#">AI眼底疾病筛查</a><span>&rsaquo;</span><strong>眼底图像输入</strong></div>
+<h1 class="page-title">眼底图像输入</h1>
+
+<div class="card">
+  <div class="card-header"><span class="card-title">眼底图像上传</span></div>
+  <div class="steps">
+    <div class="step active"><div class="step-circle">1</div>上传图像</div>
+    <div class="step"><div class="step-circle">2</div>质量质控</div>
+    <div class="step"><div class="step-circle">3</div>疾病筛查</div>
+    <div class="step"><div class="step-circle">4</div>联合筛查</div>
+    <div class="step"><div class="step-circle">5</div>输出报告</div>
+  </div>
+
+  <div class="upload-zone" onclick="document.getElementById('fi').click()" id="uploadZone">
+    <div>
+      <div class="plus">+</div>
+      <div style="font-weight:700;color:var(--text);">点击或拖拽上传眼底图像</div>
+      <div class="upload-hint">支持 JPG / PNG / DICOM / TIFF 格式，单文件最大 50MB</div>
+      <div id="filePickState" class="upload-hint" style="color:var(--primary);font-weight:700;">尚未选择文件</div>
+      <input type="file" id="fi" accept="image/*,.dcm,.dicom" multiple style="display:none" onchange="handleFiles(this.files)">
+    </div>
+  </div>
+
+  <div id="up" style="margin-top:14px;display:none;"></div>
+
+  <div style="margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+    <button class="btn primary lg" onclick="startProc()">开始处理</button>
+    <button class="btn secondary" onclick="resetUp()">重置</button>
+    <span style="color:var(--soft);font-size:12px;">上传后自动进入质控流程，支持批量上传，每个文件生成独立记录。</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">筛查记录</span>
+    <button class="btn primary small" onclick="location.href='眼底图像输入.html'">刷新</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><span>总记录</span><strong>12</strong></div>
+    <div class="stat"><span>质控通过</span><strong>10</strong></div>
+    <div class="stat"><span>质控拦截</span><strong>1</strong></div>
+    <div class="stat"><span>分析失败</span><strong>1</strong></div>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>筛查任务</th><th>患者</th><th>上传时间</th><th>质控</th><th>状态</th><th>操作</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="row-main"><strong>右眼_眼底彩照_001.jpg</strong><span>FS-260626-001 · 市中心门诊</span></div></td>
+          <td><div class="row-main"><strong>李*</strong><span>OPD-202606-001</span></div></td>
+          <td>2026-06-26 14:30</td>
+          <td><span class="tag success">质控通过</span></td>
+          <td><span class="tag success">已出报告</span></td>
+          <td><a class="btn secondary small" href="javascript:void(0)" onclick="openReportModal('FS-260626-001', '李*', 'OPD-202606-001', '2026-06-26 14:30')">查看报告</a></td>
+        </tr>
+        <tr class="active">
+          <td><div class="row-main"><strong>右眼_眼底彩照_004.dcm</strong><span>FS-260626-004 · 社区筛查</span></div></td>
+          <td><div class="row-main"><strong>赵*</strong><span>OPD-202606-003</span></div></td>
+          <td>2026-06-26 10:05</td>
+          <td><span class="tag danger">质控不合格</span></td>
+          <td><span class="tag danger">等待重传</span></td>
+          <td><a class="btn secondary small" href="眼底图像输入.html">重新上传</a></td>
+        </tr>
+        <tr>
+          <td><div class="row-main"><strong>左眼_眼底彩照_002.jpg</strong><span>FS-260626-002 · 院内复查</span></div></td>
+          <td><div class="row-main"><strong>王*</strong><span>OPD-202606-002</span></div></td>
+          <td>2026-06-26 14:35</td>
+          <td><span class="tag success">质控通过</span></td>
+          <td><span class="tag warning">分析失败</span></td>
+          <td><a class="btn secondary small" href="图像质量质控.html">重试分析</a></td>
+        </tr>
+        <tr>
+          <td><div class="row-main"><strong>双眼_眼底OCT_003.png</strong><span>FS-260626-003 · 眼科专科门诊</span></div></td>
+          <td><div class="row-main"><strong>陈*</strong><span>OPD-202606-004</span></div></td>
+          <td>2026-06-26 09:12</td>
+          <td><span class="tag success">质控通过</span></td>
+          <td><span class="tag success">已出报告</span></td>
+          <td><a class="btn secondary small" href="javascript:void(0)" onclick="openReportModal('FS-260626-003', '陈*', 'OPD-202606-004', '2026-06-26 09:12')">查看报告</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<script>
+function navigateTo(url) { window.location.href = url; }
+function logout() {
+  localStorage.removeItem('life_med_user');
+  window.location.href = 'login.html';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var user = JSON.parse(localStorage.getItem('life_med_user'));
+    if (user && user.name) {
+      document.getElementById('headerUserName').textContent = user.name;
+    }
+  } catch(e) {}
+  var path = window.location.pathname.replace(/\\/g, '/');
+  var currentPage = path.split('/').pop();
+  var menuItems = document.querySelectorAll('.sidebar .menu-item');
+  menuItems.forEach(function(item) {
+    var href = item.getAttribute('href');
+    if (href && (href === currentPage || href.endsWith('/' + currentPage))) {
+      item.classList.add('active');
+    }
+  });
+});
+</script>
+<script>
+function handleFiles(f) {
+  var p = document.getElementById('up');
+  p.style.display = 'block';
+  var html = '<div class="alert alert-info">已选择 ' + f.length + ' 个文件</div>';
+  for (var i = 0; i < f.length; i++) {
+    html += '<p style="font-size:13px;margin:4px 0;color:var(--muted);">' + f[i].name + ' (' + (f[i].size/1024).toFixed(1) + ' KB)</p>';
+  }
+  p.innerHTML = html;
+  document.getElementById('filePickState').textContent = '已选择 ' + f.length + ' 个文件';
+}
+function startProc() {
+  if (confirm('确认提交眼底图像进行质控分析？')) {
+    alert('已提交，系统将自动进入质控阶段。');
+    location.href = '图像质量质控.html';
+  }
+}
+function resetUp() {
+  document.getElementById('fi').value = '';
+  document.getElementById('up').style.display = 'none';
+  document.getElementById('filePickState').textContent = '尚未选择文件';
+}
+document.getElementById('uploadZone').addEventListener('dragover', function(e) { e.preventDefault(); this.style.borderColor = 'var(--primary)'; });
+document.getElementById('uploadZone').addEventListener('dragleave', function() { this.style.borderColor = '#b5c7e6'; });
+document.getElementById('uploadZone').addEventListener('drop', function(e) {
+  e.preventDefault(); this.style.borderColor = '#b5c7e6';
+  if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+});
+</script>
+
+<!-- 筛查报告弹窗 — 参照原型图设计 -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div class="header-text">
+        <span class="modal-title" id="modalTitle">筛查报告详情</span>
+        <span class="modal-subtitle">选择一条记录即可查看对应质控、筛查与报告。</span>
+      </div>
+      <button class="modal-close-text" onclick="closeReportModal()">关闭</button>
+    </div>
+    <div class="modal-body">
+      <!-- 状态标签 -->
+      <span class="status-tag" id="modalStatusTag">已出报告</span>
+
+      <!-- 患者信息 2x2 卡片 -->
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-label">报告编号</span>
+          <span class="info-value" id="infoReportId">—</span>
+        </div>
+        <div class="info-card">
+          <span class="info-label">患者姓名</span>
+          <span class="info-value" id="infoPatientName">—</span>
+        </div>
+        <div class="info-card">
+          <span class="info-label">门诊编号</span>
+          <span class="info-value" id="infoOpdId">—</span>
+        </div>
+        <div class="info-card">
+          <span class="info-label">筛查时间</span>
+          <span class="info-value" id="infoTime">—</span>
+        </div>
+      </div>
+
+      <!-- 风险与复查摘要 -->
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-label">综合风险</span>
+          <span class="info-value" id="infoRisk" style="color:#f59a23;">—</span>
+        </div>
+        <div class="info-card">
+          <span class="info-label">复查建议</span>
+          <span class="info-value" id="infoFollowUp">—</span>
+        </div>
+      </div>
+
+      <!-- 报告信息 -->
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-label">来源机构</span>
+          <span class="info-value" id="infoSource">—</span>
+        </div>
+        <div class="info-card">
+          <span class="info-label">图片来源</span>
+          <span class="info-value" id="infoImage">—</span>
+        </div>
+        <div class="info-card" style="grid-column:1/-1;">
+          <span class="info-label">质控评分</span>
+          <span class="info-value" id="infoQcScore">—</span>
+        </div>
+      </div>
+
+      <!-- 筛查流程时间线 -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#323233;margin-bottom:10px;">筛查流程时间线</div>
+        <div class="timeline" id="modalTimeline"></div>
+      </div>
+
+      <!-- 筛查结果汇总 -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#323233;margin-bottom:10px;">筛查结果汇总</div>
+        <div class="result-grid" id="modalResultGrid"></div>
+      </div>
+
+      <!-- 质控说明 -->
+      <div class="report-box" id="modalQcNote"></div>
+
+      <!-- 医生建议 -->
+      <div class="report-box" id="modalAdvice"></div>
+
+      
+    </div>
+    <div class="modal-footer">
+      <button class="btn-download" onclick="downloadReportPDF()">
+        <span class="dl-icon"></span>下载报告
+      </button>
+      <button class="btn-outline" onclick="closeReportModal()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 下载结果Toast弹窗 — 参照原型图设计 -->
+<div class="toast-overlay" id="toastOverlay">
+  <div class="toast-box">
+    <span class="toast-icon" id="toastIcon">&#10003;</span>
+    <div class="toast-text">
+      <div class="toast-title" id="toastTitle">下载成功</div>
+      <div class="toast-desc" id="toastDesc">筛查报告已成功下载到本地</div>
+    </div>
+    <button class="toast-close-btn" onclick="closeToast()">&times;</button>
+  </div>
+</div>
+
+<script>
+var currentReportData = { taskId: '', patientName: '', opdId: '', time: '', reportId: '', risk: '', followUp: '', source: '', image: '', qcScore: '' };
+
+// 根据 taskId 模拟报告数据（与输出筛查报告.html 一致）
+function getReportData(taskId) {
+  var dataMap = {
+    'FS-260626-001': {
+      reportId: 'RP-260626-001', risk: '中度', riskColor: '#f59a23', followUp: '3个月内',
+      source: '市中心门诊', image: '右眼_眼底彩照_001.jpg', qcScore: '96%',
+      results: [
+        { name: '糖尿病视网膜病变（DR）', status: '中度 · 87%', tag: 'warning', desc: '检测到中度非增殖性糖尿病视网膜病变特征，存在多发微动脉瘤与少量出血灶。', tips: '建议3个月内复查，关注血糖控制，必要时转诊眼底专科。', border: 'var(--warning)' },
+        { name: '青光眼相关病变', status: '阴性 · 94%', tag: 'success', desc: '视盘边界清晰，杯盘比未见明显异常。', tips: '建议年度随访，结合眼压和视野检查。', border: 'var(--success)' },
+        { name: '年龄相关性黄斑变性（AMD）', status: '阴性 · 91%', tag: 'success', desc: '黄斑区未见典型渗出或萎缩灶。', tips: '建议半年至一年复查，关注视物变形症状。', border: 'var(--success)' },
+        { name: '高血压性视网膜病变', status: '轻度 · 81%', tag: 'blue', desc: '可见轻度动静脉交叉压迫迹象与血管轻度扭曲。', tips: '建议血压管理，复查眼底和血压。', border: 'var(--primary)' }
+      ]
+    },
+    'FS-260626-003': {
+      reportId: 'RP-260626-002', risk: '低风险', riskColor: '#00b42a', followUp: '年度随访',
+      source: '眼科专科门诊', image: '双眼_眼底OCT_003.png', qcScore: '92%',
+      results: [
+        { name: '糖尿病视网膜病变（DR）', status: '阴性 · 96%', tag: 'success', desc: '未见明显糖尿病视网膜病变特征。', tips: '建议年度随访，关注血糖控制。', border: 'var(--success)' },
+        { name: '青光眼相关病变', status: '阴性 · 93%', tag: 'success', desc: '视盘形态正常，未见杯盘比增大。', tips: '建议年度随访。', border: 'var(--success)' },
+        { name: '年龄相关性黄斑变性（AMD）', status: '阴性 · 95%', tag: 'success', desc: '黄斑区结构清晰，未见异常。', tips: '建议年度复查。', border: 'var(--success)' },
+        { name: '高血压性视网膜病变', status: '阴性 · 90%', tag: 'success', desc: '视网膜血管走行正常。', tips: '常规随访即可。', border: 'var(--success)' }
+      ]
+    }
+  };
+  return dataMap[taskId] || {
+    reportId: 'RP-260626-001', risk: '中度', riskColor: '#f59a23', followUp: '3个月内',
+    source: '市中心门诊', image: '右眼_眼底彩照_001.jpg', qcScore: '96%',
+    results: [
+      { name: '糖尿病视网膜病变（DR）', status: '中度 · 87%', tag: 'warning', desc: '检测到中度非增殖性糖尿病视网膜病变特征，存在多发微动脉瘤与少量出血灶。', tips: '建议3个月内复查，关注血糖控制，必要时转诊眼底专科。', border: 'var(--warning)' },
+      { name: '青光眼相关病变', status: '阴性 · 94%', tag: 'success', desc: '视盘边界清晰，杯盘比未见明显异常。', tips: '建议年度随访，结合眼压和视野检查。', border: 'var(--success)' },
+      { name: '年龄相关性黄斑变性（AMD）', status: '阴性 · 91%', tag: 'success', desc: '黄斑区未见典型渗出或萎缩灶。', tips: '建议半年至一年复查，关注视物变形症状。', border: 'var(--success)' },
+      { name: '高血压性视网膜病变', status: '轻度 · 81%', tag: 'blue', desc: '可见轻度动静脉交叉压迫迹象与血管轻度扭曲。', tips: '建议血压管理，复查眼底和血压。', border: 'var(--primary)' }
+    ]
+  };
+}
+
+// 生成时间线 HTML（与输出筛查报告.html 保持一致）
+function buildTimeline(time) {
+  var steps = [
+    { label: '上传图像', desc: '已完成图像上传', time: time },
+    { label: '图像质控', desc: '质量合格，评分96%，可进入筛查', time: time },
+    { label: '常见疾病筛查', desc: '4项筛查完成，检出2项异常', time: time },
+    { label: '多任务联合筛查', desc: '病灶分割、视盘定位、血管分析均已完成', time: time },
+    { label: '输出筛查报告', desc: '结构化报告已生成，可下载或打印', time: time }
+  ];
+  var html = '';
+  for (var i = 0; i < steps.length; i++) {
+    html += '<div class="timeline-item success"><span class="dot"></span><div><strong>' + steps[i].label + '</strong><span>' + steps[i].desc + '</span></div></div>';
+  }
+  return html;
+}
+
+// 生成结果汇总 HTML
+function buildResultGrid(results) {
+  var html = '';
+  for (var i = 0; i < results.length; i++) {
+    var r = results[i];
+    html += '<div class="result-card" style="border-left:3px solid ' + r.border + ';">';
+    html += '<div class="result-name">' + r.name + '</div>';
+    html += '<span class="tag ' + r.tag + ' result-status">' + r.status + '</span>';
+    html += '<div class="result-desc">' + r.desc + '</div>';
+    html += '<div class="result-tips">' + r.tips + '</div>';
+    html += '</div>';
+  }
+  return html;
+}
+
+function openReportModal(taskId, patientName, opdId, time) {
+  var reportData = getReportData(taskId);
+  currentReportData = {
+    taskId: taskId, patientName: patientName, opdId: opdId, time: time,
+    reportId: reportData.reportId, risk: reportData.risk, followUp: reportData.followUp,
+    source: reportData.source, image: reportData.image, qcScore: reportData.qcScore
+  };
+
+  document.getElementById('modalTitle').textContent = '筛查报告详情 — ' + taskId + ' · ' + patientName;
+
+  // 基本信息
+  document.getElementById('infoReportId').textContent = reportData.reportId;
+  document.getElementById('infoPatientName').textContent = patientName;
+  document.getElementById('infoOpdId').textContent = opdId;
+  document.getElementById('infoTime').textContent = time;
+
+  // 风险与复查
+  var riskEl = document.getElementById('infoRisk');
+  riskEl.textContent = reportData.risk;
+  riskEl.style.color = reportData.riskColor;
+  document.getElementById('infoFollowUp').textContent = reportData.followUp;
+
+  // 报告信息
+  document.getElementById('infoSource').textContent = reportData.source;
+  document.getElementById('infoImage').textContent = reportData.image;
+  document.getElementById('infoQcScore').textContent = reportData.qcScore;
+
+  // 时间线
+  document.getElementById('modalTimeline').innerHTML = buildTimeline(time);
+
+  // 筛查结果
+  document.getElementById('modalResultGrid').innerHTML = buildResultGrid(reportData.results);
+
+  // 质控说明
+  document.getElementById('modalQcNote').innerHTML = '<p><strong>质控说明：</strong>图像清晰，视盘、黄斑与血管分布完整，可进入AI分析。</p>';
+
+  // 医生建议
+  var adviceText = '综合AI筛查结果，建议患者' + reportData.followUp + '行眼底复查，重点关注糖尿病视网膜病变进展。同时建议控制血糖、血压，必要时转诊眼底专科进行进一步检查和治疗。';
+  document.getElementById('modalAdvice').innerHTML = '<p><strong>医生建议：</strong>' + adviceText + '</p>';
+
+  // 状态标签
+  document.getElementById('modalStatusTag').textContent = '已出报告';
+
+  document.getElementById('reportModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeReportModal() {
+  document.getElementById('reportModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('reportModal').addEventListener('click', function(e) {
+  if (e.target === this) closeReportModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('reportModal').classList.contains('show')) {
+      closeReportModal();
+    }
+    if (document.getElementById('toastOverlay').classList.contains('show')) {
+      closeToast();
+    }
+  }
+});
+
+/* ====== Toast 弹窗 ====== */
+function showToast(success, title, desc) {
+  var icon = document.getElementById('toastIcon');
+  var titleEl = document.getElementById('toastTitle');
+  var descEl = document.getElementById('toastDesc');
+  if (success) {
+    icon.className = 'toast-icon success';
+    icon.innerHTML = '&#10003;';
+  } else {
+    icon.className = 'toast-icon error';
+    icon.innerHTML = '&#10007;';
+  }
+  titleEl.textContent = title;
+  descEl.textContent = desc;
+  document.getElementById('toastOverlay').classList.add('show');
+}
+
+function closeToast() {
+  document.getElementById('toastOverlay').classList.remove('show');
+}
+
+document.getElementById('toastOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeToast();
+});
+
+/* ====== PDF 下载 ====== */
+function downloadReportPDF() {
+  try {
+    var pdfWidth = 210;
+    var pdfHeight = 297;
+    var margin = 15;
+    var contentWidth = pdfWidth - margin * 2;
+    var doc = new jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+
+    var y = margin;
+    var lineH = 7;
+
+    // 标题
+    doc.setFontSize(16);
+    doc.setTextColor(29, 37, 51);
+    doc.text('眼底疾病筛查报告', margin, y + 6);
+    y += 16;
+
+    // 分隔线
+    doc.setDrawColor(228, 235, 245);
+    doc.line(margin, y, pdfWidth - margin, y);
+    y += 10;
+
+    // 报告编号 + 综合风险
+    doc.setFontSize(11);
+    doc.setTextColor(93, 107, 130);
+    doc.text('报告编号：', margin, y);
+    doc.setTextColor(29, 37, 51);
+    doc.setFont(undefined, 'bold');
+    doc.text(currentReportData.reportId || '—', margin + 22, y);
+    doc.setFont(undefined, 'normal');
+    y += lineH;
+
+    doc.setTextColor(93, 107, 130);
+    doc.text('综合风险：', margin, y);
+    doc.setTextColor(29, 37, 51);
+    doc.setFont(undefined, 'bold');
+    doc.text(currentReportData.risk || '—', margin + 22, y);
+    doc.setFont(undefined, 'normal');
+    y += lineH;
+
+    doc.setTextColor(93, 107, 130);
+    doc.text('复查建议：', margin, y);
+    doc.setTextColor(29, 37, 51);
+    doc.setFont(undefined, 'bold');
+    doc.text(currentReportData.followUp || '—', margin + 22, y);
+    doc.setFont(undefined, 'normal');
+    y += lineH + 3;
+
+    // 患者信息
+    doc.setFontSize(10);
+    var infoLines = [
+      ['患者姓名：', currentReportData.patientName],
+      ['门诊编号：', currentReportData.opdId],
+      ['筛查时间：', currentReportData.time],
+      ['来源机构：', currentReportData.source || '—'],
+      ['图片来源：', currentReportData.image || '—'],
+      ['质控评分：', currentReportData.qcScore || '—']
+    ];
+    infoLines.forEach(function(row) {
+      doc.setTextColor(124, 139, 161);
+      doc.text(row[0], margin, y);
+      doc.setTextColor(29, 37, 51);
+      doc.setFont(undefined, 'bold');
+      doc.text(row[1] || '—', margin + 28, y);
+      doc.setFont(undefined, 'normal');
+      y += lineH;
+    });
+
+    y += 5;
+
+    // 状态标签
+    doc.setFillColor(232, 255, 234);
+    doc.roundedRect(margin, y, 70, 7, 2, 2, 'F');
+    doc.setFontSize(10);
+    doc.setTextColor(19, 115, 51);
+    doc.text('● 已出报告', margin + 3, y + 5);
+    y += 14;
+
+    // 筛查结果汇总
+    doc.setFontSize(12);
+    doc.setTextColor(29, 37, 51);
+    doc.setFont(undefined, 'bold');
+    doc.text('筛查结果汇总', margin, y);
+    doc.setFont(undefined, 'normal');
+    y += lineH + 2;
+
+    var results = (currentReportData.taskId && getReportData(currentReportData.taskId).results) || [];
+    results.forEach(function(r) {
+      if (y > pdfHeight - margin - 20) { doc.addPage(); y = margin; }
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'bold');
+      doc.setTextColor(29, 37, 51);
+      doc.text('· ' + r.name, margin, y);
+      y += lineH;
+      doc.setFont(undefined, 'normal');
+      doc.setTextColor(93, 107, 130);
+      doc.text('  状态：' + r.status, margin, y);
+      y += lineH;
+      doc.text('  说明：' + r.desc, margin, y);
+      y += lineH;
+      doc.text('  建议：' + r.tips, margin, y);
+      y += lineH + 2;
+    });
+
+    y += 3;
+
+    // 医生建议
+    if (y > pdfHeight - margin - 20) { doc.addPage(); y = margin; }
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(29, 37, 51);
+    doc.text('医生建议', margin, y);
+    doc.setFont(undefined, 'normal');
+    y += lineH + 2;
+
+    var adviceText = '综合AI筛查结果，建议患者' + (currentReportData.followUp || '3个月内') + '行眼底复查，重点关注糖尿病视网膜病变进展。同时建议控制血糖、血压，必要时转诊眼底专科进行进一步检查和治疗。';
+    var adviceLines = doc.splitTextToSize(adviceText, contentWidth);
+    doc.setFontSize(10);
+    doc.setTextColor(93, 107, 130);
+    doc.text(adviceLines, margin, y);
+    y += adviceLines.length * lineH + 8;
+
+    // 加载报告图片
+    var img1 = document.getElementById('reportImg1');
+    var img2 = document.getElementById('reportImg2');
+
+    function addImageToPDF(img, nextY, callback) {
+      if (!img || !img.complete) { callback(nextY); return; }
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      ctx.drawImage(img, 0, 0);
+      var imgData = canvas.toDataURL('image/png');
+
+      var imgRatio = canvas.height / canvas.width;
+      var imgW = contentWidth;
+      var imgH = contentWidth * imgRatio;
+      var maxImgH = pdfHeight - margin - 30;
+
+      if (imgH > maxImgH) {
+        imgH = maxImgH;
+        imgW = imgH / imgRatio;
+      }
+
+      if (nextY + imgH > pdfHeight - margin) {
+        doc.addPage();
+        nextY = margin;
+      }
+
+      doc.addImage(imgData, 'PNG', margin, nextY, imgW, imgH);
+      callback(nextY + imgH + 10);
+    }
+
+    addImageToPDF(img1, y, function(newY) {
+      addImageToPDF(img2, newY, function(finalY) {
+        doc.save('筛查报告_' + (currentReportData.reportId || currentReportData.taskId) + '_' + currentReportData.patientName + '.pdf');
+        showToast(true, '下载成功', '筛查报告已成功下载到本地');
+      });
+    });
+
+  } catch (e) {
+    showToast(false, '下载失败', e.message || '生成PDF时出现错误，请重试');
+  }
+}
+</script>
+</body>
+</html>

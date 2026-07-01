@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>图像质量质控</title>
+<style>
+:root {
+  --primary: #165dff;
+  --primary-2: #0f9a83;
+  --primary-soft: #e8f3ff;
+  --success: #00b42a;
+  --warning: #f59a23;
+  --danger: #f53f3f;
+  --bg: #eef3fb;
+  --panel: #ffffff;
+  --panel-soft: #f7fbff;
+  --line: #e4ebf5;
+  --line-strong: #d5deeb;
+  --text: #1d2533;
+  --muted: #5d6b82;
+  --soft: #7c8ba1;
+  --shadow: 0 14px 40px rgba(41, 76, 131, 0.12);
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --font: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); }
+body { font-size: 14px; line-height: 1.6; }
+button { font: inherit; border: 0; cursor: pointer; }
+input, select, textarea { font: inherit; outline: none; }
+
+/* Header */
+.header {
+  height: 58px; display: flex; align-items: center; padding: 0 24px;
+  background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%);
+  color: #fff; position: sticky; top: 0; z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header .logo { color: #fff; text-decoration: none; font-size: 17px; font-weight: 800; letter-spacing: 1px; }
+.header .header-nav { display: flex; gap: 4px; margin-left: 32px; }
+.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 8px; font-size: 13px; transition: .18s; }
+.header .header-nav a:hover, .header .header-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 13px; }
+.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: .18s; }
+.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
+.header .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: .18s; font-weight: 600; }
+.header .btn-logout:hover { background: rgba(255,255,255,0.35); }
+
+/* Sidebar */
+.sidebar {
+  position: fixed; top: 58px; left: 0; width: 220px;
+  height: calc(100vh - 58px); background: #fff; border-right: 1px solid var(--line);
+  overflow-y: auto; z-index: 999; padding: 8px 0;
+}
+.sidebar .menu-group { margin-bottom: 4px; }
+.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--soft); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.sidebar .menu-item { display: flex; align-items: center; padding: 9px 20px; color: var(--muted); text-decoration: none; font-size: 13px; transition: .18s; border-left: 3px solid transparent; }
+.sidebar .menu-item:hover { background: var(--panel-soft); color: var(--primary); }
+.sidebar .menu-item.active { background: var(--primary-soft); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+
+/* Main Content */
+.main-content { margin-left: 220px; margin-top: 0; padding: 24px; min-height: calc(100vh - 58px); }
+.breadcrumb { font-size: 13px; color: var(--muted); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.breadcrumb a { color: var(--primary); text-decoration: none; }
+.page-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 20px; }
+
+/* Buttons */
+.btn {
+  min-height: 36px; padding: 0 14px; border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-weight: 700; transition: .16s ease; text-decoration: none;
+}
+.btn:hover { filter: brightness(1.03); }
+.btn.primary { color: #fff; background: linear-gradient(90deg, var(--primary), var(--primary-2)); box-shadow: 0 10px 20px rgba(22, 93, 255, .18); }
+.btn.secondary { color: var(--muted); background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.btn.danger { color: #fff; background: linear-gradient(90deg, #f45b5b, #e73d3d); }
+.btn.small { min-height: 30px; padding: 0 10px; font-size: 12px; border-radius: 8px; }
+.btn.lg { min-height: 44px; padding: 0 20px; font-size: 15px; }
+
+/* Tags */
+.tag {
+  min-height: 22px; padding: 0 8px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700;
+}
+.tag.blue { color: var(--primary); background: var(--primary-soft); }
+.tag.success { color: var(--success); background: #e8ffea; }
+.tag.warning { color: var(--warning); background: #fff4df; }
+.tag.danger { color: var(--danger); background: #ffecec; }
+.tag.gray { color: var(--soft); background: #f0f3f8; }
+
+/* Cards & Panels */
+.card { background: #fff; border-radius: var(--radius-lg); box-shadow: 0 10px 24px rgba(61, 102, 150, .08); padding: 20px; margin-bottom: 16px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.card-title { font-size: 16px; font-weight: 800; color: var(--text); }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.stat {
+  padding: 14px 16px; border-radius: 12px; background: var(--panel-soft);
+  box-shadow: inset 0 0 0 1px #e8eef8;
+}
+.stat span { display: block; color: var(--soft); font-size: 12px; }
+.stat strong { display: block; margin-top: 6px; font-size: 20px; line-height: 1.2; color: var(--text); }
+
+/* Tables */
+.table-wrap { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table thead th {
+  padding: 11px 12px; background: var(--panel-soft); color: var(--soft); font-size: 12px; text-align: left;
+  border-bottom: 1px solid var(--line); font-weight: 600;
+}
+.data-table tbody td { padding: 11px 12px; border-bottom: 1px solid #f0f4f9; vertical-align: middle; }
+.data-table tbody tr { transition: .14s; }
+.data-table tbody tr:hover { background: #f9fcff; }
+.data-table tbody tr.active { background: #eef7ff; }
+.row-main { display: flex; flex-direction: column; gap: 2px; }
+.row-main strong { font-size: 13px; }
+.row-main span { color: var(--soft); font-size: 12px; }
+
+/* Toolbar */
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.toolbar .search-shell {
+  display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 12px;
+  border: 1px solid var(--line); border-radius: 10px; background: #fff; min-width: 220px;
+}
+.toolbar .search-shell input { width: 100%; border: 0; background: transparent; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Steps */
+.steps { display: flex; margin-bottom: 20px; }
+.step { flex: 1; text-align: center; position: relative; font-size: 12px; color: var(--soft); }
+.step::before { content: ''; position: absolute; top: 15px; left: 50%; right: -50%; height: 2px; background: var(--line); z-index: 0; }
+.step:last-child::before { display: none; }
+.step .step-circle { width: 32px; height: 32px; border-radius: 50%; background: #e8edf5; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; position: relative; z-index: 1; }
+.step.active .step-circle { background: var(--primary); color: #fff; }
+.step.active { color: var(--primary); font-weight: 700; }
+.step.done .step-circle { background: var(--success); color: #fff; }
+.step.done { color: var(--success); }
+.step.done::before { background: var(--success); }
+
+/* Upload Zone */
+.upload-zone {
+  border: 1.5px dashed #b5c7e6; border-radius: 16px; min-height: 200px; display: flex; align-items: center; justify-content: center;
+  text-align: center; background: linear-gradient(180deg, #f8fbff 0%, #f3f7fd 100%); color: var(--muted); cursor: pointer; transition: .18s;
+}
+.upload-zone:hover { border-color: var(--primary); background: var(--primary-soft); }
+.upload-zone .plus {
+  width: 44px; height: 44px; margin: 0 auto 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: #e8f3ff; color: var(--primary); font-size: 24px; font-weight: 400;
+}
+.upload-zone .upload-hint { color: var(--soft); font-size: 12px; margin-top: 6px; }
+
+/* Forms */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.form-group input, .form-group select { width: 100%; padding: 9px 13px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; background: #fff; color: var(--text); }
+.form-group input:focus, .form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(22,93,255,.1); }
+.form-row { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+
+/* Report Box */
+.report-box { padding: 14px 16px; border-radius: 12px; background: var(--panel-soft); box-shadow: inset 0 0 0 1px #e8eef8; margin-bottom: 10px; }
+.report-box p { margin: 0; color: var(--muted); }
+.report-box strong { color: var(--text); }
+
+/* Alerts */
+.alert { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
+.alert-info { background: #e8f3ff; color: #1a56db; border: 1px solid #d2e3fc; }
+.alert-success { background: #e8ffea; color: #137333; border: 1px solid #ceead6; }
+.alert-warning { background: #fff4df; color: #b06000; border: 1px solid #feefc3; }
+.alert-danger { background: #ffecec; color: #c5221f; border: 1px solid #f5c6c2; }
+
+/* Result Grid */
+.result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.result-card { padding: 14px; border-radius: 12px; background: #f8fbff; box-shadow: inset 0 0 0 1px #e8eef8; }
+.result-card .result-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.result-card .result-status { display: inline-block; margin-bottom: 6px; }
+.result-card .result-desc { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.result-card .result-tips { margin-top: 8px; font-size: 12px; color: var(--soft); }
+
+/* Preview */
+.preview-shell { border-radius: 14px; overflow: hidden; background: #0b0b0b; margin-bottom: 14px; }
+.preview-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; background: #f7f9fd; border: 1px solid var(--line); border-bottom: 0; border-radius: 14px 14px 0 0;
+}
+.preview-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.preview-stage { aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; position: relative; }
+.tab-pill {
+  height: 30px; padding: 0 12px; border-radius: 999px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700;
+}
+.tab-pill.active { color: #fff; background: linear-gradient(90deg, var(--primary), var(--primary-2)); }
+
+/* Timeline */
+.timeline { display: grid; gap: 8px; margin-bottom: 14px; }
+.timeline-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #fbfdff; box-shadow: inset 0 0 0 1px #edf2f9; }
+.timeline-item .dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; background: #b9c7da; flex: 0 0 auto; }
+.timeline-item.success .dot { background: var(--success); }
+.timeline-item.warning .dot { background: var(--warning); }
+.timeline-item.danger .dot { background: var(--danger); }
+.timeline-item strong { display: block; font-size: 13px; }
+.timeline-item span { display: block; color: var(--soft); font-size: 12px; margin-top: 2px; }
+
+@media (max-width: 1024px) {
+  .sidebar { width: 60px; }
+  .sidebar .menu-item span { display: none; }
+  .sidebar .menu-group-title { display: none; }
+  .main-content { margin-left: 60px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .result-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .header { height: auto; flex-wrap: wrap; padding: 12px 16px; gap: 8px; }
+  .header .header-nav { margin-left: 0; }
+  .sidebar { display: none; }
+  .main-content { margin-left: 0; padding: 14px; }
+  .stats { grid-template-columns: 1fr; }
+  .form-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+<a href="index.html" class="logo">生命医学管理系统</a>
+<div class="header-nav">
+<a href="眼底图像输入.html" class="active">AI筛查</a>
+<a href="临床数据开放共享.html">数据平台</a>
+<a href="基础课程.html">AI教育</a>
+<a href="临床决策支撑.html">专家系统</a>
+<a href="数据采集工具（确认）.html">数据工具</a>
+</div>
+<div class="header-right"><span class="user-info" id="headerUserName">管理员</span><button class="btn-logout" onclick="logout()">退出</button></div></div>
+<div class="sidebar" id="sidebar">
+<div class="menu-group"><div class="menu-group-title">AI眼底疾病筛查</div>
+<a class="menu-item" href="眼底图像输入.html">眼底图像输入</a>
+<a class="menu-item" href="图像质量质控.html" class="active">图像质量质控</a>
+<a class="menu-item" href="常见疾病筛查.html">常见疾病筛查</a>
+<a class="menu-item" href="多任务联合筛查.html">多任务联合筛查</a>
+<a class="menu-item" href="输出筛查报告.html">输出筛查报告</a></div></div><div class="main-content">
+<div class="breadcrumb"><a href="index.html">首页</a><span>&rsaquo;</span><a href="#">AI眼底疾病筛查</a><span>&rsaquo;</span><strong>图像质量质控</strong></div>
+<h1 class="page-title">图像质量质控</h1>
+
+<div class="card">
+  <div class="card-header"><span class="card-title">质控检测结果</span></div>
+  <div class="steps">
+    <div class="step done"><div class="step-circle">&#10003;</div>上传图像</div>
+    <div class="step active"><div class="step-circle">2</div>质量质控</div>
+    <div class="step"><div class="step-circle">3</div>疾病筛查</div>
+    <div class="step"><div class="step-circle">4</div>联合筛查</div>
+    <div class="step"><div class="step-circle">5</div>输出报告</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span>质控评分</span><strong style="color:var(--success);">96%</strong></div>
+    <div class="stat"><span>图像清晰度</span><strong>优秀</strong></div>
+    <div class="stat"><span>视野完整性</span><strong>完整</strong></div>
+    <div class="stat"><span>曝光均匀度</span><strong>良好</strong></div>
+  </div>
+
+  <div class="alert alert-info">
+    <strong>质控通过：</strong>图像清晰，视盘、黄斑与血管分布完整，可进入AI分析阶段。
+    <a class="btn primary small" href="常见疾病筛查.html" style="margin-left:12px;">进入疾病筛查</a>
+  </div>
+
+  <div class="card-header"><span class="card-title">质控检查项明细</span></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>检查项</th><th>结果</th><th>评分</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>图像清晰度</strong></td>
+          <td><span class="tag success">通过</span></td>
+          <td>98%</td>
+          <td>视盘边界清晰，血管细节可见</td>
+        </tr>
+        <tr>
+          <td><strong>曝光均匀度</strong></td>
+          <td><span class="tag success">通过</span></td>
+          <td>95%</td>
+          <td>黄斑区域无明显过曝或欠曝</td>
+        </tr>
+        <tr>
+          <td><strong>视野完整性</strong></td>
+          <td><span class="tag success">通过</span></td>
+          <td>94%</td>
+          <td>视盘与黄斑均在视野内</td>
+        </tr>
+        <tr>
+          <td><strong>色彩真实性</strong></td>
+          <td><span class="tag success">通过</span></td>
+          <td>97%</td>
+          <td>色调正常，无偏色</td>
+        </tr>
+        <tr>
+          <td><strong>分辨率达标</strong></td>
+          <td><span class="tag success">通过</span></td>
+          <td>96%</td>
+          <td>分辨率满足AI模型最低要求</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><span class="card-title">质控不合格案例（演示）</span></div>
+  <div class="result-grid">
+    <div class="result-card" style="border-left:3px solid var(--danger);">
+      <div class="result-name" style="color:var(--danger);">图像模糊</div>
+      <div class="result-desc">视盘边界不清，难以完成多任务联合分析。</div>
+      <div class="result-tips">建议：重新拍摄，确保对焦准确。</div>
+    </div>
+    <div class="result-card" style="border-left:3px solid var(--warning);">
+      <div class="result-name" style="color:var(--warning);">曝光异常</div>
+      <div class="result-desc">局部过亮导致黄斑区域细节损失。</div>
+      <div class="result-tips">建议：调整曝光参数后重新拍摄。</div>
+    </div>
+    <div class="result-card" style="border-left:3px solid var(--warning);">
+      <div class="result-name" style="color:var(--warning);">视野不足</div>
+      <div class="result-desc">视盘未完整入镜，影响结果可靠性。</div>
+      <div class="result-tips">建议：重新拍摄确保眼底完全入镜。</div>
+    </div>
+    <div class="result-card" style="border-left:3px solid var(--danger);">
+      <div class="result-name" style="color:var(--danger);">伪影干扰</div>
+      <div class="result-desc">存在大量睫毛或眼睑遮挡。</div>
+      <div class="result-tips">建议：重新拍摄，避免遮挡。</div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+function navigateTo(url) { window.location.href = url; }
+function logout() {
+  localStorage.removeItem('life_med_user');
+  window.location.href = 'login.html';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var user = JSON.parse(localStorage.getItem('life_med_user'));
+    if (user && user.name) {
+      document.getElementById('headerUserName').textContent = user.name;
+    }
+  } catch(e) {}
+  var path = window.location.pathname.replace(/\\/g, '/');
+  var currentPage = path.split('/').pop();
+  var menuItems = document.querySelectorAll('.sidebar .menu-item');
+  menuItems.forEach(function(item) {
+    var href = item.getAttribute('href');
+    if (href && (href === currentPage || href.endsWith('/' + currentPage))) {
+      item.classList.add('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

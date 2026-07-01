@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 - 生命医学主题库</title>
+  <style>
+    :root {
+      --primary: #165dff;
+      --primary-2: #0f9a83;
+      --primary-soft: #e8f3ff;
+      --success: #00b42a;
+      --warning: #f59a23;
+      --danger: #f53f3f;
+      --bg: #eef3fb;
+      --panel: #ffffff;
+      --line: #e4ebf5;
+      --text: #1d2533;
+      --muted: #5d6b82;
+      --shadow: 0 14px 40px rgba(41, 76, 131, 0.12);
+      --font: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; font-family: var(--font); }
+    body { font-size: 14px; line-height: 1.6; color: var(--text); }
+    button, input { font: inherit; outline: none; }
+    button { border: 0; cursor: pointer; }
+
+    .login-screen {
+      position: relative; overflow: hidden; min-height: 100vh; color: #fff;
+      background:
+        radial-gradient(circle at 82% 12%, rgba(22, 93, 255, .24), transparent 28%),
+        radial-gradient(circle at 14% 76%, rgba(0, 180, 42, .14), transparent 26%),
+        linear-gradient(135deg, #11306f 0%, #123f82 44%, #0f5c66 100%);
+    }
+    .brand-float {
+      position: absolute; left: 44px; top: 28px; display: flex; align-items: center; gap: 12px;
+      font-size: 20px; font-weight: 800;
+    }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,.16); box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
+      font-size: 16px;
+    }
+    .login-wrap {
+      min-height: 100vh; display: grid; place-items: center; padding: 92px 24px 72px;
+    }
+    .login-card {
+      width: min(460px, 100%); padding: 34px 40px 38px; border-radius: 20px;
+      background: rgba(255,255,255,.93); color: var(--text); box-shadow: 0 24px 60px rgba(6, 18, 54, .22);
+    }
+    .tabs {
+      width: 220px; margin: 0 auto 18px; padding: 4px; border-radius: 999px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: #e8edf8;
+    }
+    .tab {
+      height: 34px; border-radius: 999px; background: transparent; color: #66758f; font-weight: 700;
+    }
+    .tab.active { color: #fff; background: linear-gradient(90deg, var(--primary), var(--primary-2)); }
+    .login-card h1 { margin: 0; font-size: 28px; line-height: 1.2; text-align: center; }
+    .sub { margin: 10px 0 28px; text-align: center; color: #7d8ca6; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; margin-bottom: 8px; color: #5d6b82; font-weight: 700; }
+    .control {
+      min-height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 12px;
+      border: 1px solid var(--line); border-radius: 10px; background: #fff; color: #8d9ab0;
+    }
+    .control:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(22, 93, 255, .1); }
+    .control input { width: 100%; min-width: 0; border: 0; background: transparent; color: var(--text); }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 22px; color: #7f8ea8; font-size: 12px; }
+    .check { display: inline-flex; align-items: center; gap: 8px; }
+    .check input { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); }
+    .link { color: var(--primary); background: transparent; font-size: 12px; padding: 0; border: 0; cursor: pointer; }
+    .btn {
+      min-height: 36px; padding: 0 14px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-weight: 700; transition: .16s ease;
+    }
+    .btn:hover { filter: brightness(1.03); }
+    .btn.primary { color: #fff; background: linear-gradient(90deg, var(--primary), var(--primary-2)); box-shadow: 0 10px 20px rgba(22, 93, 255, .18); }
+    .btn.secondary { color: var(--muted); background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+    .login-footer {
+      position: absolute; left: 0; right: 0; bottom: 22px; text-align: center; color: rgba(255,255,255,.72); font-size: 12px;
+    }
+    .toast {
+      position: fixed; left: 50%; top: 20px; z-index: 1000;
+      transform: translate(-50%, -10px);
+      padding: 12px 16px; min-width: 220px; max-width: 92vw;
+      border-radius: 10px; background: rgba(23, 32, 49, .95); color: #fff;
+      text-align: center; opacity: 0; pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      box-shadow: var(--shadow);
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 760px) {
+      .login-card { padding: 28px 22px; }
+      .brand-float { left: 18px; top: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <main class="login-screen">
+    <div class="brand-float">
+      <span class="brand-mark">医</span>
+      <span>生命医学主题库</span>
+    </div>
+    <section class="login-wrap">
+      <form id="authForm" class="login-card">
+        <div class="tabs">
+          <button class="tab active" type="button" data-auth="login">登录</button>
+          <button class="tab" type="button" data-auth="register">注册</button>
+        </div>
+        <h1 id="authTitle">欢迎登录</h1>
+        <p class="sub">国科信生命医学主题库管理系统</p>
+        <div class="field">
+          <label for="account">账号</label>
+          <div class="control">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><circle cx="12" cy="7" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            <input id="account" autocomplete="username" placeholder="请输入用户名/手机号/邮箱">
+          </div>
+        </div>
+        <div class="field">
+          <label for="password">密码</label>
+          <div class="control">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            <input id="password" type="password" autocomplete="current-password" placeholder="请输入密码">
+            <button class="link" id="togglePwd" type="button">显示</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="captcha">验证码</label>
+          <div style="display:grid;grid-template-columns:1fr 112px;gap:8px;">
+            <div class="control">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
+              <input id="captcha" placeholder="请输入验证码">
+            </div>
+            <button id="codeBtn" class="btn secondary" type="button" style="height:42px;">8A7Z</button>
+          </div>
+        </div>
+        <div class="row">
+          <label class="check"><input type="checkbox">记住密码</label>
+          <button class="link" type="button" id="forgot">忘记密码？</button>
+        </div>
+        <button id="submitBtn" class="btn primary" type="submit" style="width:100%;height:44px;">登录</button>
+      </form>
+    </section>
+    <footer class="login-footer">&copy; 2026 生命医学主题库 版权所有</footer>
+  </main>
+
+  <script>
+    function toast(text) {
+      var el = document.getElementById('toast');
+      el.textContent = text;
+      el.classList.add('show');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(function() { el.classList.remove('show'); }, 1800);
+    }
+
+    // Tab切换
+    document.querySelectorAll('.tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if (this.dataset.auth === 'register') {
+          window.location.href = 'register.html';
+        }
+      });
+    });
+
+    // 密码显隐
+    document.getElementById('togglePwd').addEventListener('click', function() {
+      var input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+      this.textContent = input.type === 'password' ? '显示' : '隐藏';
+    });
+
+    // 验证码刷新
+    document.getElementById('codeBtn').addEventListener('click', function() {
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      this.textContent = Array.from({length:4}, function() { return chars[Math.floor(Math.random() * chars.length)]; }).join('');
+    });
+
+    // 忘记密码
+    document.getElementById('forgot').addEventListener('click', function() {
+      toast('已发送密码找回提示，请查收注册邮箱');
+    });
+
+    // 表单提交 - 简单验证后跳转到主页
+    document.getElementById('authForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var account = document.getElementById('account').value.trim();
+      var password = document.getElementById('password').value.trim();
+      var captcha = document.getElementById('captcha').value.trim();
+      if (!account) { toast('请输入账号'); return; }
+      if (!password) { toast('请输入密码'); return; }
+      if (!captcha) { toast('请输入验证码'); return; }
+      // 模拟登录成功
+      localStorage.setItem('life_med_user', JSON.stringify({ name: '张教授', role: '主任医师', loginTime: new Date().toISOString() }));
+      toast('登录成功，正在进入系统...');
+      setTimeout(function() { window.location.href = 'index.html'; }, 600);
+    });
+
+    // 回车键提交
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('authForm').dispatchEvent(new Event('submit'));
+    });
+  </script>
+</body>
+</html>
