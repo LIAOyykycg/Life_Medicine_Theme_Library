@@ -1,10 +1,19 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>专家审核与统计分析</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>专家审核与统计分析</title>
+<style>
 :root {
-    --primary: #1a73e8; --primary-dark: #1557b0; --primary-light: #e8f0fe; --success: #34a853; --warning: #fbbc04; --danger: #ea4335;
-    --gray-50: #f8f9fa; --gray-100: #f5f7fa; --gray-200: #e8ecf0; --gray-300: #dadce0; --gray-400: #bdc1c6; --gray-500: #9aa0a6;
-    --gray-600: #80868b; --gray-700: #5f6368; --gray-800: #3c4043; --gray-900: #202124; --text: #333333; --text-secondary: #999999;
+    --primary: #1a73e8; --primary-dark: #1557b0; --primary-light: #e8f0fe;
+    --success: #34a853; --warning: #fbbc04; --danger: #ea4335;
+    --gray-50: #f8f9fa; --gray-100: #f5f7fa; --gray-200: #e8ecf0; --gray-300: #dadce0;
+    --gray-400: #bdc1c6; --gray-500: #9aa0a6; --gray-600: #80868b; --gray-700: #5f6368;
+    --gray-800: #3c4043; --gray-900: #202124; --text: #333333; --text-secondary: #999999;
     --bg: #ffffff; --sidebar-width: 220px; --header-height: 56px; --radius: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); --shadow-lg: 0 4px 12px rgba(0,0,0,0.12); --transition: all 0.2s ease;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12); --transition: all 0.2s ease;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-size: 14px; color: var(--text); background: var(--gray-50); min-height: 100vh; line-height: 1.6; }
@@ -29,35 +38,52 @@ body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-
 .breadcrumb { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
 .breadcrumb a { color: var(--primary); text-decoration: none; }
 .page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; }
+
+/* ===== 卡片通用 ===== */
 .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
 .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
 .card-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
-.filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px 18px; background: var(--gray-50); border-radius: var(--radius); margin-bottom: 16px; }
-.filter-bar label { font-size: 13px; color: var(--gray-700); white-space: nowrap; }
-.filter-bar input, .filter-bar select { padding: 7px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
-.filter-bar input:focus, .filter-bar select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+
+/* ===== 按钮 ===== */
 .btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; transition: var(--transition); gap: 6px; white-space: nowrap; text-decoration: none; }
 .btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-dark); }
 .btn-success { background: var(--success); color: #fff; } .btn-success:hover { background: #2d9249; }
+.btn-danger-outline { background: #fff; border: 1px solid var(--danger); color: var(--danger); } .btn-danger-outline:hover { background: #fce8e6; }
 .btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); } .btn-outline:hover { background: var(--gray-50); }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-lg { padding: 10px 24px; font-size: 14px; }
+
+/* ===== 表格 ===== */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 table th { background: var(--gray-100); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--gray-700); border-bottom: 2px solid var(--gray-200); white-space: nowrap; }
 table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-800); }
 table tbody tr:hover { background: var(--gray-50); }
 table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
+
+/* ===== 标签 ===== */
 .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
-.tag-blue { background: #e8f0fe; color: #1a73e8; }
 .tag-green { background: #e6f4ea; color: #137333; }
 .tag-orange { background: #fef7e0; color: #b06000; }
 .tag-red { background: #fce8e6; color: #c5221f; }
+.tag-blue { background: #e8f0fe; color: #1a73e8; }
+
+/* ===== 筛选栏 ===== */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px 18px; background: var(--gray-50); border-radius: var(--radius); margin-bottom: 16px; }
+.filter-bar label { font-size: 13px; color: var(--gray-700); white-space: nowrap; }
+.filter-bar input, .filter-bar select { padding: 7px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.filter-bar input:focus, .filter-bar select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+
+/* ===== 分页 ===== */
 .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 16px; padding: 12px 0; }
 .pagination button { padding: 6px 12px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: var(--transition); }
 .pagination button:hover:not(:disabled) { background: var(--gray-50); }
 .pagination button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-.stat-grid { display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.pagination .page-info { font-size: 13px; color: var(--gray-600); margin: 0 8px; }
+
+/* ===== KPI 统计卡片 ===== */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
 .stat-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
 .stat-card .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
 .stat-card .stat-info .stat-value { font-size: 26px; font-weight: 700; color: var(--gray-900); }
@@ -65,139 +91,1422 @@ table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
 .stat-card .stat-info .stat-change { font-size: 11px; margin-top: 2px; }
 .stat-card .stat-info .stat-change.up { color: var(--success); }
 .stat-card .stat-info .stat-change.down { color: var(--danger); }
-</style></head><body>
+
+/* ===== 使用率趋势卡片 ===== */
+.usage-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
+.usage-card .usage-title { font-size: 15px; font-weight: 600; color: var(--gray-800); margin-bottom: 16px; }
+.usage-body { display: flex; gap: 24px; align-items: center; }
+.usage-ring { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+.usage-ring .ring-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.usage-ring .ring-center .ring-pct { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+.usage-ring .ring-center .ring-label { font-size: 11px; color: var(--gray-600); }
+.usage-legend { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--gray-700); margin-left: 12px; }
+.usage-legend span { display: flex; align-items: center; gap: 6px; }
+.usage-legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.usage-chart { flex: 1; min-width: 0; }
+.usage-chart canvas { width: 100% !important; height: 180px !important; }
+
+/* ===== 弹窗遮罩 ===== */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 2000; overflow-y: auto; }
+.modal-overlay.active { display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; }
+.modal-box { background: #fff; border-radius: 12px; width: 750px; max-width: 96vw; box-shadow: 0 12px 40px rgba(0,0,0,0.2); animation: modalIn 0.25s ease; display: flex; flex-direction: column; max-height: 90vh; }
+@keyframes modalIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+.modal-header { display: flex; align-items: center; padding: 18px 24px 14px; border-bottom: 1px solid var(--gray-200); flex-shrink: 0; }
+.modal-header h3 { font-size: 18px; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 8px; }
+.modal-header .badge { background: #e3f2fd; color: #1976d2; font-size: 12px; padding: 2px 10px; border-radius: 12px; font-weight: 600; }
+.modal-header .modal-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.modal-header .modal-actions button { background: none; border: none; cursor: pointer; font-size: 13px; color: var(--gray-600); padding: 4px 8px; border-radius: 6px; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+.modal-header .modal-actions button:hover { background: var(--gray-100); color: var(--primary); }
+.modal-header .btn-close { font-size: 20px; line-height: 1; color: var(--gray-500); }
+.modal-header .btn-close:hover { color: var(--danger); }
+.modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+
+/* ===== 弹窗区块 ===== */
+.modal-section { margin-bottom: 20px; }
+.modal-section .section-title { font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.modal-section .info-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+.modal-section .info-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px 24px; }
+.modal-section .info-item { display: flex; gap: 6px; font-size: 13px; }
+.modal-section .info-item .label { color: var(--gray-600); white-space: nowrap; }
+.modal-section .info-item .value { color: var(--gray-900); font-weight: 500; }
+.modal-section .info-item .value.masked { color: var(--gray-700); }
+
+/* 病历内容卡片 */
+.record-card { background: var(--gray-50); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+.record-card .card-sub-title { font-size: 13px; font-weight: 600; color: var(--gray-800); margin-bottom: 8px; }
+.record-card p { font-size: 13px; color: var(--gray-800); line-height: 1.7; margin-bottom: 6px; }
+.record-card .exam-list { font-size: 13px; color: var(--gray-800); line-height: 1.7; }
+
+/* 诊断与治疗方案 */
+.diagnosis-section { background: var(--gray-50); border-radius: 8px; padding: 14px 16px; }
+.diagnosis-section .diag-label { font-size: 13px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+.diagnosis-section .diag-value { font-size: 13px; color: var(--gray-800); margin-bottom: 12px; }
+.diagnosis-section ol { padding-left: 20px; font-size: 13px; color: var(--gray-800); line-height: 1.8; }
+
+/* 检验检查结果表格 */
+.lab-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+.lab-table th { background: var(--gray-100); padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-700); border-bottom: 2px solid var(--gray-200); }
+.lab-table td { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); }
+.lab-table .status-high { color: #c5221f; font-weight: 600; }
+.lab-table .status-normal { color: #137333; font-weight: 600; }
+.lab-table .status-low { color: #1a73e8; font-weight: 600; }
+.lab-table .arrow-up::before { content: "↑ "; }
+.lab-table .arrow-down::before { content: "↓ "; }
+
+/* 附件卡片 */
+.attach-list { display: flex; flex-direction: column; gap: 10px; }
+.attach-card { display: flex; align-items: center; padding: 10px 14px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); }
+.attach-card .file-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 12px; flex-shrink: 0; }
+.attach-card .file-icon.excel { background: #e6f4ea; color: #137333; }
+.attach-card .file-icon.image { background: #e8f0fe; color: #1a73e8; }
+.attach-card .file-info { flex: 1; }
+.attach-card .file-info .file-name { font-size: 13px; font-weight: 500; color: var(--gray-900); }
+.attach-card .file-info .file-meta { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.attach-card .btn-download { background: none; border: 1px solid var(--gray-300); padding: 5px 12px; border-radius: 6px; font-size: 12px; color: var(--gray-700); cursor: pointer; transition: var(--transition); white-space: nowrap; }
+.attach-card .btn-download:hover { background: var(--gray-50); }
+
+/* 审核意见 */
+.audit-textarea { width: 100%; min-height: 90px; padding: 12px; border: 1px solid var(--gray-300); border-radius: 8px; background: var(--gray-50); font-size: 13px; font-family: inherit; color: var(--gray-900); resize: vertical; outline: none; transition: border-color 0.2s; }
+.audit-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.audit-textarea::placeholder { color: var(--gray-400); }
+
+/* 弹窗底部操作栏 */
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 24px; border-top: 1px solid var(--gray-200); flex-shrink: 0; }
+.modal-footer .btn-reject { background: #fff; border: 1px solid var(--danger); color: var(--danger); padding: 8px 20px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+.modal-footer .btn-reject:hover { background: #fce8e6; }
+.modal-footer .btn-approve { background: var(--success); color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+.modal-footer .btn-approve:hover { background: #2d9249; }
+.modal-footer .btn-close-gray { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); padding: 8px 20px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: var(--transition); }
+
+/* 操作栏 */
+.action-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部导航 ===== -->
 <div class="header">
   <a href="index.html" class="logo">生命医学智能平台</a>
   <div class="header-nav">
     <a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a>
-    <a href="眼病/慢病数据录入工具.html" class="active">眼病/慢病数据录入工具</a>
+    <a href="表单模板设置.html">眼病/慢病数据录入工具</a>
     <a href="眼病/慢病影像脱敏工具.html">眼病/慢病影像脱敏工具</a>
-    <a href="眼病/慢病影像标注工具.html">眼病/慢病影像标注工具</a>
+    <a href="影像标注工具.html">眼病/慢病影像标注工具</a>
   </div>
   <div class="header-right">
     <span class="user-info" id="headerUserName">张教授</span>
     <button class="btn-logout" onclick="logout()">退出登录</button>
   </div>
 </div>
+
+<!-- ===== 侧边栏 ===== -->
 <div class="sidebar">
   <div class="menu-group">
     <div class="menu-group-title">数据采集功能</div>
-    <a class="menu-item" href="表单模板设置.html"><span class="menu-icon">&#x1F4CB;</span><span>表单模板设置</span></a>
-    <a class="menu-item" href="数据录入填写.html"><span class="menu-icon">&#x1F4DD;</span><span>数据录入填写</span></a>
-    <a class="menu-item" href="病历随访.html"><span class="menu-icon">&#x1F3E5;</span><span>病历随访</span></a>
-    <a class="menu-item" href="历史数据导入.html"><span class="menu-icon">&#x1F4E4;</span><span>历史数据导入</span></a>
-    <a class="menu-item" href="医学影像存储与转码.html"><span class="menu-icon">&#x1F4CA;</span><span>医学影像存储与转码</span></a>
-    <a class="menu-item active" href="专家审核与统计分析.html"><span class="menu-icon">&#x1F50D;</span><span>专家审核与统计分析</span></a>
+    <a class="menu-item" href="表单模板设置.html"><span class="menu-icon">📋</span><span>表单模板设置</span></a>
+    <a class="menu-item" href="数据录入填写.html"><span class="menu-icon">📝</span><span>数据录入填写</span></a>
+    <a class="menu-item" href="病历随访.html"><span class="menu-icon">🏥</span><span>病历随访</span></a>
+    <a class="menu-item" href="历史数据导入.html"><span class="menu-icon">📤</span><span>历史数据导入</span></a>
+    <a class="menu-item" href="医学影像存储与转码.html"><span class="menu-icon">📊</span><span>医学影像存储与转码</span></a>
+    <a class="menu-item active" href="专家审核与统计分析.html"><span class="menu-icon">🔍</span><span>专家审核与统计分析</span></a>
   </div>
 </div>
+
+<!-- ===== 主内容区 ===== -->
 <div class="main-content">
-  <div class="breadcrumb"><a href="index.html">首页</a><span>&gt;</span><a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a><span>&gt;</span><span>专家审核与统计分析</span></div>
+  <div class="breadcrumb">
+    <a href="index.html">首页</a><span>&gt;</span>
+    <a href="医学影像存储与转码.html">数据采集功能</a><span>&gt;</span>
+    <span>专家审核与统计分析</span>
+  </div>
   <h1 class="page-title">专家审核与统计分析</h1>
-  <!-- KPI 指标卡片 -->
-  <div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-icon" style="background:#e8f0fe;">&#x1F4CB;</div>
-      <div class="stat-info">
-        <div class="stat-value">12,846</div>
-        <div class="stat-label">总录入数</div>
-        <div class="stat-change up">&#x25B2; 12.5% 较上月</div>
+
+  <!-- 【需求5】KPI 可视化指标卡 -->
+  <div class="stat-grid" id="statGrid"></div>
+
+  <!-- 【需求5】使用率趋势卡片（圆环图 + 折线图） -->
+  <div class="usage-card">
+    <div class="usage-title">审核通过率趋势</div>
+    <div class="usage-body">
+      <div class="usage-ring">
+        <canvas id="ringChart" width="160" height="160"></canvas>
+        <div class="ring-center">
+          <div class="ring-pct" id="ringPct">82%</div>
+          <div class="ring-label">当月通过率</div>
+        </div>
       </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:#e6f4ea;">&#x2714;</div>
-      <div class="stat-info">
-        <div class="stat-value">94.8%</div>
-        <div class="stat-label">审核通过率</div>
-        <div class="stat-change up">&#x25B2; 2.3% 较上月</div>
+      <div class="usage-legend">
+        <span><span class="dot" style="background:#34a853;"></span>通过率 82%</span>
+        <span><span class="dot" style="background:#fbbc04;"></span>待审核 12%</span>
+        <span><span class="dot" style="background:#ea4335;"></span>驳回率 6%</span>
       </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:#fef7e0;">&#x23F3;</div>
-      <div class="stat-info">
-        <div class="stat-value">386</div>
-        <div class="stat-label">待审核数</div>
-        <div class="stat-change down">&#x25BC; 8.1% 较上月</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:#fce8e6;">&#x2718;</div>
-      <div class="stat-info">
-        <div class="stat-value">668</div>
-        <div class="stat-label">驳回数</div>
-        <div class="stat-change down">&#x25BC; 5.2% 较上月</div>
+      <div class="usage-chart">
+        <canvas id="lineChart"></canvas>
       </div>
     </div>
   </div>
-  <!-- 筛选条件 -->
+
+  <!-- 【需求1】筛选栏 + 操作栏 -->
   <div class="card">
-    <div class="card-header"><span class="card-title">综合筛选条件</span></div>
+    <div class="card-header"><span class="card-title">审核数据筛选</span></div>
     <div class="filter-bar">
-      <label>审核状态</label>
-      <select><option>全部</option><option>待审核</option><option>已通过</option><option>已驳回</option></select>
-      <label>数据来源</label>
-      <select><option>全部</option><option>表单录入</option><option>批量导入</option><option>API接口</option></select>
-      <label>审核专家</label>
-      <select><option>全部</option><option>张教授</option><option>李主任</option><option>王医生</option></select>
-      <label>提交日期</label>
-      <input type="date"><span style="color:var(--gray-400);">至</span><input type="date">
       <label>疾病类型</label>
-      <select><option>全部</option><option>青光眼</option><option>糖尿病视网膜病变</option><option>黄斑变性</option></select>
-      <button class="btn btn-primary btn-sm">搜索</button>
-      <button class="btn btn-outline btn-sm">重置</button>
-      <button class="btn btn-success btn-sm">批量通过</button>
+      <select id="filterDisease">
+        <option value="">全部</option>
+        <option>青光眼</option>
+        <option>糖尿病视网膜病变</option>
+        <option>黄斑变性</option>
+        <option>白内障</option>
+        <option>高血压视网膜病变</option>
+        <option>干眼症</option>
+      </select>
+      <label>录入员</label>
+      <select id="filterRecorder">
+        <option value="">全部</option>
+        <option>李护士</option>
+        <option>王医生</option>
+        <option>张护士</option>
+        <option>赵医生</option>
+        <option>陈护士</option>
+      </select>
+      <label>提交时间</label>
+      <input type="date" id="filterDateFrom">
+      <span style="color:var(--gray-400);">至</span>
+      <input type="date" id="filterDateTo">
+      <label>审核状态</label>
+      <select id="filterStatus">
+        <option value="">全部</option>
+        <option>待审核</option>
+        <option>已通过</option>
+        <option>已驳回</option>
+      </select>
+      <label>患者ID/姓名</label>
+      <input type="text" id="filterKeyword" placeholder="请输入患者ID或姓名" style="width:160px;">
+      <button class="btn btn-primary btn-sm" onclick="applyFilter()">搜索</button>
+      <button class="btn btn-outline btn-sm" onclick="resetFilter()">重置</button>
     </div>
   </div>
-  <!-- 审核列表 -->
+
+  <!-- 【需求1】审核数据全量列表 -->
   <div class="card">
-    <div class="card-header"><span class="card-title">审核列表</span></div>
+    <div class="card-header">
+      <span class="card-title">审核列表</span>
+      <div class="action-bar" style="margin:0;">
+        <button class="btn btn-success btn-sm" id="btnBatchApprove" onclick="batchApprove()" disabled>批量审核</button>
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()">导出列表</button>
+      </div>
+    </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th><input type="checkbox"></th><th>申请编号</th><th>患者姓名</th><th>数据来源</th><th>疾病类型</th><th>提交时间</th><th>审核状态</th><th>操作</th></tr></thead>
-        <tbody>
+        <thead>
           <tr>
-            <td><input type="checkbox"></td><td>RV-20260701-001</td><td>王建国</td><td>表单录入</td><td>青光眼</td><td>2026-07-01 09:15</td>
-            <td><span class="tag tag-orange">待审核</span></td>
-            <td><div style="display:flex;gap:6px;"><a class="btn btn-success btn-sm">通过</a><a class="btn btn-outline btn-sm">驳回</a><a class="btn btn-outline btn-sm">查看</a></div></td>
+            <th><input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)"></th>
+            <th>申请编号</th>
+            <th>患者ID</th>
+            <th>患者姓名</th>
+            <th>疾病类型</th>
+            <th>录入员</th>
+            <th>提交时间</th>
+            <th>审核状态</th>
+            <th>操作</th>
           </tr>
-          <tr>
-            <td><input type="checkbox"></td><td>RV-20260701-002</td><td>李秀兰</td><td>批量导入</td><td>糖尿病视网膜病变</td><td>2026-07-01 08:42</td>
-            <td><span class="tag tag-orange">待审核</span></td>
-            <td><div style="display:flex;gap:6px;"><a class="btn btn-success btn-sm">通过</a><a class="btn btn-outline btn-sm">驳回</a><a class="btn btn-outline btn-sm">查看</a></div></td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td><td>RV-20260630-003</td><td>张明华</td><td>表单录入</td><td>黄斑变性</td><td>2026-06-30 16:30</td>
-            <td><span class="tag tag-green">已通过</span></td>
-            <td><div style="display:flex;gap:6px;"><a class="btn btn-outline btn-sm">查看</a></div></td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td><td>RV-20260630-004</td><td>赵丽萍</td><td>API接口</td><td>青光眼</td><td>2026-06-30 14:22</td>
-            <td><span class="tag tag-red">已驳回</span></td>
-            <td><div style="display:flex;gap:6px;"><a class="btn btn-outline btn-sm">查看</a><a class="btn btn-outline btn-sm">重新提交</a></div></td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td><td>RV-20260630-005</td><td>刘志强</td><td>批量导入</td><td>糖尿病视网膜病变</td><td>2026-06-30 11:05</td>
-            <td><span class="tag tag-green">已通过</span></td>
-            <td><div style="display:flex;gap:6px;"><a class="btn btn-outline btn-sm">查看</a></div></td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td><td>RV-20260629-006</td><td>陈晓芳</td><td>表单录入</td><td>黄斑变性</td><td>2026-06-29 15:48</td>
-            <td><span class="tag tag-orange">待审核</span></td>
-            <td><div style="display:flex;gap:6px;"><a class="btn btn-success btn-sm">通过</a><a class="btn btn-outline btn-sm">驳回</a><a class="btn btn-outline btn-sm">查看</a></div></td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td><td>RV-20260629-007</td><td>杨永强</td><td>API接口</td><td>青光眼</td><td>2026-06-29 10:12</td>
-            <td><span class="tag tag-green">已通过</span></td>
-            <td><div style="display:flex;gap:6px;"><a class="btn btn-outline btn-sm">查看</a></div></td>
-          </tr>
-        </tbody>
+        </thead>
+        <tbody id="tableBody"></tbody>
       </table>
     </div>
-    <div class="pagination"><button disabled>上一页</button><button class="active">1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>下一页</button></div>
+    <div class="pagination" id="pagination"></div>
   </div>
 </div>
+
+<!-- ===== 【需求2】病历详情弹窗 ===== -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>病历详情</h3>
+      <span style="font-size:12px;color:var(--gray-500);margin-left:12px;" id="detailMedId"></span>
+      <div class="modal-actions">
+        <button class="btn-close" onclick="closeModal('detailModal')">&times;</button>
+      </div>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-footer">
+      <button class="btn-close-gray" onclick="closeModal('detailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 【需求3】病历审核弹窗 ===== -->
+<div class="modal-overlay" id="auditModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>病历审核 <span class="badge" id="auditBadge"></span></h3>
+      <div class="modal-actions">
+        <button onclick="exportCurrentRecord()" title="导出病历">⬇ 导出病历</button>
+        <button class="btn-close" onclick="closeModal('auditModal')">&times;</button>
+      </div>
+    </div>
+    <div class="modal-body" id="auditBody"></div>
+    <div class="modal-footer">
+      <button class="btn-reject" onclick="rejectRecord()">驳回</button>
+      <button class="btn-approve" onclick="approveRecord()">审核通过</button>
+    </div>
+  </div>
+</div>
+
 <script>
-function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
-document.addEventListener('DOMContentLoaded', function() {
-  try { var user = JSON.parse(localStorage.getItem('life_med_user')); if (!user) { window.location.href = 'login.html'; return; } document.getElementById('headerUserName').textContent = user.name || '用户'; } catch(e) { window.location.href = 'login.html'; }
+/* ===================================================================
+   【需求1】模拟数据（20条，覆盖3种状态，6种疾病类型）
+   =================================================================== */
+const diseases = ['青光眼','糖尿病视网膜病变','黄斑变性','白内障','高血压视网膜病变','干眼症'];
+const recorders = ['李护士','王医生','张护士','赵医生','陈护士'];
+const statuses = ['待审核','已通过','已驳回'];
+const statusWeights = [8, 8, 4]; // 约8条待审核，8条已通过，4条已驳回
+
+// 生成20条模拟数据
+let records = [];
+const surnames = ['王','李','张','赵','陈','刘','杨','黄','周','吴','徐','孙','马','朱','胡','郭','林','何','高','罗'];
+const maleNames = ['建国','志强','永强','明华','晓东','伟','军','磊','鹏','超'];
+const femaleNames = ['秀兰','丽萍','晓芳','婷婷','静','敏','燕','霞','玲','莹'];
+
+function randomDate(start, end) {
+  const s = new Date(start), e = new Date(end);
+  return new Date(s.getTime() + Math.random() * (e.getTime() - s.getTime()));
+}
+function fmtDate(d) {
+  const yy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,'0'),
+        dd = String(d.getDate()).padStart(2,'0'),
+        hh = String(d.getHours()).padStart(2,'0'),
+        mi = String(d.getMinutes()).padStart(2,'0');
+  return `${yy}-${mm}-${dd} ${hh}:${mi}`;
+}
+function randomId(n) { return String(Math.floor(Math.random()*Math.pow(10,n))).padStart(n,'0'); }
+
+// 预定义20条完整模拟数据（含病历正文、检验结果、附件）
+const mockRecords = [
+  { // 0 - 待审核
+    applyNo: 'RV-20260411-001', patientId: 'P20260411001', patientName: '王建国', gender: '男', age: 58,
+    phone: '13800138000', idCard: '110101196803151234', disease: '糖尿病视网膜病变',
+    recorder: '李护士', submitTime: '2026-04-11 09:15', status: '待审核',
+    auditPerson: '', auditTime: '',
+    // 病历详情
+    medId: 'MED202604110001', confirmDate: '2023-05-12', hospital: '北京协和医院',
+    severity: '中度 (3期)', insurance: '城镇职工医保', doctor: '张医生',
+    diagnosis: '患者2型糖尿病病史15年，近半年出现双眼视物模糊，伴干涩、畏光。眼科检查：双眼矫正视力0.5，眼压正常，眼底可见微血管瘤、硬性渗出，黄斑区轻度水肿。诊断为糖尿病视网膜病变3期，建议控制血糖，定期眼底检查，必要时行激光光凝治疗。',
+    treatment: [
+      '药物治疗：二甲双胍 0.5g 口服 每日3次，阿卡波糖 50mg 口服 每日3次，羟苯磺酸钙 0.5g 口服 每日3次。',
+      '血糖控制目标：空腹血糖4.4-7.0mmol/L，非空腹血糖<10.0mmol/L，HbA1c<7.0%。',
+      '眼科随访：每3个月复查眼底，如病情进展及时行激光治疗。'
+    ],
+    labs: [
+      { item: '空腹血糖', result: '7.8', ref: '3.9-6.1', unit: 'mmol/L', status: 'high' },
+      { item: '糖化血红蛋白', result: '7.2', ref: '4.0-6.5', unit: '%', status: 'high' },
+      { item: '总胆固醇', result: '5.2', ref: '2.8-5.7', unit: 'mmol/L', status: 'normal' },
+      { item: '收缩压', result: '135', ref: '90-140', unit: 'mmHg', status: 'normal' }
+    ],
+    attachments: [
+      { name: '检查报告_20260410.xlsx', size: '2.4MB', time: '2026-04-10 上传', type: 'excel' },
+      { name: '眼底照片_20260410.jpg', size: '3.8MB', time: '2026-04-10 上传', type: 'image' }
+    ],
+    // 审核弹窗内容
+    chiefComplaint: '患者因"双眼视物模糊半年，加重1周"就诊。近半年无明显诱因出现双眼视物模糊，伴眼干涩、畏光，无眼痛、头痛，未予重视。1周前症状加重，遂来院就诊。',
+    presentIllness: '患者既往2型糖尿病病史15年，口服二甲双胍控制血糖，自诉血糖控制尚可。否认高血压、冠心病史。否认药物过敏史。发病以来，精神可，食欲可，睡眠一般，大小便正常，体重无明显变化。',
+    physicalExam: 'T: 36.5℃；P: 78次/分；R: 18次/分；BP: 130/85mmHg。神志清楚，全身皮肤黏膜无黄染。双眼视力：右眼0.5，左眼0.5，矫正不提高。双眼压：右眼16mmHg，左眼15mmHg。双眼结膜无充血，角膜透明，前房清，瞳孔圆，直径约3mm，对光反射灵敏。晶状体轻度混浊。眼底：双眼视乳头边界清，色泽正常，视网膜可见微血管瘤、硬性渗出，黄斑区轻度水肿。',
+    auxiliaryExam: '空腹血糖：7.8mmol/L；糖化血红蛋白：7.2%；总胆固醇：5.2mmol/L；眼底照相：符合糖尿病视网膜病变3期表现。',
+    diagnosisText: '糖尿病视网膜病变（中度，3期）',
+    treatmentPlan: [
+      '药物治疗：二甲双胍 0.5g po tid，阿卡波糖 50mg po tid，羟苯磺酸钙 0.5g po tid。',
+      '血糖控制目标：空腹血糖4.4-7.0mmol/L，HbA1c<7.0%。',
+      '眼科随访：每3个月复查眼底，必要时激光治疗。',
+      '低盐低脂糖尿病饮食，适量运动，避免劳累。',
+      '3个月后复诊，若视力进一步下降及时就诊。'
+    ]
+  },
+  { // 1 - 待审核
+    applyNo: 'RV-20260410-002', patientId: 'P20260410001', patientName: '李秀兰', gender: '女', age: 65,
+    phone: '13900139000', idCard: '110102196103152345', disease: '青光眼',
+    recorder: '王医生', submitTime: '2026-04-10 14:30', status: '待审核',
+    auditPerson: '', auditTime: '',
+    medId: 'MED202604100002', confirmDate: '2023-08-20', hospital: '北京大学人民医院',
+    severity: '重度 (晚期)', insurance: '城乡居民医保', doctor: '王医生',
+    diagnosis: '患者原发性开角型青光眼，眼压持续升高，最高达35mmHg，视野缺损进行性加重。目前使用降眼压药物控制，建议评估手术治疗指征。',
+    treatment: [
+      '药物治疗：拉坦前列素滴眼液 每晚1次，布林佐胺滴眼液 每日2次。',
+      '定期监测眼压，每周复查1次。',
+      '如药物控制不佳，评估小梁切除术。'
+    ],
+    labs: [
+      { item: '眼压（右）', result: '32', ref: '10-21', unit: 'mmHg', status: 'high' },
+      { item: '眼压（左）', result: '28', ref: '10-21', unit: 'mmHg', status: 'high' },
+      { item: '中心角膜厚度', result: '540', ref: '520-560', unit: 'μm', status: 'normal' },
+      { item: '视野MD', result: '-8.5', ref: '>-2', unit: 'dB', status: 'low' }
+    ],
+    attachments: [
+      { name: '视野检查_20260409.pdf', size: '1.8MB', time: '2026-04-09 上传', type: 'excel' },
+      { name: '眼底照相_20260409.jpg', size: '4.2MB', time: '2026-04-09 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"右眼视力下降伴眼胀2年，加重1月"就诊。2年前无明显诱因出现右眼视力下降，伴眼胀、头痛，无恶心、呕吐。',
+    presentIllness: '患者2年来反复出现眼胀、视力下降，曾在外院诊断为"青光眼"，使用降眼压药物。1月前症状加重，眼胀明显，伴右侧头痛。否认高血压、糖尿病史。',
+    physicalExam: '右眼视力0.3，左眼视力0.6。右眼眼压32mmHg，左眼眼压28mmHg。双眼视乳头杯盘比增大（右眼0.8，左眼0.6），视野缺损。',
+    auxiliaryExam: '视野检查：右眼上方弓形暗点，左眼鼻侧阶梯。OCT：视网膜神经纤维层变薄。',
+    diagnosisText: '原发性开角型青光眼（右眼重度，左眼中度）',
+    treatmentPlan: [
+      '降眼压药物：拉坦前列素滴眼液 每晚1次。',
+      '布林佐胺滴眼液 每日2次。',
+      '每周监测眼压。',
+      '评估小梁切除术指征。',
+      '1月后复诊。'
+    ]
+  },
+  { // 2 - 待审核
+    applyNo: 'RV-20260409-003', patientId: 'P20260409001', patientName: '张明华', gender: '男', age: 72,
+    phone: '13700137000', idCard: '110105195403151234', disease: '黄斑变性',
+    recorder: '张护士', submitTime: '2026-04-09 10:20', status: '待审核',
+    auditPerson: '', auditTime: '',
+    medId: 'MED202604090003', confirmDate: '2024-01-15', hospital: '北京同仁医院',
+    severity: '重度', insurance: '城镇职工医保', doctor: '赵医生',
+    diagnosis: '患者年龄相关性黄斑变性（湿性），右眼黄斑区出血、渗出，视力明显下降。建议抗VEGF治疗。',
+    treatment: [
+      '抗VEGF治疗：雷珠单抗注射液 玻璃体腔注射，每月1次，连续3次。',
+      '每3个月复查OCT及视力。',
+      '避免剧烈运动，防止眼底出血加重。'
+    ],
+    labs: [
+      { item: '最佳矫正视力（右）', result: '0.2', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '最佳矫正视力（左）', result: '0.8', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '黄斑中心凹厚度', result: '420', ref: '150-250', unit: 'μm', status: 'high' },
+      { item: '眼压', result: '15', ref: '10-21', unit: 'mmHg', status: 'normal' }
+    ],
+    attachments: [
+      { name: 'OCT报告_20260408.pdf', size: '3.1MB', time: '2026-04-08 上传', type: 'excel' },
+      { name: '眼底照相_20260408.jpg', size: '5.0MB', time: '2026-04-08 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"右眼视物变形、视力下降3月"就诊。3月前无明显诱因出现右眼视物变形，直线变弯曲，中心视力明显下降。',
+    presentIllness: '患者3月前出现右眼视物变形，伴中心视力下降，无眼红、眼痛。既往高血压病史10年，服药控制。否认糖尿病史。',
+    physicalExam: '右眼视力0.2，左眼视力0.8。右眼黄斑区可见出血、渗出。左眼黄斑区未见明显异常。眼压正常。',
+    auxiliaryExam: 'OCT：右眼黄斑中心凹厚度420μm，神经上皮层脱离。荧光血管造影：右眼黄斑区荧光渗漏。',
+    diagnosisText: '年龄相关性黄斑变性（湿性，右眼）',
+    treatmentPlan: [
+      '雷珠单抗注射液 0.5mg 玻璃体腔注射，每月1次，连续3次。',
+      '每3个月复查OCT、视力。',
+      '控制血压，避免剧烈运动。',
+      '补充叶黄素、维生素C/E。',
+      '3月后评估疗效，必要时继续注射。'
+    ]
+  },
+  { // 3 - 待审核
+    applyNo: 'RV-20260408-004', patientId: 'P20260408001', patientName: '赵丽萍', gender: '女', age: 55,
+    phone: '13600136000', idCard: '110106196903151234', disease: '白内障',
+    recorder: '赵医生', submitTime: '2026-04-08 16:45', status: '待审核',
+    auditPerson: '', auditTime: '',
+    medId: 'MED202604080004', confirmDate: '2024-03-10', hospital: '北京协和医院',
+    severity: '中度', insurance: '城镇职工医保', doctor: '赵医生',
+    diagnosis: '患者年龄相关性白内障，双眼晶状体皮质混浊，视力逐渐下降。目前矫正视力右眼0.4，左眼0.5，建议手术治疗。',
+    treatment: [
+      '术前检查：血常规、凝血功能、心电图、眼部B超。',
+      '择期行超声乳化白内障吸除+人工晶状体植入术（右眼先行）。',
+      '术后抗炎滴眼液治疗，定期复查。'
+    ],
+    labs: [
+      { item: '最佳矫正视力（右）', result: '0.4', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '最佳矫正视力（左）', result: '0.5', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '眼压', result: '16', ref: '10-21', unit: 'mmHg', status: 'normal' },
+      { item: '晶状体混浊程度', result: '中度', ref: '无', unit: '-', status: 'normal' }
+    ],
+    attachments: [
+      { name: '裂隙灯检查_20260407.pdf', size: '1.5MB', time: '2026-04-07 上传', type: 'excel' },
+      { name: '眼前节照相_20260407.jpg', size: '2.8MB', time: '2026-04-07 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"双眼视物模糊渐进性加重2年"就诊。2年前无明显诱因出现双眼视物模糊，逐渐加重，无眼红、眼痛。',
+    presentIllness: '患者2年来双眼视物模糊渐进性加重，影响日常生活。否认眼外伤史、手术史。既往高血压病史5年，服药控制。',
+    physicalExam: '右眼视力0.4，左眼视力0.5。双眼晶状体皮质混浊，核性硬化。眼底窥不清。眼压正常。',
+    auxiliaryExam: '眼部B超：双眼玻璃体混浊，视网膜平伏。角膜内皮计数：右眼2200/mm²，左眼2300/mm²。',
+    diagnosisText: '年龄相关性白内障（双眼中度）',
+    treatmentPlan: [
+      '完善术前检查。',
+      '择期行超声乳化白内障吸除+人工晶状体植入术（右眼先行）。',
+      '术后典必殊滴眼液 每日4次，逐渐减量。',
+      '术后1周、1月、3月复查。',
+      '左眼根据视力情况择期手术。'
+    ]
+  },
+  { // 4 - 待审核
+    applyNo: 'RV-20260407-005', patientId: 'P20260407001', patientName: '刘志强', gender: '男', age: 68,
+    phone: '13500135000', idCard: '110107195603151234', disease: '高血压视网膜病变',
+    recorder: '李护士', submitTime: '2026-04-07 11:30', status: '待审核',
+    auditPerson: '', auditTime: '',
+    medId: 'MED202604070005', confirmDate: '2024-02-18', hospital: '北京安贞医院',
+    severity: '中度', insurance: '城镇职工医保', doctor: '王医生',
+    diagnosis: '患者高血压病史20年，血压控制不佳，近期眼底检查可见高血压视网膜病变2级改变，视网膜动脉狭窄、交叉压迫。建议严格控制血压，定期眼底复查。',
+    treatment: [
+      '降压治疗：氨氯地平 5mg 每日1次，缬沙坦 80mg 每日1次。',
+      '每3个月复查眼底，评估视网膜病变进展。',
+      '低盐饮食，适量运动，控制体重。'
+    ],
+    labs: [
+      { item: '收缩压', result: '155', ref: '90-140', unit: 'mmHg', status: 'high' },
+      { item: '舒张压', result: '95', ref: '60-90', unit: 'mmHg', status: 'high' },
+      { item: '空腹血糖', result: '6.2', ref: '3.9-6.1', unit: 'mmol/L', status: 'high' },
+      { item: '总胆固醇', result: '5.8', ref: '2.8-5.7', unit: 'mmol/L', status: 'high' }
+    ],
+    attachments: [
+      { name: '血压监测记录_20260406.xlsx', size: '0.8MB', time: '2026-04-06 上传', type: 'excel' },
+      { name: '眼底照相_20260406.jpg', size: '3.5MB', time: '2026-04-06 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"体检发现血压高20年，近期视物模糊1月"就诊。1月前无明显诱因出现视物模糊，无眼痛、头痛。',
+    presentIllness: '患者高血压病史20年，血压最高180/110mmHg，目前口服氨氯地平治疗，自诉血压控制不佳。1月前出现视物模糊。否认糖尿病史。',
+    physicalExam: 'BP: 155/95mmHg。双眼视力0.6。双眼视网膜动脉狭窄、交叉压迫（2级）。眼底未见出血、渗出。眼压正常。',
+    auxiliaryExam: '眼底照相：高血压视网膜病变2级。血压监测：平均血压148/92mmHg。',
+    diagnosisText: '高血压视网膜病变（2级）',
+    treatmentPlan: [
+      '调整降压方案：氨氯地平 5mg po qd + 缬沙坦 80mg po qd。',
+      '目标血压<130/80mmHg。',
+      '每3个月复查眼底。',
+      '低盐低脂饮食，适量有氧运动。',
+      '1月后复诊，评估血压控制情况。'
+    ]
+  },
+  { // 5 - 待审核
+    applyNo: 'RV-20260406-006', patientId: 'P20260406001', patientName: '陈晓芳', gender: '女', age: 48,
+    phone: '13400134000', idCard: '110108197603151234', disease: '干眼症',
+    recorder: '陈护士', submitTime: '2026-04-06 09:50', status: '待审核',
+    auditPerson: '', auditTime: '',
+    medId: 'MED202604060006', confirmDate: '2024-05-20', hospital: '北京同仁医院',
+    severity: '轻度', insurance: '城镇职工医保', doctor: '张医生',
+    diagnosis: '患者长期用眼过度，双眼干涩、异物感、视疲劳。泪液分泌试验（Schirmer I）右眼5mm，左眼6mm，诊断干眼症（中度）。建议人工泪液治疗，改善用眼习惯。',
+    treatment: [
+      '人工泪液：玻璃酸钠滴眼液 每日4次。',
+      '避免长时间使用电子产品，每30分钟休息5分钟。',
+      '热敷双眼，每日2次，每次10分钟。'
+    ],
+    labs: [
+      { item: 'Schirmer I（右）', result: '5', ref: '≥10', unit: 'mm/5min', status: 'low' },
+      { item: 'Schirmer I（左）', result: '6', ref: '≥10', unit: 'mm/5min', status: 'low' },
+      { item: '泪膜破裂时间（右）', result: '4', ref: '≥10', unit: '秒', status: 'low' },
+      { item: '泪膜破裂时间（左）', result: '5', ref: '≥10', unit: '秒', status: 'low' }
+    ],
+    attachments: [
+      { name: '泪液功能检查_20260405.pdf', size: '1.2MB', time: '2026-04-05 上传', type: 'excel' }
+    ],
+    chiefComplaint: '患者因"双眼干涩、异物感1年，加重3月"就诊。1年来双眼干涩、异物感，视疲劳，长时间使用电脑后加重。',
+    presentIllness: '患者长期伏案工作，每日使用电脑>8小时。1年来出现双眼干涩、异物感，视疲劳明显。曾自行使用人工泪液，症状可缓解。3月前症状加重。否认自身免疫病史。',
+    physicalExam: '双眼视力1.0。双眼结膜轻度充血，角膜荧光素染色（+）。泪河高度<0.2mm。Schirmer I试验：右眼5mm，左眼6mm。',
+    auxiliaryExam: '泪膜破裂时间：右眼4秒，左眼5秒。睑板腺功能检查：部分睑板腺口堵塞。',
+    diagnosisText: '干眼症（中度，混合型）',
+    treatmentPlan: [
+      '玻璃酸钠滴眼液 每日4次。',
+      '热敷双眼 每日2次，每次10分钟。',
+      '睑板腺按摩，每周1次。',
+      '改善用眼习惯，每30分钟休息5分钟。',
+      '1月后复诊，评估症状改善情况。'
+    ]
+  },
+  { // 6 - 待审核
+    applyNo: 'RV-20260405-007', patientId: 'P20260405001', patientName: '杨永强', gender: '男', age: 62,
+    phone: '13300133000', idCard: '110109196403151234', disease: '青光眼',
+    recorder: '王医生', submitTime: '2026-04-05 15:20', status: '待审核',
+    auditPerson: '', auditTime: '',
+    medId: 'MED202604050007', confirmDate: '2023-11-08', hospital: '北京同仁医院',
+    severity: '中度', insurance: '城乡居民医保', doctor: '王医生',
+    diagnosis: '患者原发性闭角型青光眼（右眼急性发作后），目前眼压控制可，视野缺损。建议定期随访，必要时手术治疗。',
+    treatment: [
+      '降眼压药物：噻吗洛尔滴眼液 每日2次。',
+      '乙酰唑胺片 0.25g 每日2次（临时）。',
+      '每2周复查眼压、视野。'
+    ],
+    labs: [
+      { item: '眼压（右）', result: '22', ref: '10-21', unit: 'mmHg', status: 'high' },
+      { item: '眼压（左）', result: '18', ref: '10-21', unit: 'mmHg', status: 'normal' },
+      { item: '视野MD（右）', result: '-4.2', ref: '>-2', unit: 'dB', status: 'low' },
+      { item: '杯盘比（右）', result: '0.7', ref: '<0.3', unit: '-', status: 'high' }
+    ],
+    attachments: [
+      { name: '视野检查_20260404.pdf', size: '2.0MB', time: '2026-04-04 上传', type: 'excel' },
+      { name: '眼底照相_20260404.jpg', size: '3.2MB', time: '2026-04-04 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"右眼胀痛、视力下降1天"急诊就诊，诊断为急性闭角型青光眼，经药物治疗后眼压下降。现复诊评估。',
+    presentIllness: '患者1天前无明显诱因出现右眼胀痛、视力下降，伴右侧头痛、恶心。急诊测眼压右眼45mmHg，诊断急性闭角型青光眼，予降眼压治疗后症状缓解。既往左眼曾发作类似症状。',
+    physicalExam: '右眼视力0.4，左眼视力0.8。右眼眼压22mmHg（用药后），左眼18mmHg。右眼瞳孔轻度散大，对光反射迟钝。双眼视乳头杯盘比增大。',
+    auxiliaryExam: '视野：右眼上方弓形暗点。OCT：右眼视网膜神经纤维层变薄。',
+    diagnosisText: '原发性闭角型青光眼（右眼，发作后），左眼临床前期',
+    treatmentPlan: [
+      '噻吗洛尔滴眼液 右眼 每日2次。',
+      '定期监测眼压、视野。',
+      '评估激光虹膜周切术指征。',
+      '避免暗环境长时间停留。',
+      '2周后复诊。'
+    ]
+  },
+  { // 7 - 待审核
+    applyNo: 'RV-20260404-008', patientId: 'P20260404001', patientName: '黄美玲', gender: '女', age: 70,
+    phone: '13200132000', idCard: '110110195403151234', disease: '黄斑变性',
+    recorder: '张护士', submitTime: '2026-04-04 12:10', status: '待审核',
+    auditPerson: '', auditTime: '',
+    medId: 'MED202604040008', confirmDate: '2024-04-12', hospital: '北京大学人民医院',
+    severity: '中度', insurance: '城乡居民医保', doctor: '赵医生',
+    diagnosis: '患者年龄相关性黄斑变性（干性），双眼黄斑区玻璃膜疣，视力轻度下降。目前无特效治疗，建议定期随访，补充抗氧化剂。',
+    treatment: [
+      '补充抗氧化剂：维生素C 500mg 每日1次，维生素E 400IU 每日1次，叶黄素 10mg 每日1次。',
+      '每6个月复查OCT、视力。',
+      '避免强光照射，外出戴墨镜。'
+    ],
+    labs: [
+      { item: '最佳矫正视力（右）', result: '0.6', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '最佳矫正视力（左）', result: '0.7', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '黄斑中心凹厚度', result: '280', ref: '150-250', unit: 'μm', status: 'high' },
+      { item: '眼压', result: '14', ref: '10-21', unit: 'mmHg', status: 'normal' }
+    ],
+    attachments: [
+      { name: 'OCT报告_20260403.pdf', size: '2.5MB', time: '2026-04-03 上传', type: 'excel' }
+    ],
+    chiefComplaint: '患者因"双眼视物模糊半年"就诊。半年前无明显诱因出现双眼视物模糊，无眼痛、眼红。',
+    presentIllness: '患者半年前出现双眼视物模糊，阅读困难。否认高血压、糖尿病史。家族中母亲有类似眼病。',
+    physicalExam: '双眼视力0.6（右）、0.7（左）。双眼黄斑区可见玻璃膜疣。眼底未见出血、渗出。眼压正常。',
+    auxiliaryExam: 'OCT：双眼黄斑区视网膜色素上皮层增厚，玻璃膜疣形成。荧光血管造影：透见荧光，无渗漏。',
+    diagnosisText: '年龄相关性黄斑变性（干性，双眼）',
+    treatmentPlan: [
+      '补充维生素C、维生素E、叶黄素。',
+      '每6个月复查OCT、视力。',
+      '外出戴墨镜，避免强光。',
+      '戒烟，控制体重。',
+      '如出现视物变形，及时就诊（警惕转为湿性）。'
+    ]
+  },
+  // ===== 已通过 8条 =====
+  { applyNo: 'RV-20260320-009', patientId: 'P20260320001', patientName: '周国平', gender: '男', age: 60, phone: '13100131000', idCard: '110111196603151234', disease: '糖尿病视网膜病变', recorder: '李护士', submitTime: '2026-03-20 08:30', status: '已通过', auditPerson: '张教授', auditTime: '2026-03-21 14:20',
+    medId: 'MED202603200009', confirmDate: '2024-01-10', hospital: '北京协和医院', severity: '轻度 (2期)', insurance: '城镇职工医保', doctor: '张医生',
+    diagnosis: '患者2型糖尿病病史10年，近期眼底检查可见糖尿病视网膜病变2期表现，微血管瘤少量，无明显渗出。建议控制血糖，定期随访。',
+    treatment: ['血糖控制目标：HbA1c<7.0%。', '每6个月复查眼底。', '低盐低脂糖尿病饮食。'],
+    labs: [
+      { item: '空腹血糖', result: '6.8', ref: '3.9-6.1', unit: 'mmol/L', status: 'high' },
+      { item: '糖化血红蛋白', result: '6.8', ref: '4.0-6.5', unit: '%', status: 'high' },
+      { item: '总胆固醇', result: '5.0', ref: '2.8-5.7', unit: 'mmol/L', status: 'normal' },
+      { item: '收缩压', result: '128', ref: '90-140', unit: 'mmHg', status: 'normal' }
+    ],
+    attachments: [
+      { name: '检查报告_20260319.xlsx', size: '1.8MB', time: '2026-03-19 上传', type: 'excel' },
+      { name: '眼底照片_20260319.jpg', size: '2.5MB', time: '2026-03-19 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"体检发现糖尿病视网膜病变"就诊。无明显视力下降，无眼痛、眼红。',
+    presentIllness: '患者2型糖尿病病史10年，口服降糖药控制。近期体检眼底照相发现微血管瘤，无自觉症状。',
+    physicalExam: '双眼视力0.8。双眼压正常。双眼眼底：微血管瘤少量，无渗出、出血。',
+    auxiliaryExam: '空腹血糖6.8mmol/L，糖化血红蛋白6.8%。眼底照相：糖尿病视网膜病变2期。',
+    diagnosisText: '糖尿病视网膜病变（轻度，2期）',
+    treatmentPlan: ['控制血糖，目标HbA1c<7.0%。', '每6个月复查眼底。', '低盐低脂糖尿病饮食，适量运动。', '定期监测肾功能。', '1年后复诊。']
+  },
+  { applyNo: 'RV-20260318-010', patientId: 'P20260318001', patientName: '吴燕', gender: '女', age: 52, phone: '13000130000', idCard: '110112197203151234', disease: '白内障', recorder: '王医生', submitTime: '2026-03-18 10:15', status: '已通过', auditPerson: '张教授', auditTime: '2026-03-19 09:30',
+    medId: 'MED202603180010', confirmDate: '2024-04-05', hospital: '北京同仁医院', severity: '轻度', insurance: '城镇职工医保', doctor: '王医生',
+    diagnosis: '患者年龄相关性白内障（初期），晶状体轻度混浊，视力轻度下降。目前无需手术，定期随访。',
+    treatment: ['定期随访，每6个月复查视力、晶状体混浊程度。', '外出戴墨镜，避免强光。', '如出现视力明显下降，及时就诊评估手术指征。'],
+    labs: [
+      { item: '最佳矫正视力（右）', result: '0.8', ref: '≥1.0', unit: '-', status: 'normal' },
+      { item: '最佳矫正视力（左）', result: '0.9', ref: '≥1.0', unit: '-', status: 'normal' },
+      { item: '眼压', result: '15', ref: '10-21', unit: 'mmHg', status: 'normal' },
+      { item: '晶状体混浊程度', result: '轻度', ref: '无', unit: '-', status: 'normal' }
+    ],
+    attachments: [
+      { name: '裂隙灯检查_20260317.pdf', size: '1.0MB', time: '2026-03-17 上传', type: 'excel' }
+    ],
+    chiefComplaint: '患者因"双眼视物模糊1年"就诊。1年来双眼视物模糊，无眼红、眼痛。',
+    presentIllness: '患者1年来双眼视物模糊，渐进性加重。否认眼外伤、手术史。既往体健。',
+    physicalExam: '右眼视力0.8，左眼视力0.9。双眼晶状体轻度皮质混浊。眼底可见。眼压正常。',
+    auxiliaryExam: '眼部B超：玻璃体混浊（轻度）。角膜内皮计数正常。',
+    diagnosisText: '年龄相关性白内障（初期，双眼）',
+    treatmentPlan: ['定期随访，每6个月复查。', '外出戴墨镜。', '视力<0.5时评估手术指征。', '避免长期使用激素类滴眼液。', '1年后复诊。']
+  },
+  { applyNo: 'RV-20260315-011', patientId: 'P20260315001', patientName: '徐建国', gender: '男', age: 75, phone: '12900129000', idCard: '110113194903151234', disease: '青光眼', recorder: '赵医生', submitTime: '2026-03-15 14:00', status: '已通过', auditPerson: '李主任', auditTime: '2026-03-16 11:45',
+    medId: 'MED202603150011', confirmDate: '2023-06-10', hospital: '北京协和医院', severity: '重度', insurance: '城镇职工医保', doctor: '赵医生',
+    diagnosis: '患者原发性开角型青光眼（晚期），眼压药物控制可，视野严重缺损。建议继续药物治疗，定期随访。',
+    treatment: ['降眼压药物：拉坦前列素滴眼液 每晚1次。', '每3个月复查眼压、视野。', '如视野进一步缺损，评估手术治疗。'],
+    labs: [
+      { item: '眼压（右）', result: '18', ref: '10-21', unit: 'mmHg', status: 'normal' },
+      { item: '眼压（左）', result: '20', ref: '10-21', unit: 'mmHg', status: 'normal' },
+      { item: '视野MD（右）', result: '-18.5', ref: '>-2', unit: 'dB', status: 'low' },
+      { item: '视野MD（左）', result: '-12.3', ref: '>-2', unit: 'dB', status: 'low' }
+    ],
+    attachments: [
+      { name: '视野检查_20260314.pdf', size: '2.2MB', time: '2026-03-14 上传', type: 'excel' },
+      { name: '眼底照相_20260314.jpg', size: '3.0MB', time: '2026-03-14 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"青光眼术后随访"就诊。既往诊断原发性开角型青光眼，目前药物治疗中。',
+    presentIllness: '患者青光眼病史5年，目前使用拉坦前列素滴眼液治疗。眼压控制可。视野缺损进行性加重。',
+    physicalExam: '双眼视力0.3（右）、0.4（左）。眼压：右眼18mmHg，左眼20mmHg。双眼视乳头杯盘比0.9。',
+    auxiliaryExam: '视野：右眼严重缺损，仅存中心视野；左眼上方缺损。OCT：视网膜神经纤维层严重变薄。',
+    diagnosisText: '原发性开角型青光眼（晚期，双眼）',
+    treatmentPlan: ['拉坦前列素滴眼液 每晚1次（双眼）。', '每3个月复查眼压、视野。', '评估小梁切除术指征。', '避免剧烈运动。', '3月后复诊。']
+  },
+  { applyNo: 'RV-20260312-012', patientId: 'P20260312001', patientName: '孙丽华', gender: '女', age: 58, phone: '12800128000', idCard: '110114196603151234', disease: '干眼症', recorder: '陈护士', submitTime: '2026-03-12 09:20', status: '已通过', auditPerson: '张教授', auditTime: '2026-03-13 16:10',
+    medId: 'MED202603120012', confirmDate: '2024-06-15', hospital: '北京同仁医院', severity: '中度', insurance: '城镇职工医保', doctor: '张医生',
+    diagnosis: '患者干眼症（中度），泪液分泌明显减少，泪膜破裂时间缩短。经人工泪液治疗后症状明显改善。',
+    treatment: ['玻璃酸钠滴眼液 每日4次。', '热敷双眼 每日2次。', '改善用眼习惯，每30分钟休息。'],
+    labs: [
+      { item: 'Schirmer I（右）', result: '8', ref: '≥10', unit: 'mm/5min', status: 'low' },
+      { item: 'Schirmer I（左）', result: '9', ref: '≥10', unit: 'mm/5min', status: 'low' },
+      { item: '泪膜破裂时间（右）', result: '6', ref: '≥10', unit: '秒', status: 'low' },
+      { item: '泪膜破裂时间（左）', result: '7', ref: '≥10', unit: '秒', status: 'low' }
+    ],
+    attachments: [
+      { name: '泪液功能检查_20260311.pdf', size: '0.9MB', time: '2026-03-11 上传', type: 'excel' }
+    ],
+    chiefComplaint: '患者因"双眼干涩、异物感半年"就诊。经人工泪液治疗后症状改善。',
+    presentIllness: '患者半年前出现双眼干涩、异物感，长时间使用电脑后加重。经玻璃酸钠滴眼液治疗后症状明显改善。',
+    physicalExam: '双眼视力1.0。双眼结膜轻度充血。角膜荧光素染色（±）。Schirmer I试验：右眼8mm，左眼9mm（较治疗前改善）。',
+    auxiliaryExam: '泪膜破裂时间：右眼6秒，左眼7秒（较治疗前延长）。',
+    diagnosisText: '干眼症（中度，治疗后改善）',
+    treatmentPlan: ['继续玻璃酸钠滴眼液 每日4次。', '热敷 每日2次。', '改善用眼习惯。', '1月后复诊。', '症状加重时及时就诊。']
+  },
+  { applyNo: 'RV-20260310-013', patientId: 'P20260310001', patientName: '马志伟', gender: '男', age: 66, phone: '12700127000', idCard: '110115195803151234', disease: '高血压视网膜病变', recorder: '李护士', submitTime: '2026-03-10 11:45', status: '已通过', auditPerson: '李主任', auditTime: '2026-03-11 10:20',
+    medId: 'MED202603100013', confirmDate: '2024-01-20', hospital: '北京安贞医院', severity: '轻度', insurance: '城镇职工医保', doctor: '王医生',
+    diagnosis: '患者高血压病史15年，血压控制可。近期眼底检查可见高血压视网膜病变1级改变，动脉轻度狭窄。建议继续控制血压，定期随访。',
+    treatment: ['降压治疗：氨氯地平 5mg 每日1次。', '每6个月复查眼底。', '低盐饮食，适量运动。'],
+    labs: [
+      { item: '收缩压', result: '135', ref: '90-140', unit: 'mmHg', status: 'normal' },
+      { item: '舒张压', result: '85', ref: '60-90', unit: 'mmHg', status: 'normal' },
+      { item: '空腹血糖', result: '5.8', ref: '3.9-6.1', unit: 'mmol/L', status: 'normal' },
+      { item: '总胆固醇', result: '5.5', ref: '2.8-5.7', unit: 'mmol/L', status: 'normal' }
+    ],
+    attachments: [
+      { name: '血压监测记录_20260309.xlsx', size: '0.7MB', time: '2026-03-09 上传', type: 'excel' },
+      { name: '眼底照相_20260309.jpg', size: '2.8MB', time: '2026-03-09 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"高血压随访，体检发现眼底改变"就诊。无明显视力下降，无眼红、眼痛。',
+    presentIllness: '患者高血压病史15年，目前口服氨氯地平治疗，血压控制可。近期体检眼底照相发现动脉轻度狭窄。',
+    physicalExam: 'BP: 135/85mmHg。双眼视力0.8。双眼视网膜动脉轻度狭窄，无出血、渗出。眼压正常。',
+    auxiliaryExam: '眼底照相：高血压视网膜病变1级。血压监测：平均血压132/84mmHg。',
+    diagnosisText: '高血压视网膜病变（1级）',
+    treatmentPlan: ['继续氨氯地平 5mg po qd。', '目标血压<130/80mmHg。', '每6个月复查眼底。', '低盐饮食，适量运动。', '6月后复诊。']
+  },
+  { applyNo: 'RV-20260308-014', patientId: 'P20260308001', patientName: '朱秀英', gender: '女', age: 63, phone: '12600126000', idCard: '110116196203151234', disease: '糖尿病视网膜病变', recorder: '张护士', submitTime: '2026-03-08 16:30', status: '已通过', auditPerson: '张教授', auditTime: '2026-03-09 14:50',
+    medId: 'MED202603080014', confirmDate: '2023-09-15', hospital: '北京协和医院', severity: '中度 (3期)', insurance: '城乡居民医保', doctor: '张医生',
+    diagnosis: '患者2型糖尿病病史12年，糖尿病视网膜病变3期，微血管瘤、硬性渗出明显。建议激光治疗。',
+    treatment: ['激光光凝治疗：全视网膜光凝术，分3次完成。', '血糖控制目标：HbA1c<7.0%。', '每3个月复查眼底。'],
+    labs: [
+      { item: '空腹血糖', result: '7.5', ref: '3.9-6.1', unit: 'mmol/L', status: 'high' },
+      { item: '糖化血红蛋白', result: '7.0', ref: '4.0-6.5', unit: '%', status: 'high' },
+      { item: '总胆固醇', result: '5.6', ref: '2.8-5.7', unit: 'mmol/L', status: 'normal' },
+      { item: '收缩压', result: '138', ref: '90-140', unit: 'mmHg', status: 'normal' }
+    ],
+    attachments: [
+      { name: '检查报告_20260307.xlsx', size: '2.0MB', time: '2026-03-07 上传', type: 'excel' },
+      { name: '眼底照片_20260307.jpg', size: '3.5MB', time: '2026-03-07 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"双眼视物模糊1年，加重3月"就诊。1年前无明显诱因出现双眼视物模糊，近3月加重。',
+    presentIllness: '患者2型糖尿病病史12年，口服降糖药+胰岛素治疗。近1年出现视物模糊，近3月加重。',
+    physicalExam: '双眼视力0.4。双眼压正常。眼底：双眼糖尿病视网膜病变3期，微血管瘤、硬性渗出明显，黄斑区轻度水肿。',
+    auxiliaryExam: '空腹血糖7.5mmol/L，糖化血红蛋白7.0%。眼底照相：符合DR 3期表现。OCT：黄斑中心凹厚度320μm。',
+    diagnosisText: '糖尿病视网膜病变（中度，3期）',
+    treatmentPlan: ['全视网膜光凝术 分3次完成。', '抗VEGF治疗（必要时）。', '血糖控制目标HbA1c<7.0%。', '每3个月复查眼底、OCT。', '3月后复诊。']
+  },
+  { applyNo: 'RV-20260305-015', patientId: 'P20260305001', patientName: '胡建华', gender: '男', age: 55, phone: '12500125000', idCard: '110117196903151234', disease: '黄斑变性', recorder: '赵医生', submitTime: '2026-03-05 10:10', status: '已通过', auditPerson: '李主任', auditTime: '2026-03-06 15:30',
+    medId: 'MED202603050015', confirmDate: '2024-03-20', hospital: '北京大学人民医院', severity: '中度', insurance: '城镇职工医保', doctor: '赵医生',
+    diagnosis: '患者年龄相关性黄斑变性（湿性，左眼），经抗VEGF治疗后病情稳定。目前视力维持0.5，建议继续随访。',
+    treatment: ['继续雷珠单抗注射液 每3个月1次（按需治疗）。', '每3个月复查OCT、视力。', '外出戴墨镜，避免强光。'],
+    labs: [
+      { item: '最佳矫正视力（右）', result: '1.0', ref: '≥1.0', unit: '-', status: 'normal' },
+      { item: '最佳矫正视力（左）', result: '0.5', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '黄斑中心凹厚度（左）', result: '280', ref: '150-250', unit: 'μm', status: 'high' },
+      { item: '眼压', result: '16', ref: '10-21', unit: 'mmHg', status: 'normal' }
+    ],
+    attachments: [
+      { name: 'OCT报告_20260304.pdf', size: '2.8MB', time: '2026-03-04 上传', type: 'excel' },
+      { name: '眼底照相_20260304.jpg', size: '4.0MB', time: '2026-03-04 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"左眼视物变形治疗后随访"就诊。既往诊断湿性黄斑变性，经抗VEGF治疗后病情稳定。',
+    presentIllness: '患者1年前诊断左眼湿性黄斑变性，行雷珠单抗注射3次，病情稳定。目前左眼视力0.5，视物变形改善。',
+    physicalExam: '右眼视力1.0，左眼视力0.5。左眼黄斑区未见新鲜出血、渗出。右眼黄斑区正常。眼压正常。',
+    auxiliaryExam: 'OCT：左眼黄斑中心凹厚度280μm（较治疗前下降）。荧光血管造影：无新鲜渗漏。',
+    diagnosisText: '年龄相关性黄斑变性（湿性，左眼，治疗后稳定）',
+    treatmentPlan: ['雷珠单抗注射液 按需治疗（每3个月评估）。', '每3个月复查OCT、视力。', '外出戴墨镜。', '补充叶黄素。', '3月后复诊。']
+  },
+  { applyNo: 'RV-20260302-016', patientId: 'P20260302001', patientName: '郭婷婷', gender: '女', age: 45, phone: '12400124000', idCard: '110118197903151234', disease: '干眼症', recorder: '陈护士', submitTime: '2026-03-02 13:40', status: '已通过', auditPerson: '张教授', auditTime: '2026-03-03 09:15',
+    medId: 'MED202603020016', confirmDate: '2024-07-10', hospital: '北京同仁医院', severity: '轻度', insurance: '城镇职工医保', doctor: '张医生',
+    diagnosis: '患者干眼症（轻度），长期使用电脑工作，泪液分泌轻度减少。经改善用眼习惯后症状明显缓解。',
+    treatment: ['人工泪液：玻璃酸钠滴眼液 每日3次（按需）。', '每30分钟休息5分钟，远眺放松。', '热敷双眼 每日1次。'],
+    labs: [
+      { item: 'Schirmer I（右）', result: '10', ref: '≥10', unit: 'mm/5min', status: 'normal' },
+      { item: 'Schirmer I（左）', result: '11', ref: '≥10', unit: 'mm/5min', status: 'normal' },
+      { item: '泪膜破裂时间（右）', result: '9', ref: '≥10', unit: '秒', status: 'low' },
+      { item: '泪膜破裂时间（左）', result: '10', ref: '≥10', unit: '秒', status: 'normal' }
+    ],
+    attachments: [
+      { name: '泪液功能检查_20260301.pdf', size: '0.8MB', time: '2026-03-01 上传', type: 'excel' }
+    ],
+    chiefComplaint: '患者因"双眼干涩半年，改善后随访"就诊。长期使用电脑工作，经治疗后症状缓解。',
+    presentIllness: '患者长期使用电脑工作，半年前出现双眼干涩。经改善用眼习惯+人工泪液治疗后症状明显缓解。',
+    physicalExam: '双眼视力1.0。双眼结膜无充血。角膜荧光素染色（-）。Schirmer I试验：右眼10mm，左眼11mm（正常）。',
+    auxiliaryExam: '泪膜破裂时间：右眼9秒，左眼10秒（接近正常）。',
+    diagnosisText: '干眼症（轻度，治疗后缓解）',
+    treatmentPlan: ['玻璃酸钠滴眼液 按需使用。', '继续改善用眼习惯。', '热敷 每日1次。', '6月后复诊。', '症状加重时及时就诊。']
+  },
+  // ===== 已驳回 4条 =====
+  { applyNo: 'RV-20260301-017', patientId: 'P20260301001', patientName: '林小强', gender: '男', age: 50, phone: '12300123000', idCard: '110119197403151234', disease: '青光眼', recorder: '王医生', submitTime: '2026-03-01 15:20', status: '已驳回', auditPerson: '李主任', auditTime: '2026-03-02 10:30',
+    medId: 'MED202603010017', confirmDate: '2023-10-10', hospital: '北京同仁医院', severity: '中度', insurance: '城镇职工医保', doctor: '王医生',
+    diagnosis: '患者原发性开角型青光眼，眼压药物控制不佳，建议调整用药方案或评估手术治疗。',
+    treatment: ['调整降眼压药物：加用布林佐胺滴眼液 每日2次。', '2周后复查眼压。', '如眼压仍控制不佳，评估手术治疗。'],
+    labs: [
+      { item: '眼压（右）', result: '26', ref: '10-21', unit: 'mmHg', status: 'high' },
+      { item: '眼压（左）', result: '24', ref: '10-21', unit: 'mmHg', status: 'high' },
+      { item: '视野MD（右）', result: '-6.5', ref: '>-2', unit: 'dB', status: 'low' },
+      { item: '杯盘比（右）', result: '0.6', ref: '<0.3', unit: '-', status: 'high' }
+    ],
+    attachments: [
+      { name: '视野检查_20260228.pdf', size: '1.8MB', time: '2026-02-28 上传', type: 'excel' },
+      { name: '眼底照相_20260228.jpg', size: '2.9MB', time: '2026-02-28 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"青光眼药物控制不佳"复诊。目前使用拉坦前列素滴眼液，眼压仍偏高。',
+    presentIllness: '患者青光眼病史3年，目前使用拉坦前列素滴眼液治疗，但眼压仍偏高（>24mmHg）。视野缺损进行性加重。',
+    physicalExam: '右眼视力0.6，左眼视力0.7。眼压：右眼26mmHg，左眼24mmHg。双眼视乳头杯盘比增大。',
+    auxiliaryExam: '视野：右眼上方暗点扩大。OCT：视网膜神经纤维层变薄。',
+    diagnosisText: '原发性开角型青光眼（药物控制不佳）',
+    treatmentPlan: ['加用布林佐胺滴眼液 每日2次。', '2周后复查眼压。', '评估激光小梁成形术指征。', '如眼压仍高，评估小梁切除术。', '2周后复诊。']
+  },
+  { applyNo: 'RV-20260228-018', patientId: 'P20260228001', patientName: '何丽萍', gender: '女', age: 68, phone: '12200122000', idCard: '110120195603151234', disease: '白内障', recorder: '张护士', submitTime: '2026-02-28 09:50', status: '已驳回', auditPerson: '张教授', auditTime: '2026-02-29 14:20',
+    medId: 'MED202602280018', confirmDate: '2024-02-15', hospital: '北京协和医院', severity: '中度', insurance: '城乡居民医保', doctor: '张医生',
+    diagnosis: '患者年龄相关性白内障（中度），晶状体混浊明显，视力下降至0.3，建议手术治疗。患者拒绝手术，要求药物保守治疗（无效）。',
+    treatment: ['告知手术指征，建议择期手术。', '如拒绝手术，定期随访，每3个月复查视力。', '外出戴墨镜，避免强光。'],
+    labs: [
+      { item: '最佳矫正视力（右）', result: '0.3', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '最佳矫正视力（左）', result: '0.4', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '眼压', result: '15', ref: '10-21', unit: 'mmHg', status: 'normal' },
+      { item: '晶状体混浊程度', result: '中度', ref: '无', unit: '-', status: 'normal' }
+    ],
+    attachments: [
+      { name: '裂隙灯检查_20260227.pdf', size: '1.2MB', time: '2026-02-27 上传', type: 'excel' }
+    ],
+    chiefComplaint: '患者因"双眼视物模糊加重1年"就诊。晶状体混浊明显，视力0.3。患者拒绝手术治疗。',
+    presentIllness: '患者1年来双眼视物模糊加重，视力明显下降。诊断白内障（中度），建议手术治疗，但患者因担心手术风险拒绝。',
+    physicalExam: '右眼视力0.3，左眼视力0.4。双眼晶状体皮质及核性混浊（中度）。眼底窥不清。眼压正常。',
+    auxiliaryExam: '眼部B超：玻璃体混浊（轻度），视网膜平伏。角膜内皮计数正常。',
+    diagnosisText: '年龄相关性白内障（中度，双眼，手术指征明确，患者拒绝）',
+    treatmentPlan: ['充分告知手术必要性及风险，建议择期手术。', '如拒绝手术，每3个月复查视力、眼底。', '外出戴墨镜。', '视力<0.1时强烈建议手术。', '3月后复诊。']
+  },
+  { applyNo: 'RV-20260225-019', patientId: 'P20260225001', patientName: '高志明', gender: '男', age: 72, phone: '12100121000', idCard: '110121195203151234', disease: '高血压视网膜病变', recorder: '李护士', submitTime: '2026-02-25 14:15', status: '已驳回', auditPerson: '李主任', auditTime: '2026-02-26 11:00',
+    medId: 'MED202602250019', confirmDate: '2023-12-10', hospital: '北京安贞医院', severity: '重度', insurance: '城镇职工医保', doctor: '王医生',
+    diagnosis: '患者高血压病史25年，血压控制极差（最高180/110mmHg），高血压视网膜病变4级，视乳头水肿、出血、渗出明显。建议立即住院降压治疗。',
+    treatment: ['立即住院降压治疗：静脉降压（硝酸甘油泵入）。', '每3天复查眼底，评估视网膜病变改善情况。', '血压控制目标<140/90mmHg（逐步降至130/80mmHg）。'],
+    labs: [
+      { item: '收缩压', result: '178', ref: '90-140', unit: 'mmHg', status: 'high' },
+      { item: '舒张压', result: '108', ref: '60-90', unit: 'mmHg', status: 'high' },
+      { item: '空腹血糖', result: '7.0', ref: '3.9-6.1', unit: 'mmol/L', status: 'high' },
+      { item: '总胆固醇', result: '6.2', ref: '2.8-5.7', unit: 'mmol/L', status: 'high' }
+    ],
+    attachments: [
+      { name: '血压监测记录_20260224.xlsx', size: '0.9MB', time: '2026-02-24 上传', type: 'excel' },
+      { name: '眼底照相_20260224.jpg', size: '3.8MB', time: '2026-02-24 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"头痛、视物模糊1周"就诊。既往高血压病史25年，血压控制极差。',
+    presentIllness: '患者高血压病史25年，服药依从性差，血压最高180/110mmHg。1周前出现头痛、视物模糊，无恶心、呕吐。',
+    physicalExam: 'BP: 178/108mmHg。双眼视力0.5。双眼视网膜出血、渗出、视乳头水肿（4级）。眼压正常。',
+    auxiliaryExam: '眼底照相：高血压视网膜病变4级。血压监测：平均血压172/104mmHg。肾功能：肌酐138μmol/L。',
+    diagnosisText: '高血压视网膜病变（4级，恶性高血压）',
+    treatmentPlan: ['立即住院降压治疗。', '静脉降压（硝酸甘油泵入）。', '每3天复查眼底。', '目标血压<140/90mmHg（逐步下降）。', '3天后复诊（住院期间）。']
+  },
+  { applyNo: 'RV-20260220-020', patientId: 'P20260220001', patientName: '罗美珍', gender: '女', age: 78, phone: '12000120000', idCard: '110122194603151234', disease: '黄斑变性', recorder: '赵医生', submitTime: '2026-02-20 11:30', status: '已驳回', auditPerson: '张教授', auditTime: '2026-02-21 16:45',
+    medId: 'MED202602200020', confirmDate: '2023-08-20', hospital: '北京大学人民医院', severity: '重度', insurance: '城乡居民医保', doctor: '赵医生',
+    diagnosis: '患者年龄相关性黄斑变性（湿性，双眼），曾行抗VEGF治疗，但患者自行停药，病情进展。目前双眼视力明显下降，建议恢复抗VEGF治疗。',
+    treatment: ['恢复抗VEGF治疗：雷珠单抗注射液 玻璃体腔注射，每月1次，连续3次。', '每3个月复查OCT、视力。', '补充叶黄素、维生素。'],
+    labs: [
+      { item: '最佳矫正视力（右）', result: '0.1', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '最佳矫正视力（左）', result: '0.15', ref: '≥1.0', unit: '-', status: 'low' },
+      { item: '黄斑中心凹厚度（右）', result: '520', ref: '150-250', unit: 'μm', status: 'high' },
+      { item: '黄斑中心凹厚度（左）', result: '480', ref: '150-250', unit: 'μm', status: 'high' }
+    ],
+    attachments: [
+      { name: 'OCT报告_20260219.pdf', size: '3.0MB', time: '2026-02-19 上传', type: 'excel' },
+      { name: '眼底照相_20260219.jpg', size: '4.5MB', time: '2026-02-19 上传', type: 'image' }
+    ],
+    chiefComplaint: '患者因"双眼视力下降明显3月"就诊。既往诊断湿性黄斑变性，自行停用抗VEGF治疗。',
+    presentIllness: '患者2年前诊断双眼湿性黄斑变性，曾行雷珠单抗注射3次，视力维持0.3。但患者自行停药，近3月视力明显下降。',
+    physicalExam: '右眼视力0.1，左眼视力0.15。双眼黄斑区出血、渗出。眼压正常。',
+    auxiliaryExam: 'OCT：双眼黄斑中心凹厚度明显增加（右眼520μm，左眼480μm）。荧光血管造影：双眼黄斑区荧光渗漏。',
+    diagnosisText: '年龄相关性黄斑变性（湿性，双眼，治疗后复发）',
+    treatmentPlan: ['恢复雷珠单抗注射液 每月1次，连续3次。', '每3个月复查OCT、视力。', '补充叶黄素、维生素C/E。', '避免剧烈运动。', '1月后复诊。']
+  }
+];
+
+// 初始化 records 为 mockRecords 的副本
+records = JSON.parse(JSON.stringify(mockRecords));
+
+/* ===================================================================
+   全局状态
+   =================================================================== */
+let currentPage = 1, pageSize = 10, filteredRecords = [...records];
+let currentAuditIndex = -1; // 当前审核弹窗对应的 records 索引
+
+/* ===================================================================
+   【需求1】渲染表格
+   =================================================================== */
+function applyFilter() {
+  const disease = document.getElementById('filterDisease').value;
+  const recorder = document.getElementById('filterRecorder').value;
+  const dateFrom = document.getElementById('filterDateFrom').value;
+  const dateTo = document.getElementById('filterDateTo').value;
+  const status = document.getElementById('filterStatus').value;
+  const keyword = document.getElementById('filterKeyword').value.trim();
+  filteredRecords = records.filter(r => {
+    if (disease && r.disease !== disease) return false;
+    if (recorder && r.recorder !== recorder) return false;
+    if (status && r.status !== status) return false;
+    if (dateFrom && r.submitTime < dateFrom) return false;
+    if (dateTo && r.submitTime > dateTo + ' 23:59') return false;
+    if (keyword && !r.patientId.includes(keyword) && !r.patientName.includes(keyword)) return false;
+    return true;
+  });
+  currentPage = 1;
+  renderTable();
+  renderStats();
+}
+
+function resetFilter() {
+  document.getElementById('filterDisease').value = '';
+  document.getElementById('filterRecorder').value = '';
+  document.getElementById('filterDateFrom').value = '';
+  document.getElementById('filterDateTo').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterKeyword').value = '';
+  filteredRecords = [...records];
+  currentPage = 1;
+  renderTable();
+  renderStats();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const total = filteredRecords.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * pageSize;
+  const pageData = filteredRecords.slice(start, start + pageSize);
+
+  let html = '';
+  pageData.forEach((r, idx) => {
+    const globalIdx = records.indexOf(r);
+    const statusClass = r.status === '待审核' ? 'tag-orange' : r.status === '已通过' ? 'tag-green' : 'tag-red';
+    let actions = '';
+    if (r.status === '待审核') {
+      actions = `<button class="btn btn-primary btn-sm" onclick="openAudit(${globalIdx})">审核</button> ` +
+                `<button class="btn btn-outline btn-sm" onclick="openDetail(${globalIdx})">查看</button>`;
+    } else if (r.status === '已通过') {
+      actions = `<button class="btn btn-outline btn-sm" onclick="openDetail(${globalIdx})">查看</button>`;
+    } else {
+      actions = `<button class="btn btn-outline btn-sm" onclick="openDetail(${globalIdx})">查看</button> ` +
+                `<button class="btn btn-warning btn-sm" style="background:#fff;border:1px solid var(--warning);color:var(--warning);" onclick="resubmit(${globalIdx})">重新提交</button>`;
+    }
+    html += `<tr>
+      <td><input type="checkbox" class="row-check" data-idx="${globalIdx}" onchange="updateBatchBtn()" ${r.status !== '待审核' ? 'disabled' : ''}></td>
+      <td>${r.applyNo}</td>
+      <td>${r.patientId}</td>
+      <td>${r.patientName}</td>
+      <td>${r.disease}</td>
+      <td>${r.recorder}</td>
+      <td>${r.submitTime}</td>
+      <td><span class="tag ${statusClass}">${r.status}</span></td>
+      <td><div style="display:flex;gap:6px;">${actions}</div></td>
+    </tr>`;
+  });
+  if (html === '') html = `<tr><td colspan="9" style="text-align:center;color:var(--gray-500);padding:20px;">暂无数据</td></tr>`;
+  tbody.innerHTML = html;
+
+  // 分页
+  let pgHtml = `<button ${currentPage<=1?'disabled':''} onclick="goPage(${currentPage-1})">上一页</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) {
+      pgHtml += `<button class="${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (i === currentPage - 2 || i === currentPage + 2) {
+      pgHtml += `<button disabled>...</button>`;
+    }
+  }
+  pgHtml += `<button ${currentPage>=totalPages?'disabled':''} onclick="goPage(${currentPage+1})">下一页</button>`;
+  pgHtml += `<span class="page-info">共${total}条记录 第${currentPage}/${totalPages}页</span>`;
+  pgHtml += ` <select onchange="changePageSize(this)" style="padding:4px 8px;border:1px solid var(--gray-300);border-radius:4px;font-size:12px;">
+    <option value="10" ${pageSize===10?'selected':''}>10/页</option>
+    <option value="20" ${pageSize===20?'selected':''}>20/页</option>
+    <option value="50" ${pageSize===50?'selected':''}>50/页</option>
+  </select>`;
+  document.getElementById('pagination').innerHTML = pgHtml;
+
+  updateCheckAllState();
+  updateBatchBtn();
+}
+
+function goPage(p) {
+  const totalPages = Math.ceil(filteredRecords.length / pageSize);
+  if (p < 1 || p > totalPages) return;
+  currentPage = p;
+  renderTable();
+}
+function changePageSize(sel) {
+  pageSize = parseInt(sel.value);
+  currentPage = 1;
+  renderTable();
+}
+
+/* 全选/取消全选 */
+function toggleCheckAll(el) {
+  document.querySelectorAll('.row-check:not(:disabled)').forEach(cb => cb.checked = el.checked);
+  updateBatchBtn();
+}
+function updateCheckAllState() {
+  const all = document.querySelectorAll('.row-check:not(:disabled)');
+  const checked = document.querySelectorAll('.row-check:not(:disabled):checked');
+  document.getElementById('checkAll').checked = all.length > 0 && all.length === checked.length;
+  document.getElementById('checkAll').indeterminate = checked.length > 0 && checked.length < all.length;
+}
+function updateBatchBtn() {
+  const checked = document.querySelectorAll('.row-check:checked');
+  document.getElementById('btnBatchApprove').disabled = checked.length === 0;
+}
+
+/* ===================================================================
+   【需求4】审核状态实时标记 + KPI统计
+   =================================================================== */
+function renderStats() {
+  const total = records.length;
+  const pending = records.filter(r => r.status === '待审核').length;
+  const approved = records.filter(r => r.status === '已通过').length;
+  const rate = total > 0 ? ((approved / total) * 100).toFixed(1) : '0.0';
+  // 模拟趋势数据
+  const statHtml = `
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#e8f0fe;font-size:22px;">📋</div>
+      <div class="stat-info">
+        <div class="stat-value">${total}</div>
+        <div class="stat-label">总录入数</div>
+        <div class="stat-change up">▲ 12.5% 较上月</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fef7e0;font-size:22px;">⏳</div>
+      <div class="stat-info">
+        <div class="stat-value">${pending}</div>
+        <div class="stat-label">待审核数</div>
+        <div class="stat-change down">▼ 8.1% 较上月</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#e6f4ea;font-size:22px;">✅</div>
+      <div class="stat-info">
+        <div class="stat-value">${rate}%</div>
+        <div class="stat-label">审核通过率</div>
+        <div class="stat-change up">▲ 2.3% 较上月</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#f3e8fd;font-size:22px;color:#8b5cf6;">📊</div>
+      <div class="stat-info">
+        <div class="stat-value">${pending}</div>
+        <div class="stat-label">新增审核数</div>
+        <div class="stat-change up">▲ 15.3% 较上月</div>
+      </div>
+    </div>`;
+  document.getElementById('statGrid').innerHTML = statHtml;
+}
+
+/* ===================================================================
+   【需求2】病历详情弹窗
+   =================================================================== */
+function openDetail(idx) {
+  const r = records[idx];
+  document.getElementById('detailMedId').textContent = `病历ID: ${r.medId}`;
+  const body = document.getElementById('detailBody');
+
+  // 检验表格
+  let labHtml = '';
+  r.labs.forEach(lab => {
+    const statusClass = lab.status === 'high' ? 'status-high arrow-up' :
+                        lab.status === 'low' ? 'status-low arrow-down' : 'status-normal';
+    const statusText = lab.status === 'high' ? '↑ 偏高' : lab.status === 'low' ? '↓ 偏低' : '正常';
+    labHtml += `<tr>
+      <td>${lab.item}</td><td>${lab.result}</td><td>${lab.ref}</td><td>${lab.unit}</td>
+      <td class="${statusClass}">${statusText}</td>
+    </tr>`;
+  });
+
+  // 附件
+  let attachHtml = '';
+  r.attachments.forEach(att => {
+    const iconClass = att.type === 'excel' ? 'excel' : 'image';
+    const iconText = att.type === 'excel' ? '📊' : '🖼';
+    attachHtml += `<div class="attach-card">
+      <div class="file-icon ${iconClass}">${iconText}</div>
+      <div class="file-info">
+        <div class="file-name">${att.name}</div>
+        <div class="file-meta">${att.size} · ${att.time}</div>
+      </div>
+      <button class="btn-download" onclick="alert('下载功能演示')">↓ 下载</button>
+    </div>`;
+  });
+
+  body.innerHTML = `
+    <!-- 区块1：患者基本信息 -->
+    <div class="modal-section">
+      <div class="section-title">👤 患者基本信息</div>
+      <div class="info-grid-2">
+        <div class="info-item"><span class="label">患者姓名：</span><span class="value">${r.patientName}</span></div>
+        <div class="info-item"><span class="label">患者ID：</span><span class="value">${r.patientId}</span></div>
+        <div class="info-item"><span class="label">年龄：</span><span class="value">${r.age}岁</span></div>
+        <div class="info-item"><span class="label">性别：</span><span class="value">${r.gender}</span></div>
+        <div class="info-item"><span class="label">联系电话：</span><span class="value">${r.phone}</span></div>
+        <div class="info-item"><span class="label">身份证号：</span><span class="value">${r.idCard}</span></div>
+      </div>
+    </div>
+
+    <!-- 区块2：病历信息 -->
+    <div class="modal-section">
+      <div class="section-title">📋 病历信息</div>
+      <div class="info-grid-2" style="margin-bottom:12px;">
+        <div class="info-item"><span class="label">确诊日期：</span><span class="value">${r.confirmDate}</span></div>
+        <div class="info-item"><span class="label">疾病类型：</span><span class="value">${r.disease}</span></div>
+        <div class="info-item"><span class="label">就诊医院：</span><span class="value">${r.hospital}</span></div>
+        <div class="info-item"><span class="label">病情分级：</span><span class="value">${r.severity}</span></div>
+        <div class="info-item"><span class="label">医保类型：</span><span class="value">${r.insurance}</span></div>
+        <div class="info-item"><span class="label">主治医生：</span><span class="value">${r.doctor}</span></div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:8px;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:8px;">诊断描述</div>
+        <div style="font-size:13px;color:var(--gray-800);line-height:1.7;">${r.diagnosis}</div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:8px;padding:14px 16px;">
+        <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:8px;">治疗方案</div>
+        <ol style="padding-left:20px;font-size:13px;color:var(--gray-800);line-height:1.8;">
+          ${r.treatment.map(t => `<li>${t}</li>`).join('')}
+        </ol>
+      </div>
+    </div>
+
+    <!-- 区块3：检验检查结果 -->
+    <div class="modal-section">
+      <div class="section-title">🧪 检验检查结果</div>
+      <table class="lab-table">
+        <thead><tr><th>检查项目</th><th>检查结果</th><th>参考值</th><th>单位</th><th>状态</th></tr></thead>
+        <tbody>${labHtml}</tbody>
+      </table>
+    </div>
+
+    <!-- 区块4：相关附件 -->
+    <div class="modal-section">
+      <div class="section-title">📎 相关附件</div>
+      <div class="attach-list">${attachHtml}</div>
+    </div>`;
+
+  openModal('detailModal');
+}
+
+/* ===================================================================
+   【需求3】病历审核弹窗
+   =================================================================== */
+function openAudit(idx) {
+  currentAuditIndex = idx;
+  const r = records[idx];
+  document.getElementById('auditBadge').textContent = r.patientId;
+
+  const body = document.getElementById('auditBody');
+
+  // 身份证/电话脱敏
+  const maskedId = r.idCard.slice(0, 6) + '********' + r.idCard.slice(-4);
+  const maskedPhone = r.phone.slice(0, 3) + '****' + r.phone.slice(-4);
+
+  body.innerHTML = `
+    <!-- 区块1：患者基本信息（9字段3列） -->
+    <div class="modal-section">
+      <div class="section-title">👤 患者基本信息</div>
+      <div class="info-grid-3">
+        <div class="info-item"><span class="label">患者姓名：</span><span class="value">${r.patientName}</span></div>
+        <div class="info-item"><span class="label">性别：</span><span class="value">${r.gender}</span></div>
+        <div class="info-item"><span class="label">年龄：</span><span class="value">${r.age}岁</span></div>
+        <div class="info-item"><span class="label">身份证号：</span><span class="value masked">${maskedId}</span></div>
+        <div class="info-item"><span class="label">联系电话：</span><span class="value masked">${maskedPhone}</span></div>
+        <div class="info-item"><span class="label">疾病类型：</span><span class="value">${r.disease}</span></div>
+        <div class="info-item"><span class="label">就诊日期：</span><span class="value">${r.confirmDate}</span></div>
+        <div class="info-item"><span class="label">录入员：</span><span class="value">${r.recorder}</span></div>
+        <div class="info-item"><span class="label">提交时间：</span><span class="value">${r.submitTime}</span></div>
+      </div>
+    </div>
+
+    <!-- 区块2：病历内容 -->
+    <div class="modal-section">
+      <div class="section-title">📄 病历内容</div>
+      <div class="record-card">
+        <div class="card-sub-title">主诉</div>
+        <p>${r.chiefComplaint}</p>
+      </div>
+      <div class="record-card">
+        <div class="card-sub-title">现病史</div>
+        <p>${r.presentIllness}</p>
+      </div>
+      <div class="record-card">
+        <div class="card-sub-title">体格检查</div>
+        <p>${r.physicalExam}</p>
+      </div>
+      <div class="record-card">
+        <div class="card-sub-title">辅助检查</div>
+        <div class="exam-list">${r.auxiliaryExam.replace(/\n/g, '<br>')}</div>
+      </div>
+    </div>
+
+    <!-- 区块3：诊断与治疗方案 -->
+    <div class="modal-section">
+      <div class="section-title">🩺 诊断与治疗方案</div>
+      <div class="diagnosis-section">
+        <div class="diag-label">诊断：</div>
+        <div class="diag-value">${r.diagnosisText}</div>
+        <div class="diag-label" style="margin-top:12px;">治疗方案：</div>
+        <ol>${r.treatmentPlan.map(t => `<li>${t}</li>`).join('')}</ol>
+      </div>
+    </div>
+
+    <!-- 区块4：审核意见 -->
+    <div class="modal-section">
+      <div class="section-title">✏️ 审核意见</div>
+      <textarea class="audit-textarea" id="auditOpinion" placeholder="请输入审核意见（如审核不通过，请详细说明原因）..."></textarea>
+    </div>`;
+
+  openModal('auditModal');
+}
+
+function approveRecord() {
+  if (currentAuditIndex < 0) return;
+  const r = records[currentAuditIndex];
+  r.status = '已通过';
+  r.auditPerson = '张教授';
+  r.auditTime = fmtDate(new Date());
+  closeModal('auditModal');
+  renderTable();
+  renderStats();
+  renderCharts();
+  alert('审核通过！');
+}
+
+function rejectRecord() {
+  if (currentAuditIndex < 0) return;
+  const opinion = document.getElementById('auditOpinion').value.trim();
+  if (!opinion) {
+    alert('请填写审核意见（驳回原因）后再提交！');
+    return;
+  }
+  const r = records[currentAuditIndex];
+  r.status = '已驳回';
+  r.auditPerson = '张教授';
+  r.auditTime = fmtDate(new Date());
+  r.auditOpinion = opinion;
+  closeModal('auditModal');
+  renderTable();
+  renderStats();
+  renderCharts();
+  alert('已驳回！');
+}
+
+function resubmit(idx) {
+  if (confirm('确认重新提交该记录？')) {
+    records[idx].status = '待审核';
+    records[idx].auditPerson = '';
+    records[idx].auditTime = '';
+    renderTable();
+    renderStats();
+    renderCharts();
+  }
+}
+
+/* ===================================================================
+   【需求1】批量审核
+   =================================================================== */
+function batchApprove() {
+  const checked = document.querySelectorAll('.row-check:checked');
+  if (checked.length === 0) return;
+  const indices = Array.from(checked).map(cb => parseInt(cb.dataset.idx));
+  const pendingIndices = indices.filter(i => records[i].status === '待审核');
+  if (pendingIndices.length === 0) { alert('未勾选任何待审核项！'); return; }
+  if (!confirm(`确认批量通过 ${pendingIndices.length} 条待审核记录？`)) return;
+  const now = fmtDate(new Date());
+  pendingIndices.forEach(i => {
+    records[i].status = '已通过';
+    records[i].auditPerson = '张教授';
+    records[i].auditTime = now;
+  });
+  renderTable();
+  renderStats();
+  renderCharts();
+  alert(`已批量通过 ${pendingIndices.length} 条记录！`);
+}
+
+/* ===================================================================
+   【需求6】导出CSV
+   =================================================================== */
+function exportCSV() {
+  const BOM = '\uFEFF';
+  const headers = ['申请编号','患者ID','患者姓名','疾病类型','录入员','提交时间','审核状态','审核人','审核时间'];
+  const rows = filteredRecords.map(r => [
+    r.applyNo, r.patientId, r.patientName, r.disease, r.recorder, r.submitTime,
+    r.status, r.auditPerson || '', r.auditTime || ''
+  ]);
+  const csvContent = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
+  link.href = URL.createObjectURL(blob);
+  link.download = `审核数据导出_${dateStr}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function exportCurrentRecord() {
+  alert('导出病历功能演示（实际应生成PDF/Word文档）');
+}
+
+/* ===================================================================
+   弹窗通用控制
+   =================================================================== */
+function openModal(id) {
+  const modal = document.getElementById(id);
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+  if (id === 'auditModal') currentAuditIndex = -1;
+}
+
+// ESC关闭 + 点击遮罩关闭
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
+  }
 });
-</script></body></html>
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) closeModal(overlay.id);
+  });
+});
+
+/* ===================================================================
+   【需求5】Canvas 圆环图 + 折线图
+   =================================================================== */
+function renderCharts() {
+  // 圆环图
+  const canvas = document.getElementById('ringChart');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const cx = w / 2, cy = h / 2, r = 60;
+  ctx.clearRect(0, 0, w, h);
+
+  const approved = records.filter(r => r.status === '已通过').length;
+  const pending = records.filter(r => r.status === '待审核').length;
+  const rejected = records.filter(r => r.status === '已驳回').length;
+  const total = records.length || 1;
+  const pct = Math.round((approved / total) * 100);
+
+  // 背景环
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.strokeStyle = '#e8ecf0'; ctx.lineWidth = 14; ctx.stroke();
+  // 通过率弧
+  const endAngle = (pct / 100) * Math.PI * 2 - Math.PI / 2;
+  ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, endAngle); ctx.strokeStyle = '#34a853'; ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.stroke();
+  // 待审核弧
+  const pendingPct = (pending / total) * 100;
+  const pendingEnd = endAngle + (pendingPct / 100) * Math.PI * 2;
+  ctx.beginPath(); ctx.arc(cx, cy, r, endAngle, pendingEnd); ctx.strokeStyle = '#fbbc04'; ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.stroke();
+  // 驳回弧
+  const rejectPct = (rejected / total) * 100;
+  const rejectEnd = pendingEnd + (rejectPct / 100) * Math.PI * 2;
+  ctx.beginPath(); ctx.arc(cx, cy, r, pendingEnd, rejectEnd); ctx.strokeStyle = '#ea4335'; ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.stroke();
+
+  document.getElementById('ringPct').textContent = pct + '%';
+
+  // 折线图
+  renderLineChart();
+}
+
+function renderLineChart() {
+  const canvas = document.getElementById('lineChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 180 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '180px';
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width, h = 180;
+  ctx.clearRect(0, 0, w, h);
+
+  const data = [78, 80, 76, 82, 81, 83, 82]; // 近7天通过率
+  const labels = ['4-05','4-06','4-07','4-08','4-09','4-10','4-11'];
+  const padding = { top: 20, right: 20, bottom: 30, left: 40 };
+  const chartW = w - padding.left - padding.right;
+  const chartH = h - padding.top - padding.bottom;
+  const minV = 70, maxV = 90;
+
+  // 网格线
+  ctx.strokeStyle = '#e8ecf0'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padding.top + (chartH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(padding.left, y); ctx.lineTo(w - padding.right, y); ctx.stroke();
+    ctx.fillStyle = '#9aa0a6'; ctx.font = '11px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(Math.round(maxV - (maxV - minV) * (i / 4)), padding.left - 6, y + 4);
+  }
+
+  // X轴标签
+  ctx.textAlign = 'center';
+  data.forEach((_, i) => {
+    const x = padding.left + (chartW / (data.length - 1)) * i;
+    ctx.fillStyle = '#9aa0a6'; ctx.font = '11px sans-serif';
+    ctx.fillText(labels[i], x, h - 8);
+  });
+
+  // 折线
+  const points = data.map((v, i) => ({
+    x: padding.left + (chartW / (data.length - 1)) * i,
+    y: padding.top + chartH - ((v - minV) / (maxV - minV)) * chartH
+  }));
+
+  // 面积填充
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(points[points.length - 1].x, padding.top + chartH);
+  ctx.lineTo(points[0].x, padding.top + chartH);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
+  grad.addColorStop(0, 'rgba(52,168,83,0.2)'); grad.addColorStop(1, 'rgba(52,168,83,0.02)');
+  ctx.fillStyle = grad; ctx.fill();
+
+  // 折线
+  ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.strokeStyle = '#34a853'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.stroke();
+
+  // 圆点
+  points.forEach(p => {
+    ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = '#34a853'; ctx.lineWidth = 2; ctx.stroke();
+  });
+}
+
+/* ===================================================================
+   初始化
+   =================================================================== */
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    try { localStorage.removeItem('life_med_user'); } catch(e) {}
+    window.location.href = 'login.html';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 用户信息
+  try {
+    var user = JSON.parse(localStorage.getItem('life_med_user'));
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('headerUserName').textContent = user.name || '用户';
+  } catch(e) { window.location.href = 'login.html'; }
+
+  renderStats();
+  renderTable();
+  // 延迟渲染图表，确保canvas尺寸正确
+  setTimeout(renderCharts, 100);
+});
+</script>
+</body>
+</html>

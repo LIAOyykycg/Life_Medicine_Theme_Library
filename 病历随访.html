@@ -41,6 +41,8 @@ body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-
 .btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-dark); }
 .btn-success { background: var(--success); color: #fff; } .btn-success:hover { background: #2d9249; }
 .btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); } .btn-outline:hover { background: var(--gray-50); }
+.btn-danger { background: var(--danger); color: #fff; } .btn-danger:hover { background: #d33426; }
+.btn-secondary { background: var(--gray-200); color: var(--gray-700); } .btn-secondary:hover { background: var(--gray-300); }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -52,20 +54,119 @@ table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
 .tag-blue { background: #e8f0fe; color: #1a73e8; }
 .tag-green { background: #e6f4ea; color: #137333; }
 .tag-orange { background: #fef7e0; color: #b06000; }
+.tag-danger { background: #fce8e6; color: #c5221f; }
 .tag-gray { background: #f1f3f4; color: #5f6368; }
 .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 16px; padding: 12px 0; }
 .pagination button { padding: 6px 12px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: var(--transition); }
 .pagination button:hover:not(:disabled) { background: var(--gray-50); }
 .pagination button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* New styles for follow-up management */
+.stats-row { display: flex; gap: 16px; margin-bottom: 20px; }
+.stat-card { flex: 1; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; cursor: pointer; transition: var(--transition); border-left: 4px solid transparent; }
+.stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.stat-card .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.stat-card .stat-label { font-size: 13px; color: var(--gray-600); }
+.stat-card.total { border-left-color: var(--primary); } .stat-card.total .stat-value { color: var(--primary); }
+.stat-card.normal { border-left-color: var(--success); } .stat-card.normal .stat-value { color: var(--success); }
+.stat-card.pending { border-left-color: #e37400; } .stat-card.pending .stat-value { color: #e37400; }
+.stat-card.overdue { border-left-color: var(--danger); } .stat-card.overdue .stat-value { color: var(--danger); }
+
+.warning-row { background: #fff5f5 !important; }
+
+.alert-warning-bar { background: #fef7e0; border: 1px solid #fbbc04; color: #b06000; padding: 10px 16px; border-radius: var(--radius); margin-bottom: 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.alert-warning-bar .alert-icon { font-size: 18px; }
+
+/* Detail view */
+.detail-view { display: none; }
+.patient-info-card { display: flex; gap: 24px; align-items: flex-start; }
+.patient-info-card .info-main { flex: 1; }
+.patient-info-card .info-main h2 { font-size: 20px; margin-bottom: 8px; }
+.patient-info-card .info-meta { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: var(--gray-600); margin-bottom: 12px; }
+.patient-info-card .info-tags { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.patient-info-card .info-aside { text-align: right; min-width: 140px; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 30px; }
+.timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--gray-200); }
+.timeline-item { position: relative; margin-bottom: 24px; }
+.timeline-dot { position: absolute; left: -26px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--primary); border: 3px solid #fff; box-shadow: 0 0 0 2px var(--primary); z-index: 1; }
+.timeline-item.collapsed .timeline-dot { background: var(--gray-400); box-shadow: 0 0 0 2px var(--gray-400); }
+.timeline-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; cursor: pointer; }
+.timeline-date { font-weight: 600; font-size: 14px; color: var(--gray-800); }
+.timeline-doctor { font-size: 12px; color: var(--gray-500); }
+.timeline-summary { font-size: 13px; color: var(--gray-600); margin-top: 2px; }
+.timeline-body { display: none; }
+.timeline-item.expanded .timeline-body { display: block; padding: 12px 16px; background: var(--gray-50); border-radius: var(--radius); margin-top: 8px; }
+.timeline-body .section-label { font-size: 12px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px; }
+.timeline-body .section-content { font-size: 13px; color: var(--gray-800); margin-bottom: 10px; }
+.timeline-body table { margin-bottom: 12px; }
+.timeline-body .image-thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.timeline-body .image-thumbs img { width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--gray-200); cursor: pointer; transition: var(--transition); }
+.timeline-body .image-thumbs img:hover { transform: scale(1.05); box-shadow: var(--shadow-lg); }
+.timeline-body .timeline-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+.load-more-btn { text-align: center; padding: 12px; }
+
+/* Modals */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+.modal-overlay.active { display: flex; }
+.modal { background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); width: 680px; max-height: 85vh; overflow-y: auto; animation: modalIn 0.2s ease; }
+@keyframes modalIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+.modal-lg { width: 760px; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; background: #fff; border-radius: 12px 12px 0 0; z-index: 1; }
+.modal-header h3 { font-size: 17px; font-weight: 600; }
+.modal-close { width: 32px; height: 32px; border: none; background: none; font-size: 20px; color: var(--gray-500); cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+.modal-close:hover { background: var(--gray-100); color: var(--gray-800); }
+.modal-body { padding: 20px 24px; }
+.modal-footer { padding: 14px 24px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0; background: #fff; border-radius: 0 0 12px 12px; }
+.modal .form-group { margin-bottom: 14px; }
+.modal .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 4px; }
+.modal .form-group label .required { color: var(--danger); margin-left: 2px; }
+.modal .form-group input, .modal .form-group select, .modal .form-group textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.modal .form-group input:focus, .modal .form-group select:focus, .modal .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.modal .form-group textarea { resize: vertical; min-height: 60px; }
+.form-row { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+.lab-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.lab-row input { flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 12px; outline: none; font-family: inherit; }
+.lab-row input:focus { border-color: var(--primary); }
+.upload-zone { border: 2px dashed var(--gray-300); border-radius: 8px; padding: 20px; text-align: center; color: var(--gray-500); font-size: 13px; cursor: pointer; transition: var(--transition); }
+.upload-zone:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.upload-list { margin-top: 8px; }
+.upload-list .file-item { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: var(--gray-50); border-radius: 4px; margin-bottom: 4px; font-size: 12px; }
+.upload-list .file-item button { border: none; background: none; color: var(--danger); cursor: pointer; font-size: 14px; }
+
+/* FAB */
+.fab { position: fixed; right: 32px; bottom: 32px; width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: #fff; border: none; font-size: 24px; cursor: pointer; box-shadow: 0 4px 16px rgba(26,115,232,0.4); z-index: 1500; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+.fab:hover { background: var(--primary-dark); transform: scale(1.05); box-shadow: 0 6px 20px rgba(26,115,232,0.5); }
+
+/* Status dropdown in table */
+.status-select { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; border: none; cursor: pointer; font-family: inherit; outline: none; }
+.status-select.status-green { background: #e6f4ea; color: #137333; }
+.status-select.status-orange { background: #fef7e0; color: #b06000; }
+.status-select.status-danger { background: #fce8e6; color: #c5221f; }
+
+/* Back link */
+.back-link { color: var(--primary); text-decoration: none; font-size: 13px; cursor: pointer; }
+.back-link:hover { text-decoration: underline; }
+
+@media (max-width: 768px) {
+    .modal { width: 90%; }
+    .stats-row { flex-wrap: wrap; }
+    .stat-card { flex: 1 1 calc(50% - 8px); min-width: 140px; }
+    .form-row { flex-direction: column; }
+    .patient-info-card { flex-direction: column; }
+}
 </style></head><body>
 <div class="header">
   <a href="index.html" class="logo">生命医学智能平台</a>
   <div class="header-nav">
     <a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a>
-    <a href="眼病/慢病数据录入工具.html" class="active">眼病/慢病数据录入工具</a>
+    <a href="表单模板设置.html" class="active">眼病/慢病数据录入工具</a>
     <a href="眼病/慢病影像脱敏工具.html">眼病/慢病影像脱敏工具</a>
-    <a href="眼病/慢病影像标注工具.html">眼病/慢病影像标注工具</a>
+    <a href="影像标注工具.html">眼病/慢病影像标注工具</a>
   </div>
   <div class="header-right">
     <span class="user-info" id="headerUserName">张教授</span>
@@ -84,46 +185,733 @@ table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
   </div>
 </div>
 <div class="main-content">
-  <div class="breadcrumb"><a href="index.html">首页</a><span>&gt;</span><a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a><span>&gt;</span><span>病历随访</span></div>
-  <h1 class="page-title">病历随访</h1>
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">筛选条件</span>
-      <button class="btn btn-success">+ 新增随访记录</button>
+  <!-- List View -->
+  <div id="listView">
+    <div class="breadcrumb"><a href="index.html">首页</a><span>&gt;</span><span>病历随访</span></div>
+    <h1 class="page-title">病历随访</h1>
+    <div id="overdueAlert" class="alert-warning-bar" style="display:none;"><span class="alert-icon">&#9888;</span><span id="overdueAlertText"></span></div>
+    <div class="stats-row" id="statsRow"></div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">筛选条件</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="openPlanManage()">随访计划管理</button>
+          <button class="btn btn-success" onclick="openAddFollowup()">+ 新增随访记录</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <label>搜索</label>
+        <input type="text" id="searchInput" placeholder="搜索患者ID / 姓名" oninput="applyFilters()">
+        <label>疾病类型</label>
+        <select id="filterDisease" onchange="applyFilters()">
+          <option value="">全部</option>
+          <option value="青光眼">青光眼</option>
+          <option value="糖尿病视网膜病变">糖尿病视网膜病变</option>
+          <option value="黄斑变性">黄斑变性</option>
+          <option value="白内障">白内障</option>
+          <option value="高血压视网膜病变">高血压视网膜病变</option>
+          <option value="干眼症">干眼症</option>
+        </select>
+        <label>随访日期</label>
+        <input type="date" id="filterDateFrom" style="min-width:140px;" onchange="applyFilters()">
+        <span style="color:var(--gray-400);">至</span>
+        <input type="date" id="filterDateTo" style="min-width:140px;" onchange="applyFilters()">
+        <label>随访状态</label>
+        <select id="filterStatus" onchange="applyFilters()">
+          <option value="">全部</option>
+          <option value="正常">随访正常</option>
+          <option value="待随访">待随访</option>
+          <option value="已超期">已超期</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="applyFilters()">搜索</button>
+        <button class="btn btn-outline btn-sm" onclick="resetFilters()">重置</button>
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()">导出列表</button>
+      </div>
     </div>
-    <div class="filter-bar">
-      <label>随访类型</label>
-      <select><option>全部</option><option>门诊随访</option><option>电话随访</option><option>远程随访</option></select>
-      <label>随访时间</label>
-      <input type="date" style="min-width:140px;"><span style="color:var(--gray-400);">至</span><input type="date" style="min-width:140px;">
-      <label>随访医生</label>
-      <select><option>全部</option><option>张教授</option><option>李主任</option><option>王医生</option></select>
-      <label>随访状态</label>
-      <select><option>全部</option><option>待随访</option><option>已完成</option><option>失访</option></select>
-      <button class="btn btn-primary btn-sm">搜索</button>
-      <button class="btn btn-outline btn-sm">重置</button>
+    <div class="card">
+      <div class="card-header"><span class="card-title">患者列表</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>患者ID</th><th>姓名</th><th>性别</th><th>年龄</th><th>疾病类型</th><th>末次随访</th><th>下次随访</th><th>随访状态</th><th>随访周期</th><th>操作</th></tr></thead>
+          <tbody id="patientTableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="paginationBox"></div>
     </div>
   </div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">患者列表</span></div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>患者ID</th><th>姓名</th><th>性别</th><th>年龄</th><th>诊断</th><th>随访类型</th><th>末次随访</th><th>随访状态</th><th>操作</th></tr></thead>
-        <tbody>
-          <tr><td>SF-2026001</td><td>王建国</td><td>男</td><td>58</td><td>青光眼</td><td>门诊随访</td><td>2026-06-15</td><td><span class="tag tag-green">已完成</span></td><td><a class="btn btn-outline btn-sm">查看详情</a></td></tr>
-          <tr><td>SF-2026002</td><td>李秀兰</td><td>女</td><td>62</td><td>糖尿病视网膜病变</td><td>电话随访</td><td>2026-06-18</td><td><span class="tag tag-green">已完成</span></td><td><a class="btn btn-outline btn-sm">查看详情</a></td></tr>
-          <tr><td>SF-2026003</td><td>张明华</td><td>男</td><td>45</td><td>黄斑变性</td><td>远程随访</td><td>2026-06-20</td><td><span class="tag tag-orange">待随访</span></td><td><a class="btn btn-outline btn-sm">查看详情</a></td></tr>
-          <tr><td>SF-2026004</td><td>赵丽萍</td><td>女</td><td>51</td><td>青光眼</td><td>门诊随访</td><td>2026-05-30</td><td><span class="tag tag-orange">待随访</span></td><td><a class="btn btn-outline btn-sm">查看详情</a></td></tr>
-          <tr><td>SF-2026005</td><td>刘志强</td><td>男</td><td>67</td><td>糖尿病视网膜病变</td><td>电话随访</td><td>2026-06-10</td><td><span class="tag tag-green">已完成</span></td><td><a class="btn btn-outline btn-sm">查看详情</a></td></tr>
-          <tr><td>SF-2026006</td><td>陈晓芳</td><td>女</td><td>39</td><td>黄斑变性</td><td>门诊随访</td><td>2026-04-22</td><td><span class="tag tag-gray">失访</span></td><td><a class="btn btn-outline btn-sm">查看详情</a></td></tr>
-          <tr><td>SF-2026007</td><td>杨永强</td><td>男</td><td>55</td><td>青光眼</td><td>远程随访</td><td>2026-06-25</td><td><span class="tag tag-green">已完成</span></td><td><a class="btn btn-outline btn-sm">查看详情</a></td></tr>
-        </tbody>
-      </table>
+
+  <!-- Detail View -->
+  <div id="detailView" class="detail-view">
+    <div class="breadcrumb">
+      <a href="index.html">首页</a><span>&gt;</span><span>病历随访</span><span>&gt;</span><span>随访详情</span>&nbsp;<a class="back-link" onclick="backToList()">← 返回列表</a>
     </div>
-    <div class="pagination"><button disabled>上一页</button><button class="active">1</button><button>2</button><button>3</button><button>下一页</button></div>
+    <div id="detailContent"></div>
   </div>
 </div>
+
+<!-- FAB -->
+<button class="fab" id="fabBtn" title="新增随访" onclick="openAddFollowup()">+</button>
+
+<!-- New Followup Modal -->
+<div class="modal-overlay" id="addFollowupModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><h3>新增随访记录</h3><button class="modal-close" onclick="closeAddFollowup()">&times;</button></div>
+    <div class="modal-body" id="addFollowupBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeAddFollowup()">取消</button>
+      <button class="btn btn-secondary" onclick="saveFollowup('draft')">保存草稿</button>
+      <button class="btn btn-success" onclick="saveFollowup('done')">提交随访记录</button>
+    </div>
+  </div>
+</div>
+
+<!-- Plan Manage Modal -->
+<div class="modal-overlay" id="planManageModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><h3>随访计划管理</h3><button class="modal-close" onclick="closePlanManage()">&times;</button></div>
+    <div class="modal-body" id="planManageBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closePlanManage()">取消</button>
+      <button class="btn btn-primary" onclick="savePlanChanges()">保存配置</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modify Plan Modal -->
+<div class="modal-overlay" id="modifyPlanModal">
+  <div class="modal">
+    <div class="modal-header"><h3>修改随访计划</h3><button class="modal-close" onclick="closeModifyPlan()">&times;</button></div>
+    <div class="modal-body" id="modifyPlanBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModifyPlan()">取消</button>
+      <button class="btn btn-primary" onclick="saveModifyPlan()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div class="modal-overlay" id="imagePreviewModal" onclick="closeImagePreview()">
+  <div class="modal" style="width:auto;max-width:90vw;background:transparent;box-shadow:none;" onclick="event.stopPropagation()">
+    <button class="modal-close" style="position:absolute;top:8px;right:8px;color:#fff;z-index:1;" onclick="closeImagePreview()">&times;</button>
+    <img id="imagePreviewImg" style="max-width:85vw;max-height:85vh;border-radius:8px;">
+  </div>
+</div>
+
 <script>
+// ======== DATA ========
+const followupTemplates = {
+  '青光眼': { defaultCycle: 90, stableCycle: 180 },
+  '糖尿病视网膜病变': { defaultCycle: 90, stableCycle: null },
+  '黄斑变性': { defaultCycle: 30, stableCycle: 90 },
+  '白内障': { defaultCycle: 7, stableCycle: 90 },
+  '高血压视网膜病变': { defaultCycle: 180, stableCycle: null },
+  '干眼症': { defaultCycle: 60, stableCycle: null }
+};
+
+const doctors = ['张教授','李主任','王医生','陈医生'];
+
+let patientData = [
+  { id:'SF-2026001', name:'王建国', gender:'男', age:58, diseaseType:'青光眼', followupStatus:'正常', lastFollowupDate:'2026-06-15', nextFollowupDate:'2026-09-13', followupCycle:90, phone:'138****2345', doctor:'张教授', createDate:'2025-03-10' },
+  { id:'SF-2026002', name:'李秀兰', gender:'女', age:62, diseaseType:'糖尿病视网膜病变', followupStatus:'正常', lastFollowupDate:'2026-06-18', nextFollowupDate:'2026-09-16', followupCycle:90, phone:'139****3456', doctor:'李主任', createDate:'2025-05-22' },
+  { id:'SF-2026003', name:'张明华', gender:'男', age:45, diseaseType:'黄斑变性', followupStatus:'待随访', lastFollowupDate:null, nextFollowupDate:'2026-07-15', followupCycle:30, phone:'137****4567', doctor:'王医生', createDate:'2026-06-01' },
+  { id:'SF-2026004', name:'赵丽萍', gender:'女', age:51, diseaseType:'青光眼', followupStatus:'已超期', lastFollowupDate:'2026-05-30', nextFollowupDate:'2026-06-30', followupCycle:90, phone:'136****5678', doctor:'张教授', createDate:'2025-08-14' },
+  { id:'SF-2026005', name:'刘志强', gender:'男', age:67, diseaseType:'糖尿病视网膜病变', followupStatus:'正常', lastFollowupDate:'2026-06-10', nextFollowupDate:'2026-09-08', followupCycle:90, phone:'135****6789', doctor:'李主任', createDate:'2025-01-05' },
+  { id:'SF-2026006', name:'陈晓芳', gender:'女', age:39, diseaseType:'黄斑变性', followupStatus:'已超期', lastFollowupDate:'2026-04-22', nextFollowupDate:'2026-05-22', followupCycle:30, phone:'134****7890', doctor:'王医生', createDate:'2026-02-18' },
+  { id:'SF-2026007', name:'杨永强', gender:'男', age:55, diseaseType:'青光眼', followupStatus:'正常', lastFollowupDate:'2026-06-25', nextFollowupDate:'2026-09-23', followupCycle:90, phone:'133****8901', doctor:'张教授', createDate:'2025-11-20' },
+  { id:'SF-2026008', name:'周美玲', gender:'女', age:71, diseaseType:'白内障', followupStatus:'正常', lastFollowupDate:'2026-06-28', nextFollowupDate:'2026-07-05', followupCycle:7, phone:'132****9012', doctor:'李主任', createDate:'2026-06-20' },
+  { id:'SF-2026009', name:'吴建国', gender:'男', age:63, diseaseType:'高血压视网膜病变', followupStatus:'正常', lastFollowupDate:'2026-06-01', nextFollowupDate:'2026-11-28', followupCycle:180, phone:'131****0123', doctor:'陈医生', createDate:'2025-04-08' },
+  { id:'SF-2026010', name:'郑小琳', gender:'女', age:35, diseaseType:'干眼症', followupStatus:'待随访', lastFollowupDate:null, nextFollowupDate:'2026-08-05', followupCycle:60, phone:'130****1234', doctor:'王医生', createDate:'2026-06-05' },
+  { id:'SF-2026011', name:'孙大伟', gender:'男', age:49, diseaseType:'糖尿病视网膜病变', followupStatus:'已超期', lastFollowupDate:'2026-03-15', nextFollowupDate:'2026-06-13', followupCycle:90, phone:'139****2346', doctor:'李主任', createDate:'2025-07-12' },
+  { id:'SF-2026012', name:'马丽华', gender:'女', age:56, diseaseType:'青光眼', followupStatus:'正常', lastFollowupDate:'2026-06-20', nextFollowupDate:'2026-09-18', followupCycle:90, phone:'138****3457', doctor:'张教授', createDate:'2025-02-28' },
+  { id:'SF-2026013', name:'黄晓东', gender:'男', age:42, diseaseType:'干眼症', followupStatus:'已超期', lastFollowupDate:'2026-05-10', nextFollowupDate:'2026-07-04', followupCycle:60, phone:'137****4568', doctor:'陈医生', createDate:'2026-01-15' },
+  { id:'SF-2026014', name:'林秀英', gender:'女', age:68, diseaseType:'白内障', followupStatus:'正常', lastFollowupDate:'2026-06-25', nextFollowupDate:'2026-09-23', followupCycle:90, phone:'136****5679', doctor:'王医生', createDate:'2025-09-30' },
+  { id:'SF-2026015', name:'何伟强', gender:'男', age:53, diseaseType:'高血压视网膜病变', followupStatus:'待随访', lastFollowupDate:null, nextFollowupDate:'2026-08-01', followupCycle:180, phone:'135****6780', doctor:'李主任', createDate:'2026-04-20' }
+];
+
+let followupRecords = [
+  { id:1, patientId:'SF-2026001', date:'2026-06-15', type:'门诊随访', doctor:'张教授', chiefComplaint:'右眼视物模糊加重2周', presentIllness:'患者2周前无明显诱因出现右眼视力下降', physicalExam:'右眼眼压24mmHg，左眼18mmHg', labTests:[{name:'眼压',value:'24',unit:'mmHg',refRange:'10-21'},{name:'视力',value:'0.4',unit:'',refRange:'≥0.8'}], images:[{name:'右眼OCT',url:'data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22120%22%20height=%22120%22%3E%3Crect%20fill=%22%23e8f0fe%22%20width=%22120%22%20height=%22120%22/%3E%3Ctext%20x=%2230%22%20y=%2265%22%20font-size=%2212%22%20fill=%22%231a73e8%22%3EOCT影像%3C/text%3E%3C/svg%3E'}], treatment:'调整降眼压药物，加用拉坦前列素滴眼液', nextFollowupDate:'2026-09-13', summary:'眼压控制不佳，调整用药方案', status:'已完成' },
+  { id:2, patientId:'SF-2026001', date:'2026-03-10', type:'门诊随访', doctor:'张教授', chiefComplaint:'左眼偶有胀痛', presentIllness:'近1个月左眼偶有胀痛感', physicalExam:'双眼眼压正常', labTests:[{name:'眼压',value:'18',unit:'mmHg',refRange:'10-21'}], images:[], treatment:'继续原方案', nextFollowupDate:'2026-06-10', summary:'病情稳定', status:'已完成' },
+  { id:3, patientId:'SF-2026002', date:'2026-06-18', type:'电话随访', doctor:'李主任', chiefComplaint:'无明显不适', presentIllness:'自述血糖控制良好', physicalExam:'-', labTests:[{name:'空腹血糖',value:'6.2',unit:'mmol/L',refRange:'3.9-6.1'},{name:'糖化血红蛋白',value:'6.8',unit:'%',refRange:'4.0-6.0'}], images:[], treatment:'继续二甲双胍治疗，建议每周监测血糖', nextFollowupDate:'2026-09-16', summary:'血糖控制尚可，糖化偏高需关注', status:'已完成' },
+  { id:4, patientId:'SF-2026003', date:'2026-06-20', type:'远程随访', doctor:'王医生', chiefComplaint:'视物变形，阅读困难', presentIllness:'黄斑区渗出明显', physicalExam:'视力右0.3左0.5', labTests:[{name:'视力',value:'0.3',unit:'',refRange:'≥0.8'},{name:'OCT-CMT',value:'385',unit:'μm',refRange:'≤300'}], images:[{name:'右眼OCT',url:'data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22120%22%20height=%22120%22%3E%3Crect%20fill=%22%23e6f4ea%22%20width=%22120%22%20height=%22120%22/%3E%3Ctext%20x=%2225%22%20y=%2265%22%20font-size=%2211%22%20fill=%22%23137333%22%3E黄斑OCT%3C/text%3E%3C/svg%3E'}], treatment:'抗VEGF治疗，建议每月注射', nextFollowupDate:'2026-07-20', summary:'黄斑水肿需积极干预', status:'已完成' },
+  { id:5, patientId:'SF-2026005', date:'2026-06-10', type:'门诊随访', doctor:'李主任', chiefComplaint:'视力模糊，复视', presentIllness:'糖尿病15年，血压控制可', physicalExam:'眼底散瞳检查见微血管瘤及点状出血', labTests:[{name:'空腹血糖',value:'7.8',unit:'mmol/L',refRange:'3.9-6.1'},{name:'血压',value:'142/88',unit:'mmHg',refRange:'≤140/90'}], images:[], treatment:'全视网膜光凝治疗PRP，加强降糖', nextFollowupDate:'2026-09-08', summary:'需行激光治疗，密切监测血糖', status:'已完成' },
+  { id:6, patientId:'SF-2026007', date:'2026-06-25', type:'门诊随访', doctor:'张教授', chiefComplaint:'视物清晰，无不适', presentIllness:'青光眼治疗后稳定', physicalExam:'眼压正常', labTests:[{name:'眼压',value:'16',unit:'mmHg',refRange:'10-21'},{name:'视野',value:'正常',unit:'',refRange:'无缺损'}], images:[], treatment:'维持当前用药', nextFollowupDate:'2026-09-23', summary:'青光眼控制良好', status:'已完成' },
+  { id:7, patientId:'SF-2026008', date:'2026-06-28', type:'门诊随访', doctor:'李主任', chiefComplaint:'术后第7天复查', presentIllness:'白内障术后恢复良好', physicalExam:'角膜透明，前房清', labTests:[{name:'视力',value:'0.8',unit:'',refRange:'≥0.8'}], images:[], treatment:'继续用抗生素眼药水，一周后复查', nextFollowupDate:'2026-07-05', summary:'术后恢复良好', status:'已完成' },
+  { id:8, patientId:'SF-2026009', date:'2026-06-01', type:'门诊随访', doctor:'陈医生', chiefComplaint:'偶有眼胀', presentIllness:'高血压10年，眼底动脉硬化II级', physicalExam:'眼底动脉变细，反光增强', labTests:[{name:'血压',value:'150/95',unit:'mmHg',refRange:'≤140/90'}], images:[], treatment:'调整降压药物，半年后复查眼底', nextFollowupDate:'2026-11-28', summary:'血压需进一步控制', status:'已完成' },
+  { id:9, patientId:'SF-2026004', date:'2026-05-30', type:'门诊随访', doctor:'张教授', chiefComplaint:'左眼视力进行性下降', presentIllness:'眼压控制不佳', physicalExam:'左眼眼压28mmHg', labTests:[{name:'眼压',value:'28',unit:'mmHg',refRange:'10-21'}], images:[], treatment:'加强用药，必要时手术', nextFollowupDate:'2026-06-30', summary:'眼压失控，需密切随访', status:'已完成' },
+  { id:10, patientId:'SF-2026012', date:'2026-06-20', type:'电话随访', doctor:'张教授', chiefComplaint:'无明显不适', presentIllness:'规律用药中', physicalExam:'-', labTests:[], images:[], treatment:'继续原方案', nextFollowupDate:'2026-09-18', summary:'病情稳定', status:'已完成' },
+  { id:11, patientId:'SF-2026014', date:'2026-06-25', type:'门诊随访', doctor:'王医生', chiefComplaint:'术后3个月复查', presentIllness:'视力稳定', physicalExam:'人工晶体位置良好', labTests:[{name:'视力',value:'0.9',unit:'',refRange:'≥0.8'}], images:[], treatment:'定期复查', nextFollowupDate:'2026-09-23', summary:'恢复良好', status:'已完成' }
+];
+
+let currentPage = 1;
+const pageSize = 10;
+let currentPatientId = null;
+let filteredPatients = [];
+let tempPlanChanges = {};
+let currentModifyPatientId = null;
+let uploadedFiles = [];
+
+// ======== UTILS ========
+function formatDate(dateStr) { if(!dateStr) return '-'; var d=new Date(dateStr+ 'T00:00:00'); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function todayStr() { var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+
+function updateFollowupStatus() {
+  var today = todayStr();
+  patientData.forEach(function(p) {
+    if (!p.nextFollowupDate || p.nextFollowupDate === '') { p.followupStatus = '待随访'; }
+    else if (p.nextFollowupDate < today) { p.followupStatus = '已超期'; }
+    else { p.followupStatus = '正常'; }
+  });
+}
+
+function getStatusTag(status) {
+  if (status === '正常') return '<span class="tag tag-green">随访正常</span>';
+  if (status === '待随访') return '<span class="tag tag-orange">待随访</span>';
+  if (status === '已超期') return '<span class="tag tag-danger">已超期</span>';
+  return '<span class="tag tag-gray">'+status+'</span>';
+}
+
+function getFollowupTypeTag(type) {
+  if (type === '门诊随访') return '<span class="tag tag-blue">门诊随访</span>';
+  if (type === '电话随访') return '<span class="tag tag-green">电话随访</span>';
+  if (type === '远程随访') return '<span class="tag tag-gray">远程随访</span>';
+  return '<span class="tag tag-gray">'+type+'</span>';
+}
+
+// ======== STATS ========
+function renderStats() {
+  updateFollowupStatus();
+  var total = patientData.length;
+  var normal = patientData.filter(function(p){return p.followupStatus==='正常';}).length;
+  var pending = patientData.filter(function(p){return p.followupStatus==='待随访';}).length;
+  var overdue = patientData.filter(function(p){return p.followupStatus==='已超期';}).length;
+  document.getElementById('statsRow').innerHTML =
+    '<div class="stat-card total" onclick="filterByStatus(\'\')"><div class="stat-value">'+total+'</div><div class="stat-label">随访总人数</div></div>'+
+    '<div class="stat-card normal" onclick="filterByStatus(\'正常\')"><div class="stat-value">'+normal+'</div><div class="stat-label">随访正常</div></div>'+
+    '<div class="stat-card pending" onclick="filterByStatus(\'待随访\')"><div class="stat-value">'+pending+'</div><div class="stat-label">待随访</div></div>'+
+    '<div class="stat-card overdue" onclick="filterByStatus(\'已超期\')"><div class="stat-value">'+overdue+'</div><div class="stat-label">已超期</div></div>';
+  if (overdue > 0) {
+    document.getElementById('overdueAlert').style.display = 'flex';
+    document.getElementById('overdueAlertText').textContent = '系统检测到'+overdue+'名患者随访已超期，请及时处理。';
+  } else {
+    document.getElementById('overdueAlert').style.display = 'none';
+  }
+}
+
+function filterByStatus(status) {
+  document.getElementById('filterStatus').value = status;
+  applyFilters();
+}
+
+// ======== FILTER & TABLE ========
+function applyFilters() {
+  var search = document.getElementById('searchInput').value.toLowerCase();
+  var disease = document.getElementById('filterDisease').value;
+  var status = document.getElementById('filterStatus').value;
+  var dateFrom = document.getElementById('filterDateFrom').value;
+  var dateTo = document.getElementById('filterDateTo').value;
+
+  filteredPatients = patientData.filter(function(p) {
+    if (search && p.id.toLowerCase().indexOf(search)===-1 && p.name.toLowerCase().indexOf(search)===-1) return false;
+    if (disease && p.diseaseType !== disease) return false;
+    if (status && p.followupStatus !== status) return false;
+    if (dateFrom && p.lastFollowupDate && p.lastFollowupDate < dateFrom) return false;
+    if (dateTo && p.lastFollowupDate && p.lastFollowupDate > dateTo) return false;
+    return true;
+  });
+  currentPage = 1;
+  renderTable();
+  renderStats();
+}
+
+function resetFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterDisease').value = '';
+  document.getElementById('filterDateFrom').value = '';
+  document.getElementById('filterDateTo').value = '';
+  document.getElementById('filterStatus').value = '';
+  filteredPatients = patientData.slice();
+  currentPage = 1;
+  renderTable();
+  renderStats();
+}
+
+function renderTable() {
+  var start = (currentPage - 1) * pageSize;
+  var page = filteredPatients.slice(start, start + pageSize);
+  var tbody = document.getElementById('patientTableBody');
+  tbody.innerHTML = '';
+  page.forEach(function(p) {
+    var rowClass = p.followupStatus === '已超期' ? ' class="warning-row"' : '';
+    tbody.innerHTML += '<tr'+rowClass+'>'+
+      '<td>'+p.id+'</td>'+
+      '<td>'+p.name+'</td>'+
+      '<td>'+p.gender+'</td>'+
+      '<td>'+p.age+'</td>'+
+      '<td>'+p.diseaseType+'</td>'+
+      '<td>'+formatDate(p.lastFollowupDate)+'</td>'+
+      '<td>'+formatDate(p.nextFollowupDate)+'</td>'+
+      '<td>'+getStatusTag(p.followupStatus)+'</td>'+
+      '<td>'+p.followupCycle+'天</td>'+
+      '<td>'+
+        '<a class="btn btn-outline btn-sm" href="javascript:void(0)" onclick="openDetail(\''+p.id+'\')">查看详情</a> '+
+        '<select class="status-select status-'+ (p.followupStatus==='正常'?'green':p.followupStatus==='待随访'?'orange':'danger')+'" onchange="updatePatientStatus(\''+p.id+'\',this.value)">'+
+        '<option value="正常"'+(p.followupStatus==='正常'?' selected':'')+'>随访正常</option>'+
+        '<option value="待随访"'+(p.followupStatus==='待随访'?' selected':'')+'>待随访</option>'+
+        '<option value="已超期"'+(p.followupStatus==='已超期'?' selected':'')+'>已超期</option>'+
+        '</select>'+
+      '</td>'+
+      '</tr>';
+  });
+  renderPagination();
+}
+
+function updatePatientStatus(pid,status) {
+  var p = patientData.find(function(p){return p.id===pid;});
+  if(p){ p.followupStatus = status; }
+  renderTable();
+  renderStats();
+}
+
+function renderPagination() {
+  var totalPages = Math.ceil(filteredPatients.length / pageSize) || 1;
+  var box = document.getElementById('paginationBox');
+  var html = '<span style="font-size:13px;color:var(--gray-600);margin-right:12px;">共'+filteredPatients.length+'条记录，第'+currentPage+'/'+totalPages+'页</span>';
+  html += '<button '+(currentPage===1?'disabled':'')+' onclick="goPage('+(currentPage-1)+')">上一页</button>';
+  for (var i=1;i<=totalPages;i++) {
+    html += '<button class="'+(i===currentPage?'active':'')+'" onclick="goPage('+i+')">'+i+'</button>';
+  }
+  html += '<button '+(currentPage===totalPages?'disabled':'')+' onclick="goPage('+(currentPage+1)+')">下一页</button>';
+  box.innerHTML = html;
+}
+
+function goPage(p) { currentPage = p; renderTable(); }
+
+// ======== EXPORT ========
+function exportCSV() {
+  var headers = ['患者ID','姓名','性别','年龄','疾病类型','末次随访','下次随访','随访状态','随访周期'];
+  var rows = [headers.join(',')];
+  filteredPatients.forEach(function(p) {
+    rows.push([p.id,p.name,p.gender,p.age,p.diseaseType,formatDate(p.lastFollowupDate),formatDate(p.nextFollowupDate),p.followupStatus,p.followupCycle+'天'].join(','));
+  });
+  var csv = '\uFEFF' + rows.join('\n');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  var d = new Date();
+  a.download = '病历随访列表_'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ======== DETAIL VIEW ========
+function openDetail(pid) {
+  currentPatientId = pid;
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('detailView').style.display = 'block';
+  document.getElementById('fabBtn').style.display = 'flex';
+  renderDetail();
+}
+
+function backToList() {
+  document.getElementById('listView').style.display = 'block';
+  document.getElementById('detailView').style.display = 'none';
+  currentPatientId = null;
+  document.getElementById('fabBtn').style.display = 'flex';
+  updateFollowupStatus();
+  applyFilters();
+}
+
+function renderDetail() {
+  var p = patientData.find(function(p){return p.id===currentPatientId;});
+  if (!p) return;
+  var records = followupRecords.filter(function(r){return r.patientId===currentPatientId;}).sort(function(a,b){return b.date.localeCompare(a.date);});
+
+  var html = '';
+  // Patient info card
+  html += '<div class="card">';
+  html += '<div class="patient-info-card">';
+  html += '<div class="info-main">';
+  html += '<h2>'+p.name+' <span style="font-size:14px;color:var(--gray-500);font-weight:400;">'+p.gender+' '+p.age+'岁</span></h2>';
+  html += '<div class="info-meta"><span>患者ID：'+p.id+'</span><span>建档时间：'+p.createDate+'</span></div>';
+  html += '<div class="info-tags"><span class="tag tag-blue">'+p.diseaseType+'</span>'+getStatusTag(p.followupStatus)+'</div>';
+  html += '<div class="info-meta"><span>联系电话：'+p.phone+'</span><span>主治医生：'+p.doctor+'</span><span>下次随访：'+formatDate(p.nextFollowupDate)+'</span></div>';
+  html += '</div>';
+  html += '<div class="info-aside"><button class="btn btn-outline" onclick="openModifyPlan(\''+p.id+'\')">修改随访计划</button></div>';
+  html += '</div></div>';
+
+  // Timeline
+  html += '<div class="card">';
+  html += '<div class="card-header"><span class="card-title">随访记录</span><span style="font-size:13px;color:var(--gray-500);">共'+records.length+'条</span></div>';
+  html += '<div class="timeline" id="timelineContainer">';
+
+  if (records.length === 0) {
+    html += '<div style="text-align:center;padding:40px;color:var(--gray-500);">暂无随访记录</div>';
+  }
+
+  var showCount = Math.min(records.length, 5);
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var expanded = i === 0; // first (latest) expanded
+    var hideClass = i >= showCount ? ' style="display:none;"' : '';
+    var isExpandedClass = expanded ? ' expanded' : ' collapsed';
+
+    html += '<div class="timeline-item'+isExpandedClass+'" data-rec-id="'+r.id+'"'+hideClass+'>';
+    html += '<div class="timeline-dot"></div>';
+    html += '<div class="timeline-header" onclick="toggleTimelineItem(this.parentElement)">';
+    html += '<span class="timeline-date">'+r.date+'</span>';
+    html += getFollowupTypeTag(r.type);
+    html += '<span class="timeline-doctor">'+r.doctor+'</span>';
+    if (!expanded) {
+      html += '<span class="timeline-summary" style="margin-left:8px;">'+r.summary+'</span>';
+    }
+    html += '</div>';
+    html += '<div class="timeline-body">';
+    html += '<div class="section-label">主诉</div><div class="section-content">'+r.chiefComplaint+'</div>';
+    html += '<div class="section-label">现病史</div><div class="section-content">'+r.presentIllness+'</div>';
+    html += '<div class="section-label">体格检查</div><div class="section-content">'+r.physicalExam+'</div>';
+    if (r.labTests && r.labTests.length > 0) {
+      html += '<div class="section-label">检查指标</div>';
+      html += '<table><thead><tr><th>指标名</th><th>数值</th><th>单位</th><th>参考范围</th></tr></thead><tbody>';
+      r.labTests.forEach(function(lt) {
+        html += '<tr><td>'+lt.name+'</td><td>'+lt.value+'</td><td>'+lt.unit+'</td><td>'+lt.refRange+'</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+    if (r.images && r.images.length > 0) {
+      html += '<div class="section-label">检查影像</div>';
+      html += '<div class="image-thumbs">';
+      r.images.forEach(function(img) {
+        html += '<img src="'+img.url+'" alt="'+img.name+'" title="'+img.name+'" onclick="previewImage(\''+img.url+'\')">';
+      });
+      html += '</div>';
+    }
+    html += '<div class="section-label">治疗方案</div><div class="section-content">'+r.treatment+'</div>';
+    html += '<div class="section-label">下次随访日期</div><div class="section-content">'+formatDate(r.nextFollowupDate)+'</div>';
+    html += '<div class="timeline-actions">';
+    html += '<button class="btn btn-outline btn-sm" onclick="editFollowupRecord('+r.id+')">编辑</button>';
+    html += '<button class="btn btn-outline btn-sm" style="color:var(--danger);" onclick="deleteFollowupRecord('+r.id+')">删除</button>';
+    html += '</div>';
+    html += '</div></div>';
+  }
+
+  if (records.length > 5) {
+    html += '<div class="load-more-btn"><button class="btn btn-outline btn-sm" id="loadMoreBtn" onclick="loadMoreRecords()">加载更多历史记录</button></div>';
+  }
+
+  html += '</div></div>';
+  document.getElementById('detailContent').innerHTML = html;
+}
+
+function toggleTimelineItem(el) {
+  el.classList.toggle('expanded');
+  el.classList.toggle('collapsed');
+}
+
+function loadMoreRecords() {
+  var items = document.querySelectorAll('#timelineContainer .timeline-item');
+  items.forEach(function(item) { item.style.display = ''; });
+  var btn = document.getElementById('loadMoreBtn');
+  if (btn) btn.style.display = 'none';
+}
+
+function previewImage(url) {
+  document.getElementById('imagePreviewImg').src = url;
+  document.getElementById('imagePreviewModal').classList.add('active');
+}
+
+function closeImagePreview() {
+  document.getElementById('imagePreviewModal').classList.remove('active');
+}
+
+function editFollowupRecord(rid) {
+  var r = followupRecords.find(function(r){return r.id===rid;});
+  if(!r) return;
+  openAddFollowup(r.patientId, r);
+}
+
+function deleteFollowupRecord(rid) {
+  if(!confirm('确定删除此随访记录吗？')) return;
+  followupRecords = followupRecords.filter(function(r){return r.id!==rid;});
+  renderDetail();
+}
+
+// ======== NEW FOLLOWUP MODAL ========
+function openAddFollowup(prefillPatientId, editRecord) {
+  uploadedFiles = [];
+  currentModifyPatientId = prefillPatientId || null;
+
+  var today = todayStr();
+  var html = '';
+  // Patient select
+  html += '<div class="form-group"><label>选择患者 <span class="required">*</span></label>';
+  html += '<select id="fuPatient" '+(prefillPatientId?'disabled':'')+' onchange="onPatientChange()"><option value="">请选择患者</option>';
+  patientData.forEach(function(p) {
+    html += '<option value="'+p.id+'"'+(prefillPatientId===p.id?' selected':'')+'>'+p.id+' - '+p.name+' - '+p.diseaseType+'</option>';
+  });
+  html += '</select></div>';
+
+  html += '<div class="form-row">';
+  html += '<div class="form-group"><label>随访日期 <span class="required">*</span></label><input type="date" id="fuDate" value="'+(editRecord?editRecord.date:today)+'"></div>';
+  html += '<div class="form-group"><label>随访类型 <span class="required">*</span></label><select id="fuType"><option value="门诊随访"'+(editRecord&&editRecord.type==='门诊随访'?' selected':'')+'>门诊随访</option><option value="电话随访"'+(editRecord&&editRecord.type==='电话随访'?' selected':'')+'>电话随访</option><option value="远程随访"'+(editRecord&&editRecord.type==='远程随访'?' selected':'')+'>远程随访</option></select></div>';
+  html += '</div>';
+
+  html += '<div class="form-row">';
+  html += '<div class="form-group"><label>随访医生 <span class="required">*</span></label><select id="fuDoctor">';
+  doctors.forEach(function(d) {
+    html += '<option value="'+d+'"'+(editRecord&&editRecord.doctor===d?' selected':'')+'>'+d+'</option>';
+  });
+  html += '</select></div>';
+  html += '<div class="form-group"><label>下次随访日期 <span class="required">*</span></label><input type="date" id="fuNextDate" value="'+(editRecord?editRecord.nextFollowupDate:'')+'"></div>';
+  html += '</div>';
+
+  html += '<div class="form-group"><label>主诉</label><input type="text" id="fuChiefComplaint" value="'+(editRecord?editRecord.chiefComplaint:'')+'"></div>';
+  html += '<div class="form-group"><label>现病史</label><textarea id="fuPresentIllness">'+(editRecord?editRecord.presentIllness:'')+'</textarea></div>';
+  html += '<div class="form-group"><label>体格检查</label><textarea id="fuPhysicalExam">'+(editRecord?editRecord.physicalExam:'')+'</textarea></div>';
+
+  // Lab tests
+  html += '<div class="form-group"><label>检查指标 <button class="btn btn-outline btn-sm" onclick="addLabRow()" style="margin-left:8px;">+ 添加</button></label>';
+  html += '<div id="labRows">';
+  var labData = editRecord ? editRecord.labTests : [{name:'',value:'',unit:'',refRange:''}];
+  labData.forEach(function(lab) {
+    html += '<div class="lab-row"><input placeholder="指标名" value="'+(lab.name||'')+'"><input placeholder="数值" value="'+(lab.value||'')+'" style="flex:0.6"><input placeholder="单位" value="'+(lab.unit||'')+'" style="flex:0.5"><input placeholder="参考范围" value="'+(lab.refRange||'')+'" style="flex:1"><button class="btn btn-outline btn-sm" onclick="this.parentElement.remove()">-</button></div>';
+  });
+  html += '</div></div>';
+
+  // Upload
+  html += '<div class="form-group"><label>检查影像</label>';
+  html += '<div class="upload-zone" onclick="document.getElementById(\'fileInput\').click()">点击上传文件（JPG/PNG/PDF，单文件不超过10MB）</div>';
+  html += '<input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf" style="display:none;" multiple onchange="handleFileUpload()">';
+  html += '<div class="upload-list" id="uploadList"></div></div>';
+
+  if (editRecord && editRecord.images && editRecord.images.length > 0) {
+    editRecord.images.forEach(function(img) {
+      uploadedFiles.push({name:img.name, url:img.url});
+    });
+    renderUploadList();
+  }
+
+  html += '<div class="form-group"><label>治疗方案</label><textarea id="fuTreatment">'+(editRecord?editRecord.treatment:'')+'</textarea></div>';
+  html += '<div class="form-group"><label>本次随访摘要</label><input type="text" id="fuSummary" value="'+(editRecord?editRecord.summary:'')+'" placeholder="一行文字概括本次随访"></div>';
+
+  document.getElementById('addFollowupBody').innerHTML = html;
+  document.getElementById('addFollowupModal').classList.add('active');
+
+  if (prefillPatientId && !editRecord) {
+    setTimeout(function() { onPatientChange(); }, 100);
+  }
+
+  // Store editRecord reference
+  document.getElementById('addFollowupModal')._editRecord = editRecord || null;
+}
+
+function closeAddFollowup() {
+  document.getElementById('addFollowupModal').classList.remove('active');
+  uploadedFiles = [];
+  currentModifyPatientId = null;
+}
+
+function addLabRow() {
+  var div = document.createElement('div');
+  div.className = 'lab-row';
+  div.innerHTML = '<input placeholder="指标名"><input placeholder="数值" style="flex:0.6"><input placeholder="单位" style="flex:0.5"><input placeholder="参考范围" style="flex:1"><button class="btn btn-outline btn-sm" onclick="this.parentElement.remove()">-</button>';
+  document.getElementById('labRows').appendChild(div);
+}
+
+function handleFileUpload() {
+  var files = document.getElementById('fileInput').files;
+  for (var i=0;i<files.length;i++) {
+    if (files[i].size > 10*1024*1024) { alert('文件 '+files[i].name+' 超过10MB限制'); continue; }
+    uploadedFiles.push({name:files[i].name, url:'data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22120%22%20height=%22120%22%3E%3Crect%20fill=%22%23f5f7fa%22%20width=%22120%22%20height=%22120%22/%3E%3Ctext%20x=%2215%22%20y=%2265%22%20font-size=%2210%22%20fill=%22%23999%22%3E'+encodeURIComponent(files[i].name.substring(0,12))+'%3C/text%3E%3C/svg%3E'});
+  }
+  renderUploadList();
+}
+
+function renderUploadList() {
+  var list = document.getElementById('uploadList');
+  list.innerHTML = '';
+  uploadedFiles.forEach(function(f,idx) {
+    list.innerHTML += '<div class="file-item"><span>'+f.name+'</span><button onclick="uploadedFiles.splice('+idx+',1);renderUploadList();">&times;</button></div>';
+  });
+}
+
+function onPatientChange() {
+  var pid = document.getElementById('fuPatient').value;
+  if (!pid) return;
+  var p = patientData.find(function(p){return p.id===pid;});
+  if (!p) return;
+  var template = followupTemplates[p.diseaseType];
+  var cycle = template ? template.defaultCycle : 90;
+  var fuDate = document.getElementById('fuDate').value || todayStr();
+  var nextDate = addDays(fuDate, cycle);
+  document.getElementById('fuNextDate').value = nextDate;
+}
+
+function addDays(dateStr, days) {
+  var d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function saveFollowup(mode) {
+  var editRecord = document.getElementById('addFollowupModal')._editRecord;
+  var pid = document.getElementById('fuPatient').value;
+  if (!pid) { alert('请选择患者'); return; }
+  var date = document.getElementById('fuDate').value;
+  if (!date) { alert('请选择随访日期'); return; }
+  var type = document.getElementById('fuType').value;
+  var doctor = document.getElementById('fuDoctor').value;
+  var nextDate = document.getElementById('fuNextDate').value;
+  if (!nextDate) { alert('请选择下次随访日期'); return; }
+
+  var labRows = document.getElementById('labRows').querySelectorAll('.lab-row');
+  var labTests = [];
+  labRows.forEach(function(row) {
+    var inputs = row.querySelectorAll('input');
+    if (inputs[0].value) {
+      labTests.push({name:inputs[0].value, value:inputs[1].value, unit:inputs[2].value, refRange:inputs[3].value});
+    }
+  });
+
+  var record = {
+    id: editRecord ? editRecord.id : (followupRecords.length > 0 ? Math.max.apply(null, followupRecords.map(function(r){return r.id;}))+1 : 1),
+    patientId: pid,
+    date: date,
+    type: type,
+    doctor: doctor,
+    chiefComplaint: document.getElementById('fuChiefComplaint').value,
+    presentIllness: document.getElementById('fuPresentIllness').value,
+    physicalExam: document.getElementById('fuPhysicalExam').value,
+    labTests: labTests,
+    images: uploadedFiles.slice(),
+    treatment: document.getElementById('fuTreatment').value,
+    nextFollowupDate: nextDate,
+    summary: document.getElementById('fuSummary').value,
+    status: mode === 'done' ? '已完成' : '待审核'
+  };
+
+  if (editRecord) {
+    var idx = followupRecords.findIndex(function(r){return r.id===editRecord.id;});
+    if (idx >= 0) { followupRecords[idx] = record; }
+  } else {
+    followupRecords.push(record);
+  }
+
+  // Update patient
+  var p = patientData.find(function(p){return p.id===pid;});
+  if (p) {
+    p.lastFollowupDate = date;
+    p.nextFollowupDate = nextDate;
+    p.doctor = doctor;
+    var template = followupTemplates[p.diseaseType];
+    if (template) p.followupCycle = template.defaultCycle;
+  }
+
+  closeAddFollowup();
+  if (currentPatientId) { renderDetail(); }
+  else { applyFilters(); }
+}
+
+// ======== PLAN MANAGE MODAL ========
+function openPlanManage() {
+  tempPlanChanges = {};
+  var html = '<div class="table-wrap"><table><thead><tr><th>疾病类型</th><th>默认随访周期（天）</th><th>稳定期周期（天）</th><th>操作</th></tr></thead><tbody>';
+  Object.keys(followupTemplates).forEach(function(disease) {
+    var t = followupTemplates[disease];
+    html += '<tr>';
+    html += '<td>'+disease+'</td>';
+    html += '<td><input type="number" data-disease="'+disease+'" data-field="defaultCycle" value="'+t.defaultCycle+'" style="width:80px;padding:4px 8px;border:1px solid var(--gray-300);border-radius:4px;font-size:13px;"></td>';
+    html += '<td><input type="number" data-disease="'+disease+'" data-field="stableCycle" value="'+(t.stableCycle||'')+'" style="width:80px;padding:4px 8px;border:1px solid var(--gray-300);border-radius:4px;font-size:13px;" placeholder="无"></td>';
+    html += '<td><button class="btn btn-outline btn-sm" onclick="batchApplyCycle(\''+disease+'\')">批量应用到此疾病患者</button></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('planManageBody').innerHTML = html;
+  document.getElementById('planManageModal').classList.add('active');
+}
+
+function closePlanManage() {
+  document.getElementById('planManageModal').classList.remove('active');
+}
+
+function savePlanChanges() {
+  var inputs = document.querySelectorAll('#planManageBody input');
+  inputs.forEach(function(inp) {
+    var disease = inp.dataset.disease;
+    var field = inp.dataset.field;
+    if (!followupTemplates[disease]) followupTemplates[disease] = {defaultCycle:90, stableCycle:null};
+    followupTemplates[disease][field] = parseInt(inp.value) || null;
+  });
+  closePlanManage();
+  alert('随访计划配置已保存');
+}
+
+function batchApplyCycle(disease) {
+  var template = followupTemplates[disease];
+  if (!template) return;
+  if (!confirm('确定将"'+disease+'"的默认周期('+template.defaultCycle+'天)应用到所有该疾病的患者吗？')) return;
+  patientData.forEach(function(p) {
+    if (p.diseaseType === disease) {
+      p.followupCycle = template.defaultCycle;
+    }
+  });
+  alert('已批量应用');
+  applyFilters();
+}
+
+// ======== MODIFY FOLLOWUP PLAN ========
+function openModifyPlan(pid) {
+  currentModifyPatientId = pid;
+  var p = patientData.find(function(p){return p.id===pid;});
+  if (!p) return;
+
+  var html = '<div class="form-group"><label>当前随访周期：<strong>'+p.followupCycle+'天</strong></label></div>';
+  html += '<div class="form-group"><label>当前下次随访：<strong>'+formatDate(p.nextFollowupDate)+'</strong></label></div>';
+  html += '<div class="form-group"><label>新随访周期</label><select id="modifyCycle" onchange="onModifyCycleChange()"><option value="30">30天</option><option value="60">60天</option><option value="90">90天</option><option value="180">180天</option><option value="360">360天</option><option value="custom">自定义</option></select></div>';
+  html += '<div class="form-group" id="customCycleGroup" style="display:none;"><label>自定义天数</label><input type="number" id="customCycleDays" placeholder="请输入天数" min="1"></div>';
+  html += '<div class="form-group"><label>下次随访日期</label><input type="date" id="modifyNextDate" value="'+p.nextFollowupDate+'"></div>';
+  html += '<div class="form-group"><label>备注</label><input type="text" id="modifyRemark" placeholder="修改原因"></div>';
+
+  document.getElementById('modifyPlanBody').innerHTML = html;
+  document.getElementById('modifyPlanModal').classList.add('active');
+}
+
+function closeModifyPlan() {
+  document.getElementById('modifyPlanModal').classList.remove('active');
+  currentModifyPatientId = null;
+}
+
+function onModifyCycleChange() {
+  var val = document.getElementById('modifyCycle').value;
+  document.getElementById('customCycleGroup').style.display = val === 'custom' ? 'block' : 'none';
+  if (val !== 'custom' && currentModifyPatientId) {
+    var today = todayStr();
+    var nextDate = addDays(today, parseInt(val));
+    document.getElementById('modifyNextDate').value = nextDate;
+  }
+}
+
+function saveModifyPlan() {
+  var p = patientData.find(function(p){return p.id===currentModifyPatientId;});
+  if (!p) return;
+
+  var cycleVal = document.getElementById('modifyCycle').value;
+  var cycleDays = cycleVal === 'custom' ? parseInt(document.getElementById('customCycleDays').value) : parseInt(cycleVal);
+  if (!cycleDays || cycleDays < 1) { alert('请输入有效的随访周期天数'); return; }
+
+  p.followupCycle = cycleDays;
+  p.nextFollowupDate = document.getElementById('modifyNextDate').value;
+
+  closeModifyPlan();
+  if (currentPatientId) { renderDetail(); }
+  else { applyFilters(); }
+}
+
+// ======== INIT ========
+updateFollowupStatus();
+filteredPatients = patientData.slice();
+applyFilters();
+
 function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
 document.addEventListener('DOMContentLoaded', function() {
   try { var user = JSON.parse(localStorage.getItem('life_med_user')); if (!user) { window.location.href = 'login.html'; return; } document.getElementById('headerUserName').textContent = user.name || '用户'; } catch(e) { window.location.href = 'login.html'; }

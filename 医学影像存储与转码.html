@@ -1,10 +1,19 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>医学影像存储与转码</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>医学影像存储与转码</title>
+<style>
 :root {
-    --primary: #1a73e8; --primary-dark: #1557b0; --primary-light: #e8f0fe; --success: #34a853; --warning: #fbbc04; --danger: #ea4335;
-    --gray-50: #f8f9fa; --gray-100: #f5f7fa; --gray-200: #e8ecf0; --gray-300: #dadce0; --gray-400: #bdc1c6; --gray-500: #9aa0a6;
-    --gray-600: #80868b; --gray-700: #5f6368; --gray-800: #3c4043; --gray-900: #202124; --text: #333333; --text-secondary: #999999;
+    --primary: #1a73e8; --primary-dark: #1557b0; --primary-light: #e8f0fe;
+    --success: #34a853; --warning: #fbbc04; --danger: #ea4335;
+    --gray-50: #f8f9fa; --gray-100: #f5f7fa; --gray-200: #e8ecf0; --gray-300: #dadce0;
+    --gray-400: #bdc1c6; --gray-500: #9aa0a6; --gray-600: #80868b; --gray-700: #5f6368;
+    --gray-800: #3c4043; --gray-900: #202124; --text: #333333; --text-secondary: #999999;
     --bg: #ffffff; --sidebar-width: 220px; --header-height: 56px; --radius: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); --shadow-lg: 0 4px 12px rgba(0,0,0,0.12); --transition: all 0.2s ease;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12); --transition: all 0.2s ease;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-size: 14px; color: var(--text); background: var(--gray-50); min-height: 100vh; line-height: 1.6; }
@@ -29,140 +38,909 @@ body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-
 .breadcrumb { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
 .breadcrumb a { color: var(--primary); text-decoration: none; }
 .page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; }
+
+/* 卡片通用 */
 .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
 .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
 .card-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
+
+/* 按钮 */
 .btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; transition: var(--transition); gap: 6px; white-space: nowrap; text-decoration: none; }
 .btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-dark); }
 .btn-success { background: var(--success); color: #fff; } .btn-success:hover { background: #2d9249; }
+.btn-warning { background: var(--warning); color: #fff; } .btn-warning:hover { background: #e6a800; }
+.btn-danger { background: var(--danger); color: #fff; } .btn-danger:hover { background: #d33426; }
 .btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); } .btn-outline:hover { background: var(--gray-50); }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-lg { padding: 10px 24px; font-size: 14px; }
+
+/* 表格 */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 table th { background: var(--gray-100); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--gray-700); border-bottom: 2px solid var(--gray-200); white-space: nowrap; }
 table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-800); }
 table tbody tr:hover { background: var(--gray-50); }
 table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
+
+/* 标签 */
 .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
 .tag-blue { background: #e8f0fe; color: #1a73e8; }
 .tag-green { background: #e6f4ea; color: #137333; }
 .tag-orange { background: #fef7e0; color: #b06000; }
+.tag-red { background: #fce8e6; color: #c5221f; }
 .tag-gray { background: #f1f3f4; color: #5f6368; }
-.monitor-grid { display: grid; grid-template-columns: repeat(3, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
-.monitor-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
-.monitor-card .monitor-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.monitor-card .monitor-title { font-size: 12px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
-.monitor-card .monitor-value { font-size: 28px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
-.monitor-card .monitor-unit { font-size: 13px; color: var(--gray-500); margin-left: 4px; }
+
+/* 进度条 */
 .progress-bar { height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
-.progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; position: relative; }
 .progress-bar-fill.blue { background: var(--primary); }
 .progress-bar-fill.green { background: var(--success); }
 .progress-bar-fill.orange { background: var(--warning); }
-.monitor-stats { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-500); }
-</style></head><body>
+.progress-bar-fill.red { background: var(--danger); }
+.progress-bar-fill.gray { background: var(--gray-400); }
+/* 进度条动画脉冲 */
+.progress-pulse::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+/* 存储统计卡片 */
+.storage-stats { display: grid; grid-template-columns: repeat(3, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.stat-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; cursor: pointer; transition: var(--transition); }
+.stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.stat-card .stat-label { font-size: 12px; color: var(--gray-500); margin-bottom: 8px; }
+.stat-card .stat-value { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+
+/* 存储使用率卡片 */
+.usage-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
+.usage-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.usage-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
+.usage-body { display: flex; gap: 30px; align-items: center; }
+.usage-ring { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+.usage-ring canvas { width: 100%; height: 100%; }
+.usage-ring .ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.usage-ring .ring-value { font-size: 32px; font-weight: 700; color: var(--gray-900); }
+.usage-ring .ring-label { font-size: 12px; color: var(--gray-500); }
+.usage-chart { flex: 1; height: 140px; }
+.usage-chart canvas { width: 100%; height: 100%; }
+
+/* 筛选栏 */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px 18px; background: var(--gray-50); border-radius: var(--radius); margin-bottom: 16px; }
+.filter-bar label { font-size: 13px; color: var(--gray-700); white-space: nowrap; }
+.filter-bar input, .filter-bar select { padding: 7px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.filter-bar input:focus, .filter-bar select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+
+/* 分页 */
+.pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 16px; padding: 12px 0; }
+.pagination button { padding: 6px 12px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: var(--transition); }
+.pagination button:hover:not(:disabled) { background: var(--gray-50); }
+.pagination button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+.pagination .page-size-select { margin-left: 16px; padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; }
+
+/* 任务状态统计栏 */
+.task-stats-bar { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.task-stat-item { display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); font-size: 13px; }
+.task-stat-item .stat-dot { width: 10px; height: 10px; border-radius: 50%; }
+.task-stat-item .stat-num { font-size: 20px; font-weight: 700; color: var(--gray-900); margin: 0 4px; }
+
+/* ===== 模态弹窗 ===== */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 2000; display: none; align-items: center; justify-content: center; }
+.modal-overlay.active { display: flex; }
+.modal { background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--gray-200); }
+.modal-header h3 { font-size: 16px; font-weight: 600; color: var(--gray-900); }
+.modal-header .modal-close { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: none; font-size: 20px; color: var(--gray-600); cursor: pointer; border-radius: 6px; transition: var(--transition); }
+.modal-header .modal-close:hover { background: var(--gray-100); color: var(--gray-900); }
+.modal-body { padding: 20px 24px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px; border-top: 1px solid var(--gray-200); }
+
+/* 信息提示框 */
+.info-box { padding: 12px 16px; background: #e8f0fe; border-radius: 6px; color: #1a73e8; font-size: 13px; margin-bottom: 18px; line-height: 1.6; }
+
+/* 拖拽上传区域 */
+.upload-zone { border: 2px dashed var(--gray-300); border-radius: 10px; padding: 36px 20px; text-align: center; cursor: pointer; transition: var(--transition); margin-bottom: 18px; }
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--primary); background: var(--primary-light); }
+.upload-zone.error { border-color: var(--danger); background: #fce8e6; }
+.upload-zone .upload-icon { font-size: 42px; margin-bottom: 10px; }
+.upload-zone .upload-text { font-size: 14px; color: var(--gray-700); margin-bottom: 6px; }
+.upload-zone .upload-hint { font-size: 12px; color: var(--gray-500); }
+
+/* 单选卡片 */
+.radio-cards { display: flex; gap: 12px; margin-bottom: 18px; }
+.radio-card { flex: 1; padding: 14px 16px; border: 2px solid var(--gray-200); border-radius: 8px; cursor: pointer; transition: var(--transition); font-size: 13px; color: var(--gray-700); }
+.radio-card:hover { border-color: var(--gray-400); }
+.radio-card.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+.radio-card .radio-title { font-weight: 600; margin-bottom: 4px; }
+.radio-card .radio-desc { font-size: 12px; color: var(--gray-500); }
+
+/* 已选文件列表 */
+.file-list { margin-bottom: 18px; }
+.file-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--gray-50); border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
+.file-item .file-icon { font-size: 20px; }
+.file-item .file-info { flex: 1; }
+.file-item .file-name { font-weight: 500; color: var(--gray-800); }
+.file-item .file-meta { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.file-item .file-tag { display: inline-block; padding: 1px 8px; background: #e8f0fe; color: #1a73e8; border-radius: 4px; font-size: 11px; margin-left: 8px; }
+.file-item .file-remove { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: none; background: none; color: var(--danger); cursor: pointer; border-radius: 6px; font-size: 16px; transition: var(--transition); }
+.file-item .file-remove:hover { background: #fce8e6; }
+
+/* 存储桶管理表格 */
+.bucket-actions { display: flex; gap: 6px; }
+.bucket-actions .btn { padding: 4px 10px; font-size: 12px; }
+
+/* 表单 */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; color: var(--gray-700); margin-bottom: 6px; font-weight: 500; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.form-group textarea { resize: vertical; min-height: 60px; }
+.form-group .radio-group { display: flex; gap: 16px; }
+.form-group .radio-item { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; }
+.form-group .radio-item input { width: auto; }
+
+/* 响应式 */
+@media (max-width: 900px) {
+    .storage-stats { grid-template-columns: 1fr; }
+    .usage-body { flex-direction: column; }
+    .radio-cards { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
 <div class="header">
   <a href="index.html" class="logo">生命医学智能平台</a>
   <div class="header-nav">
     <a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a>
-    <a href="眼病/慢病数据录入工具.html" class="active">眼病/慢病数据录入工具</a>
+    <a href="表单模板设置.html" class="active">眼病/慢病数据录入工具</a>
     <a href="眼病/慢病影像脱敏工具.html">眼病/慢病影像脱敏工具</a>
-    <a href="眼病/慢病影像标注工具.html">眼病/慢病影像标注工具</a>
+    <a href="影像标注工具.html">眼病/慢病影像标注工具</a>
   </div>
   <div class="header-right">
     <span class="user-info" id="headerUserName">张教授</span>
     <button class="btn-logout" onclick="logout()">退出登录</button>
   </div>
 </div>
+
+<!-- Sidebar -->
 <div class="sidebar">
   <div class="menu-group">
     <div class="menu-group-title">数据采集功能</div>
-    <a class="menu-item" href="表单模板设置.html"><span class="menu-icon">&#x1F4CB;</span><span>表单模板设置</span></a>
-    <a class="menu-item" href="数据录入填写.html"><span class="menu-icon">&#x1F4DD;</span><span>数据录入填写</span></a>
-    <a class="menu-item" href="病历随访.html"><span class="menu-icon">&#x1F3E5;</span><span>病历随访</span></a>
-    <a class="menu-item" href="历史数据导入.html"><span class="menu-icon">&#x1F4E4;</span><span>历史数据导入</span></a>
-    <a class="menu-item active" href="医学影像存储与转码.html"><span class="menu-icon">&#x1F4CA;</span><span>医学影像存储与转码</span></a>
-    <a class="menu-item" href="专家审核与统计分析.html"><span class="menu-icon">&#x1F50D;</span><span>专家审核与统计分析</span></a>
+    <a class="menu-item" href="表单模板设置.html"><span class="menu-icon">📋</span><span>表单模板设置</span></a>
+    <a class="menu-item" href="数据录入填写.html"><span class="menu-icon">📝</span><span>数据录入填写</span></a>
+    <a class="menu-item" href="病历随访.html"><span class="menu-icon">🏥</span><span>病历随访</span></a>
+    <a class="menu-item" href="历史数据导入.html"><span class="menu-icon">📤</span><span>历史数据导入</span></a>
+    <a class="menu-item active" href="医学影像存储与转码.html"><span class="menu-icon">📊</span><span>医学影像存储与转码</span></a>
+    <a class="menu-item" href="专家审核与统计分析.html"><span class="menu-icon">📈</span><span>专家审核与统计分析</span></a>
   </div>
 </div>
+
+<!-- Main Content -->
 <div class="main-content">
-  <div class="breadcrumb"><a href="index.html">首页</a><span>&gt;</span><a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a><span>&gt;</span><span>医学影像存储与转码</span></div>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="index.html">首页</a><span>&gt;</span>
+    <a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a><span>&gt;</span>
+    <span>医学影像存储与转码</span>
+  </div>
+
   <h1 class="page-title">医学影像存储与转码</h1>
-  <!-- 监控卡片 -->
-  <div class="monitor-grid">
-    <div class="monitor-card">
-      <div class="monitor-header"><span class="monitor-title">存储用量</span></div>
-      <div class="monitor-value">3.2<span class="monitor-unit">TB</span></div>
-      <div class="progress-bar"><div class="progress-bar-fill blue" style="width:64%;"></div></div>
-      <div class="monitor-stats"><span>已用 3.2TB</span><span>总量 5.0TB</span></div>
+
+  <!-- 需求5：任务状态统计栏 -->
+  <div class="task-stats-bar">
+    <div class="task-stat-item">
+      <div class="stat-dot" style="background:#1a73e8;"></div>
+      <span>转码中</span>
+      <span class="stat-num" id="statRunning">2</span><span>个</span>
     </div>
-    <div class="monitor-card">
-      <div class="monitor-header"><span class="monitor-title">CPU 使用率</span></div>
-      <div class="monitor-value">47<span class="monitor-unit">%</span></div>
-      <div class="progress-bar"><div class="progress-bar-fill green" style="width:47%;"></div></div>
-      <div class="monitor-stats"><span>核心数: 16</span><span>负载: 中等</span></div>
+    <div class="task-stat-item">
+      <div class="stat-dot" style="background:#fbbc04;"></div>
+      <span>排队中</span>
+      <span class="stat-num" id="statQueued">3</span><span>个</span>
     </div>
-    <div class="monitor-card">
-      <div class="monitor-header"><span class="monitor-title">内存使用</span></div>
-      <div class="monitor-value">28.6<span class="monitor-unit">GB</span></div>
-      <div class="progress-bar"><div class="progress-bar-fill orange" style="width:71%;"></div></div>
-      <div class="monitor-stats"><span>已用 28.6GB</span><span>总量 40GB</span></div>
+    <div class="task-stat-item">
+      <div class="stat-dot" style="background:#34a853;"></div>
+      <span>已完成</span>
+      <span class="stat-num" id="statDone">6</span><span>个</span>
+    </div>
+    <div class="task-stat-item">
+      <div class="stat-dot" style="background:#ea4335;"></div>
+      <span>失败</span>
+      <span class="stat-num" id="statFailed">1</span><span>个</span>
     </div>
   </div>
-  <!-- 转码任务 -->
+
+  <!-- 需求2：存储容量可视化监控 -->
+  <div class="storage-stats">
+    <div class="stat-card" onclick="alert('存储总容量详情：5.0TB\n已分配：5.0TB\n可用：1.8TB')">
+      <div class="stat-label">存储总容量</div>
+      <div class="stat-value">5.0<span style="font-size:16px;color:var(--gray-500);margin-left:4px;">TB</span></div>
+    </div>
+    <div class="stat-card" onclick="alert('已用空间详情：3.2TB\n使用率：64%\n剩余：1.8TB')">
+      <div class="stat-label">已用空间</div>
+      <div class="stat-value">3.2<span style="font-size:16px;color:var(--gray-500);margin-left:4px;">TB</span></div>
+    </div>
+    <div class="stat-card" onclick="alert('对象数量详情：128,456个\nDICOM文件：98,320个\nPNG文件：25,136个\n其他：5,000个')">
+      <div class="stat-label">对象数量</div>
+      <div class="stat-value">128,456<span style="font-size:16px;color:var(--gray-500);margin-left:4px;">个</span></div>
+    </div>
+  </div>
+
+  <!-- 使用率 + 趋势图 -->
+  <div class="usage-card">
+    <div class="usage-header">
+      <span class="usage-title">存储使用率</span>
+    </div>
+    <div class="usage-body">
+      <div class="usage-ring">
+        <canvas id="ringChart" width="140" height="140"></canvas>
+        <div class="ring-text">
+          <div class="ring-value">64%</div>
+          <div class="ring-label">已使用</div>
+        </div>
+      </div>
+      <div class="usage-chart">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- 需求3：存储桶配置管理 -->
   <div class="card">
     <div class="card-header">
-      <span class="card-title">最近转码任务</span>
-      <button class="btn btn-success">手动触发转码</button>
+      <span class="card-title">存储桶管理</span>
+      <button class="btn btn-primary" onclick="openModal('bucketModal')">新建存储桶</button>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>任务ID</th><th>文件名</th><th>原始格式</th><th>目标格式</th><th>文件大小</th><th>进度</th><th>状态</th><th>操作</th></tr></thead>
-        <tbody>
+        <thead>
           <tr>
-            <td>TC-0629-001</td><td>眼底扫描_DICOM_001</td><td>DICOM</td><td>JPEG2000</td><td>256MB</td>
-            <td><div class="progress-bar"><div class="progress-bar-fill green" style="width:100%;"></div></div></td>
-            <td><span class="tag tag-green">已完成</span></td>
-            <td><a class="btn btn-outline btn-sm">下载</a></td>
+            <th>桶名称</th><th>区域</th><th>存储类型</th><th>创建时间</th><th>访问权限</th><th>状态</th><th>操作</th>
           </tr>
-          <tr>
-            <td>TC-0629-002</td><td>OCT影像_20260628</td><td>DICOM</td><td>PNG序列</td><td>1.2GB</td>
-            <td><div class="progress-bar"><div class="progress-bar-fill blue" style="width:72%;"></div></div></td>
-            <td><span class="tag tag-blue">转码中</span></td>
-            <td><a class="btn btn-outline btn-sm">暂停</a></td>
-          </tr>
-          <tr>
-            <td>TC-0629-003</td><td>超声_右眼_20260627</td><td>BMP</td><td>DICOM</td><td>89MB</td>
-            <td><div class="progress-bar"><div class="progress-bar-fill green" style="width:100%;"></div></div></td>
-            <td><span class="tag tag-green">已完成</span></td>
-            <td><a class="btn btn-outline btn-sm">下载</a></td>
-          </tr>
-          <tr>
-            <td>TC-0628-004</td><td>视野检查图_批量</td><td>TIFF</td><td>JPEG2000</td><td>480MB</td>
-            <td><div class="progress-bar"><div class="progress-bar-fill orange" style="width:35%;"></div></div></td>
-            <td><span class="tag tag-orange">排队中</span></td>
-            <td><a class="btn btn-outline btn-sm">取消</a></td>
-          </tr>
-          <tr>
-            <td>TC-0628-005</td><td>荧光造影序列</td><td>DICOM</td><td>MP4</td><td>3.1GB</td>
-            <td><div class="progress-bar"><div class="progress-bar-fill gray" style="width:0%; background:var(--gray-400);"></div></div></td>
-            <td><span class="tag tag-gray">等待中</span></td>
-            <td><a class="btn btn-outline btn-sm">取消</a></td>
-          </tr>
-          <tr>
-            <td>TC-0627-006</td><td>角膜地形图_20260626</td><td>IMG</td><td>PNG</td><td>34MB</td>
-            <td><div class="progress-bar"><div class="progress-bar-fill green" style="width:100%;"></div></div></td>
-            <td><span class="tag tag-green">已完成</span></td>
-            <td><a class="btn btn-outline btn-sm">下载</a></td>
-          </tr>
+        </thead>
+        <tbody id="bucketTableBody">
+          <!-- JS渲染 -->
         </tbody>
       </table>
     </div>
   </div>
+
+  <!-- 需求1 + 需求4：转码任务 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">转码任务列表</span>
+      <button class="btn btn-success" onclick="openModal('transcodeModal')">手动触发转码</button>
+    </div>
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+      <label>状态筛选</label>
+      <select id="statusFilter" onchange="renderTaskTable()">
+        <option value="全部">全部</option>
+        <option value="转码中">转码中</option>
+        <option value="已完成">已完成</option>
+        <option value="失败">失败</option>
+        <option value="排队中">排队中</option>
+        <option value="等待中">等待中</option>
+      </select>
+      <label>文件名搜索</label>
+      <input type="text" id="searchInput" placeholder="输入文件名关键词" oninput="renderTaskTable()">
+      <button class="btn btn-primary btn-sm" onclick="renderTaskTable()">搜索</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('searchInput').value='';document.getElementById('statusFilter').value='全部';renderTaskTable()">重置</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>任务ID</th><th>文件名</th><th>原始格式</th><th>目标格式</th><th>文件大小</th><th>进度</th><th>状态</th><th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="taskTableBody">
+          <!-- JS渲染 -->
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination" id="taskPagination"></div>
+  </div>
+
+</div><!-- /main-content -->
+
+<!-- ===== 需求1：手动触发转码弹窗 ===== -->
+<div class="modal-overlay" id="transcodeModal">
+  <div class="modal" style="width:600px;">
+    <div class="modal-header">
+      <h3>手动触发转码</h3>
+      <button class="modal-close" onclick="closeModal('transcodeModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- 信息提示 -->
+      <div class="info-box">
+        📌 请上传DICOM文件进行手动转码，支持批量上传，最大支持单文件500MB，支持格式：.dcm、.zip压缩包
+      </div>
+      <!-- 拖拽上传 -->
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">☁️</div>
+        <div class="upload-text">点击或拖拽文件到此处上传</div>
+        <div class="upload-hint">支持 .dcm 或 .zip 格式，单文件最大 500MB</div>
+        <input type="file" id="fileInput" multiple accept=".dcm,.zip" style="display:none;" onchange="handleFileSelect(event)">
+      </div>
+      <!-- 目标格式 -->
+      <div style="margin-bottom:14px;font-size:13px;font-weight:500;color:var(--gray-700);">目标格式</div>
+      <div class="radio-cards">
+        <div class="radio-card selected" id="fmtDcm" onclick="selectFormat('dcm')">
+          <div class="radio-title">📄 标准DICOM</div>
+          <div class="radio-desc">保留原始医学影像元数据</div>
+        </div>
+        <div class="radio-card" id="fmtPng" onclick="selectFormat('png')">
+          <div class="radio-title">🖼️ PNG</div>
+          <div class="radio-desc">转换为通用图片格式</div>
+        </div>
+      </div>
+      <!-- 已选文件列表 -->
+      <div class="file-list" id="fileList"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('transcodeModal')">取消</button>
+      <button class="btn btn-primary" onclick="startTranscode()">开始转码</button>
+    </div>
+  </div>
 </div>
+
+<!-- ===== 需求3：新建存储桶弹窗 ===== -->
+<div class="modal-overlay" id="bucketModal">
+  <div class="modal" style="width:500px;">
+    <div class="modal-header">
+      <h3>新建存储桶</h3>
+      <button class="modal-close" onclick="closeModal('bucketModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>桶名称</label>
+        <input type="text" id="bucketName" placeholder="例：life-med-img-bj">
+      </div>
+      <div class="form-group">
+        <label>区域</label>
+        <select id="bucketRegion">
+          <option value="华北-北京">华北-北京</option>
+          <option value="华东-上海">华东-上海</option>
+          <option value="华南-广州">华南-广州</option>
+          <option value="西南-成都">西南-成都</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>存储类型</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="bucketType" value="标准" checked> 标准</label>
+          <label class="radio-item"><input type="radio" name="bucketType" value="低频"> 低频</label>
+          <label class="radio-item"><input type="radio" name="bucketType" value="归档"> 归档</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>访问权限</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="bucketAcl" value="私有" checked> 私有</label>
+          <label class="radio-item"><input type="radio" name="bucketAcl" value="公共读"> 公共读</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>备注</label>
+        <textarea id="bucketRemark" placeholder="可选，输入存储桶用途说明"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('bucketModal')">取消</button>
+      <button class="btn btn-primary" onclick="createBucket()">确认创建</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 存储桶编辑弹窗 ===== -->
+<div class="modal-overlay" id="editBucketModal">
+  <div class="modal" style="width:500px;">
+    <div class="modal-header">
+      <h3>编辑存储桶</h3>
+      <button class="modal-close" onclick="closeModal('editBucketModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>桶名称</label>
+        <input type="text" id="editBucketName" disabled style="background:var(--gray-100);">
+      </div>
+      <div class="form-group">
+        <label>访问权限</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="editBucketAcl" value="私有"> 私有</label>
+          <label class="radio-item"><input type="radio" name="editBucketAcl" value="公共读"> 公共读</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>备注</label>
+        <textarea id="editBucketRemark" placeholder="可选，输入存储桶用途说明"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('editBucketModal')">取消</button>
+      <button class="btn btn-primary" onclick="saveBucketEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
 <script>
-function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+// ========== 数据存储 ==========
+// 存储桶数据
+var buckets = [
+  { name: 'life-med-img-bj', region: '华北-北京', type: '标准', createTime: '2025-03-15 10:30', acl: '私有', status: '运行中', remark: '' },
+  { name: 'life-med-dcm-sh', region: '华东-上海', type: '标准', createTime: '2025-04-20 14:22', acl: '私有', status: '运行中', remark: '' },
+  { name: 'life-med-archive-gz', region: '华南-广州', type: '归档', createTime: '2025-06-10 09:15', acl: '私有', status: '运行中', remark: '' },
+  { name: 'life-med-backup-cd', region: '西南-成都', type: '低频', createTime: '2025-08-05 16:40', acl: '公共读', status: '已停用', remark: '' }
+];
+
+// 转码任务数据
+var tasks = [
+  { id: 'TC-0701-001', fileName: '眼底扫描_DICOM_001.dcm', srcFmt: 'DICOM', dstFmt: 'JPEG2000', size: '256MB', progress: 100, status: '已完成' },
+  { id: 'TC-0701-002', fileName: 'OCT影像_20260701.dcm', srcFmt: 'DICOM', dstFmt: 'PNG序列', size: '1.2GB', progress: 72, status: '转码中' },
+  { id: 'TC-0701-003', fileName: '超声_右眼_20260701.zip', srcFmt: 'ZIP', dstFmt: 'DICOM', size: '89MB', progress: 100, status: '已完成' },
+  { id: 'TC-0630-004', fileName: '视野检查图_批量.dcm', srcFmt: 'DICOM', dstFmt: 'JPEG2000', size: '480MB', progress: 0, status: '排队中' },
+  { id: 'TC-0630-005', fileName: '荧光造影序列.dcm', srcFmt: 'DICOM', dstFmt: 'MP4', size: '3.1GB', progress: 0, status: '等待中' },
+  { id: 'TC-0629-006', fileName: '角膜地形图_20260629.dcm', srcFmt: 'DICOM', dstFmt: 'PNG', size: '34MB', progress: 100, status: '已完成' },
+  { id: 'TC-0629-007', fileName: '眼底照相_左眼.dcm', srcFmt: 'DICOM', dstFmt: 'JPEG2000', size: '128MB', progress: 45, status: '转码中' },
+  { id: 'TC-0628-008', fileName: 'OCT三维重建.dcm', srcFmt: 'DICOM', dstFmt: 'PNG序列', size: '890MB', progress: 100, status: '已完成' },
+  { id: 'TC-0628-009', fileName: '视网膜断层扫描.dcm', srcFmt: 'DICOM', dstFmt: 'DICOM', size: '210MB', progress: 100, status: '已完成' },
+  { id: 'TC-0627-010', fileName: '眼底血管造影.dcm', srcFmt: 'DICOM', dstFmt: 'MP4', size: '2.3GB', progress: 100, status: '已完成' },
+  { id: 'TC-0627-011', fileName: '超声生物显微镜.dcm', srcFmt: 'DICOM', dstFmt: 'PNG', size: '67MB', progress: 0, status: '失败' },
+  { id: 'TC-0626-012', fileName: '眼前节OCT.dcm', srcFmt: 'DICOM', dstFmt: 'JPEG2000', size: '156MB', progress: 0, status: '排队中' }
+];
+
+var selectedFiles = [];
+var currentPage = 1;
+var pageSize = 10;
+var editingBucketName = '';
+
+// ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', function() {
-  try { var user = JSON.parse(localStorage.getItem('life_med_user')); if (!user) { window.location.href = 'login.html'; return; } document.getElementById('headerUserName').textContent = user.name || '用户'; } catch(e) { window.location.href = 'login.html'; }
+  try {
+    var user = JSON.parse(localStorage.getItem('life_med_user'));
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('headerUserName').textContent = user.name || '用户';
+  } catch(e) { window.location.href = 'login.html'; }
+
+  renderBucketTable();
+  renderTaskTable();
+  drawRingChart();
+  drawTrendChart();
+  updateTaskStats();
+
+  // 上传区域事件
+  var zone = document.getElementById('uploadZone');
+  zone.addEventListener('click', function() { document.getElementById('fileInput').click(); });
+  zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', function() { zone.classList.remove('dragover'); });
+  zone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+  });
+
+  // ESC关闭弹窗
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeAllModals();
+    }
+  });
+  // 点击遮罩关闭
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
+  });
 });
-</script></body></html>
+
+// ========== 弹窗控制 ==========
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  if (id === 'transcodeModal') {
+    selectedFiles = [];
+    renderFileList();
+    document.getElementById('uploadZone').classList.remove('error');
+  }
+}
+function closeAllModals() {
+  document.querySelectorAll('.modal-overlay').forEach(function(m) { m.classList.remove('active'); });
+}
+
+// ========== 需求1：转码弹窗 ==========
+function selectFormat(fmt) {
+  document.getElementById('fmtDcm').classList.toggle('selected', fmt === 'dcm');
+  document.getElementById('fmtPng').classList.toggle('selected', fmt === 'png');
+}
+function handleFileSelect(e) {
+  handleFiles(e.target.files);
+  e.target.value = '';
+}
+function handleFiles(fileList) {
+  var zone = document.getElementById('uploadZone');
+  zone.classList.remove('error');
+  for (var i = 0; i < fileList.length; i++) {
+    var f = fileList[i];
+    var ext = f.name.split('.').pop().toLowerCase();
+    if (ext !== 'dcm' && ext !== 'zip') {
+      alert('不支持的文件格式：' + f.name + '，仅支持 .dcm 和 .zip');
+      continue;
+    }
+    if (f.size > 500 * 1024 * 1024) {
+      zone.classList.add('error');
+      alert('文件 ' + f.name + ' 超过500MB限制，已拒绝上传');
+      continue;
+    }
+    // 去重
+    if (selectedFiles.some(function(sf) { return sf.name === f.name && sf.size === f.size; })) continue;
+    selectedFiles.push(f);
+  }
+  renderFileList();
+}
+function renderFileList() {
+  var container = document.getElementById('fileList');
+  if (selectedFiles.length === 0) { container.innerHTML = ''; return; }
+  var html = '';
+  selectedFiles.forEach(function(f, idx) {
+    var sizeStr = f.size > 1024*1024 ? (f.size/(1024*1024)).toFixed(1) + 'MB' : (f.size/1024).toFixed(1) + 'KB';
+    html += '<div class="file-item">' +
+      '<span class="file-icon">📄</span>' +
+      '<div class="file-info">' +
+        '<span class="file-name">' + escapeHtml(f.name) + '</span>' +
+        '<span class="file-tag">加密DICOM</span>' +
+        '<div class="file-meta">' + sizeStr + '</div>' +
+      '</div>' +
+      '<button class="file-remove" onclick="removeFile(' + idx + ')" title="移除">✕</button>' +
+    '</div>';
+  });
+  container.innerHTML = html;
+}
+function removeFile(idx) {
+  selectedFiles.splice(idx, 1);
+  renderFileList();
+}
+function startTranscode() {
+  if (selectedFiles.length === 0) {
+    alert('请先上传文件');
+    return;
+  }
+  var dstFmt = document.getElementById('fmtDcm').classList.contains('selected') ? 'DICOM' : 'PNG';
+  selectedFiles.forEach(function(f) {
+    var now = new Date();
+    var dateStr = String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
+    var rand = String(Math.floor(Math.random()*900)+100);
+    var taskId = 'TC-' + dateStr + '-' + rand;
+    var sizeStr = f.size > 1024*1024 ? (f.size/(1024*1024)).toFixed(1)+'MB' : (f.size/1024).toFixed(1)+'KB';
+    tasks.unshift({
+      id: taskId,
+      fileName: f.name,
+      srcFmt: 'DICOM',
+      dstFmt: dstFmt,
+      size: sizeStr,
+      progress: 0,
+      status: '排队中'
+    });
+  });
+  closeModal('transcodeModal');
+  selectedFiles = [];
+  renderFileList();
+  renderTaskTable();
+  updateTaskStats();
+  alert('已创建 ' + selectedFiles.length + ' 个转码任务');
+}
+
+// ========== 需求2：Canvas绘制 ==========
+function drawRingChart() {
+  var canvas = document.getElementById('ringChart');
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  canvas.width = 140 * dpr;
+  canvas.height = 140 * dpr;
+  ctx.scale(dpr, dpr);
+  var cx = 70, cy = 70, r = 56, lineW = 12;
+  var percent = 64;
+  var startAngle = -Math.PI / 2;
+  var endAngle = startAngle + (2 * Math.PI * percent / 100);
+  // 背景环
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.lineWidth = lineW;
+  ctx.strokeStyle = '#e8ecf0';
+  ctx.stroke();
+  // 进度环
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, startAngle, endAngle);
+  ctx.lineWidth = lineW;
+  ctx.strokeStyle = '#1a73e8';
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
+function drawTrendChart() {
+  var canvas = document.getElementById('trendChart');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  var w = rect.width, h = rect.height;
+  var data = [58, 60, 59, 62, 63, 61, 64];
+  var labels = ['6天前','5天前','4天前','3天前','2天前','昨天','今天'];
+  var padL = 40, padR = 16, padT = 16, padB = 32;
+  var chartW = w - padL - padR;
+  var chartH = h - padT - padB;
+  var minV = 50, maxV = 70;
+  // 网格线
+  ctx.strokeStyle = '#e8ecf0';
+  ctx.lineWidth = 1;
+  for (var i = 0; i <= 4; i++) {
+    var y = padT + chartH * i / 4;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+    var val = maxV - (maxV - minV) * i / 4;
+    ctx.fillStyle = '#9aa0a6';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(val + '%', padL - 6, y + 4);
+  }
+  // X轴标签
+  ctx.textAlign = 'center';
+  for (var i = 0; i < data.length; i++) {
+    var x = padL + chartW * i / (data.length - 1);
+    ctx.fillText(labels[i], x, h - 8);
+  }
+  // 折线
+  ctx.beginPath();
+  ctx.strokeStyle = '#1a73e8';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  for (var i = 0; i < data.length; i++) {
+    var x = padL + chartW * i / (data.length - 1);
+    var y = padT + chartH * (1 - (data[i] - minV) / (maxV - minV));
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  // 面积填充
+  ctx.lineTo(padL + chartW, padT + chartH);
+  ctx.lineTo(padL, padT + chartH);
+  ctx.closePath();
+  var grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+  grad.addColorStop(0, 'rgba(26,115,232,0.15)');
+  grad.addColorStop(1, 'rgba(26,115,232,0.01)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  // 数据点
+  for (var i = 0; i < data.length; i++) {
+    var x = padL + chartW * i / (data.length - 1);
+    var y = padT + chartH * (1 - (data[i] - minV) / (maxV - minV));
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.strokeStyle = '#1a73e8';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+
+// ========== 需求3：存储桶管理 ==========
+function renderBucketTable() {
+  var tbody = document.getElementById('bucketTableBody');
+  var html = '';
+  buckets.forEach(function(b, idx) {
+    var statusTag = b.status === '运行中'
+      ? '<span class="tag tag-green">运行中</span>'
+      : '<span class="tag tag-gray">已停用</span>';
+    html += '<tr>' +
+      '<td>' + escapeHtml(b.name) + '</td>' +
+      '<td>' + escapeHtml(b.region) + '</td>' +
+      '<td>' + escapeHtml(b.type) + '</td>' +
+      '<td>' + escapeHtml(b.createTime) + '</td>' +
+      '<td>' + escapeHtml(b.acl) + '</td>' +
+      '<td>' + statusTag + '</td>' +
+      '<td><div class="bucket-actions">' +
+        '<button class="btn btn-outline btn-sm" onclick="editBucket(' + idx + ')">编辑</button>' +
+        (b.status === '运行中'
+          ? '<button class="btn btn-warning btn-sm" onclick="toggleBucket(' + idx + ')">停用</button>'
+          : '<button class="btn btn-success btn-sm" onclick="toggleBucket(' + idx + ')">启用</button>') +
+        '<button class="btn btn-danger btn-sm" onclick="deleteBucket(' + idx + ')">删除</button>' +
+      '</div></td>' +
+    '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+function createBucket() {
+  var name = document.getElementById('bucketName').value.trim();
+  if (!name) { alert('请输入桶名称'); return; }
+  if (buckets.some(function(b) { return b.name === name; })) {
+    alert('存储桶名称已存在'); return;
+  }
+  var region = document.getElementById('bucketRegion').value;
+  var type = document.querySelector('input[name="bucketType"]:checked').value;
+  var acl = document.querySelector('input[name="bucketAcl"]:checked').value;
+  var now = new Date();
+  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  buckets.push({ name: name, region: region, type: type, createTime: timeStr, acl: acl, status: '运行中', remark: '' });
+  closeModal('bucketModal');
+  renderBucketTable();
+  document.getElementById('bucketName').value = '';
+  document.getElementById('bucketRemark').value = '';
+}
+function editBucket(idx) {
+  var b = buckets[idx];
+  editingBucketName = b.name;
+  document.getElementById('editBucketName').value = b.name;
+  document.querySelector('input[name="editBucketAcl"][value="' + b.acl + '"]').checked = true;
+  document.getElementById('editBucketRemark').value = b.remark || '';
+  openModal('editBucketModal');
+}
+function saveBucketEdit() {
+  var b = buckets.find(function(bk) { return bk.name === editingBucketName; });
+  if (!b) return;
+  b.acl = document.querySelector('input[name="editBucketAcl"]:checked').value;
+  b.remark = document.getElementById('editBucketRemark').value;
+  closeModal('editBucketModal');
+  renderBucketTable();
+}
+function toggleBucket(idx) {
+  var b = buckets[idx];
+  b.status = b.status === '运行中' ? '已停用' : '运行中';
+  renderBucketTable();
+}
+function deleteBucket(idx) {
+  if (!confirm('确定要删除存储桶 ' + buckets[idx].name + ' 吗？')) return;
+  buckets.splice(idx, 1);
+  renderBucketTable();
+}
+
+// ========== 需求4 + 5：任务列表 ==========
+function renderTaskTable() {
+  var statusFilter = document.getElementById('statusFilter').value;
+  var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+  var filtered = tasks.filter(function(t) {
+    var matchStatus = statusFilter === '全部' || t.status === statusFilter;
+    var matchSearch = !keyword || t.fileName.toLowerCase().indexOf(keyword) !== -1 || t.id.toLowerCase().indexOf(keyword) !== -1;
+    return matchStatus && matchSearch;
+  });
+  // 分页
+  var total = filtered.length;
+  var totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (currentPage > totalPages) currentPage = totalPages;
+  var start = (currentPage - 1) * pageSize;
+  var pageData = filtered.slice(start, start + pageSize);
+
+  var tbody = document.getElementById('taskTableBody');
+  var html = '';
+  pageData.forEach(function(t) {
+    var progressBar = getProgressBar(t);
+    var statusTag = getStatusTag(t.status);
+    var actionBtns = getActionButtons(t);
+    html += '<tr>' +
+      '<td>' + escapeHtml(t.id) + '</td>' +
+      '<td>' + escapeHtml(t.fileName) + '</td>' +
+      '<td>' + escapeHtml(t.srcFmt) + '</td>' +
+      '<td>' + escapeHtml(t.dstFmt) + '</td>' +
+      '<td>' + escapeHtml(t.size) + '</td>' +
+      '<td style="min-width:120px;">' + progressBar + '</td>' +
+      '<td>' + statusTag + '</td>' +
+      '<td><div style="display:flex;gap:6px;">' + actionBtns + '</div></td>' +
+    '</tr>';
+  });
+  tbody.innerHTML = html;
+  renderPagination(total, totalPages);
+}
+function getProgressBar(t) {
+  var cls = 'blue';
+  if (t.status === '已完成') cls = 'green';
+  else if (t.status === '失败') cls = 'red';
+  else if (t.status === '排队中' || t.status === '等待中') cls = 'gray';
+  var pulse = (t.status === '转码中') ? ' progress-pulse' : '';
+  return '<div class="progress-bar"><div class="progress-bar-fill ' + cls + pulse + '" style="width:' + t.progress + '%;"></div></div>' +
+    '<div style="font-size:11px;color:var(--gray-500);">' + t.progress + '%</div>';
+}
+function getStatusTag(status) {
+  var cls = '';
+  if (status === '已完成') cls = 'tag-green';
+  else if (status === '转码中') cls = 'tag-blue';
+  else if (status === '排队中' || status === '等待中') cls = 'tag-orange';
+  else if (status === '失败') cls = 'tag-red';
+  else cls = 'tag-gray';
+  return '<span class="tag ' + cls + '">' + escapeHtml(status) + '</span>';
+}
+function getActionButtons(t) {
+  if (t.status === '失败') {
+    return '<button class="btn btn-warning btn-sm" onclick="retryTask(\'' + t.id + '\')">重试</button>';
+  }
+  if (t.status === '已完成') {
+    return '<button class="btn btn-outline btn-sm" onclick="downloadTask(\'' + t.id + '\')">下载</button>';
+  }
+  return '<button class="btn btn-outline btn-sm" onclick="cancelTask(\'' + t.id + '\')">取消</button>';
+}
+function renderPagination(total, totalPages) {
+  var container = document.getElementById('taskPagination');
+  var html = '';
+  html += '<button ' + (currentPage <= 1 ? 'disabled' : '') + ' onclick="goPage(' + (currentPage-1) + ')">上一页</button>';
+  var startP = Math.max(1, currentPage - 2);
+  var endP = Math.min(totalPages, startP + 4);
+  if (endP - startP < 4) startP = Math.max(1, endP - 4);
+  for (var i = startP; i <= endP; i++) {
+    html += '<button class="' + (i === currentPage ? 'active' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+  }
+  html += '<button ' + (currentPage >= totalPages ? 'disabled' : '') + ' onclick="goPage(' + (currentPage+1) + ')">下一页</button>';
+  html += '<span style="margin-left:16px;font-size:13px;color:var(--gray-600);">共 ' + total + ' 条</span>';
+  html += '<select class="page-size-select" onchange="changePageSize(this.value)">' +
+    '<option value="10"' + (pageSize===10?' selected':'') + '>10条/页</option>' +
+    '<option value="20"' + (pageSize===20?' selected':'') + '>20条/页</option>' +
+    '<option value="50"' + (pageSize===50?' selected':'') + '>50条/页</option>' +
+  '</select>';
+  container.innerHTML = html;
+}
+function goPage(p) {
+  currentPage = p;
+  renderTaskTable();
+}
+function changePageSize(val) {
+  pageSize = parseInt(val);
+  currentPage = 1;
+  renderTaskTable();
+}
+function updateTaskStats() {
+  var running = tasks.filter(function(t) { return t.status === '转码中'; }).length;
+  var queued = tasks.filter(function(t) { return t.status === '排队中' || t.status === '等待中'; }).length;
+  var done = tasks.filter(function(t) { return t.status === '已完成'; }).length;
+  var failed = tasks.filter(function(t) { return t.status === '失败'; }).length;
+  document.getElementById('statRunning').textContent = running;
+  document.getElementById('statQueued').textContent = queued;
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statFailed').textContent = failed;
+}
+
+// 任务操作
+function retryTask(taskId) {
+  var t = tasks.find(function(tk) { return tk.id === taskId; });
+  if (t) {
+    t.status = '排队中';
+    t.progress = 0;
+    renderTaskTable();
+    updateTaskStats();
+  }
+}
+function downloadTask(taskId) {
+  alert('开始下载任务 ' + taskId + ' 的输出文件...');
+}
+function cancelTask(taskId) {
+  var t = tasks.find(function(tk) { return tk.id === taskId; });
+  if (t && confirm('确定要取消任务 ' + taskId + ' 吗？')) {
+    t.status = '失败';
+    t.progress = 0;
+    renderTaskTable();
+    updateTaskStats();
+  }
+}
+
+// ========== 工具函数 ==========
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    localStorage.removeItem('life_med_user');
+    window.location.href = 'login.html';
+  }
+}
+</script>
+</body>
+</html>
