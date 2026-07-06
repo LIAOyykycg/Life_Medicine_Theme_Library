@@ -1,185 +1,1361 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>基因诊断应用</title><style>
-/* ===== 生命医学主题库 - 通用样式 ===== */
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>基于基因的眼病/慢病诊断应用 - 生命医学智能平台</title>
+<style>
 :root {
-    --primary: #1a73e8;
-    --primary-dark: #1557b0;
-    --primary-light: #e8f0fe;
-    --success: #34a853;
-    --warning: #fbbc04;
-    --danger: #ea4335;
-    --gray-50: #f8f9fa;
-    --gray-100: #f5f7fa;
-    --gray-200: #e8ecf0;
-    --gray-300: #dadce0;
-    --gray-400: #bdc1c6;
-    --gray-500: #9aa0a6;
-    --gray-600: #80868b;
-    --gray-700: #5f6368;
-    --gray-800: #3c4043;
-    --gray-900: #202124;
-    --text: #333333;
-    --text-secondary: #999999;
-    --bg: #ffffff;
-    --sidebar-width: 220px;
-    --header-height: 56px;
-    --radius: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
-    --transition: all 0.2s ease;
+  --bg: #f5f7fa;
+  --panel: #ffffff;
+  --text: #333333;
+  --muted: #999999;
+  --soft: #7c8ba1;
+  --line: #e4ebf5;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius: 8px;
+  --font: "Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;
+  --blue: #165dff;
+  --blue-light: #e8f3ff;
+  --green: #10b981;
+  --green-light: #d1fae5;
+  --red: #ef4444;
+  --red-light: #fee2e2;
+  --yellow: #f59e0b;
+  --yellow-light: #fef3c7;
+  --orange: #f97316;
+  --sidebar-w: 220px;
+  --topbar-h: 56px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6}
+a{text-decoration:none;color:inherit}
+
+/* ===== Topbar ===== */
+.topbar{
+  height:var(--topbar-h);background:linear-gradient(135deg,#1a56db,#3b82f6,#0ea5e9);
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  position:fixed;top:0;left:0;right:0;z-index:100;color:#fff;box-shadow:0 2px 12px rgba(26,86,219,0.25);
+}
+.topbar-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px}
+.topbar-logo{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:800}
+.topbar-actions{display:flex;align-items:center;gap:14px}
+.topbar-actions a{color:rgba(255,255,255,0.9);font-size:13px;padding:6px 14px;border-radius:6px;transition:.16s}
+.topbar-actions a:hover{background:rgba(255,255,255,0.15);color:#fff}
+.topbar-user{display:flex;align-items:center;gap:8px;font-size:13px}
+.avatar-sm{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.25);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+
+/* ===== Layout ===== */
+.app-shell{display:flex;padding-top:var(--topbar-h);min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);background:#fff;border-right:1px solid var(--line);
+  position:fixed;top:var(--topbar-h);bottom:0;left:0;overflow-y:auto;z-index:90;
+  padding:12px 0;
+}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:2px}
+.main-content{
+  margin-left:var(--sidebar-w);flex:1;padding:20px 24px;overflow-y:auto;
+  min-height:calc(100vh - var(--topbar-h));
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-size: 14px; color: var(--text); background: var(--gray-50); min-height: 100vh; line-height: 1.6; }
-.header { height: var(--header-height); background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%); color: #fff; display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-.header .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
-.header .header-nav { display: flex; gap: 4px; margin-left: 40px; }
-.header .header-nav a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; transition: var(--transition); }
-.header .header-nav a:hover, .header .header-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
-.header .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
-.header .header-right .user-info { cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: var(--transition); }
-.header .header-right .user-info:hover { background: rgba(255,255,255,0.15); }
-.header .header-right .btn-logout { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: var(--transition); }
-.header .header-right .btn-logout:hover { background: rgba(255,255,255,0.35); }
-.sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--gray-200); overflow-y: auto; z-index: 999; padding: 8px 0; }
-.sidebar .menu-group { margin-bottom: 4px; }
-.sidebar .menu-group-title { padding: 12px 20px 6px; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-.sidebar .menu-item { display: flex; align-items: center; padding: 10px 20px; color: var(--gray-700); text-decoration: none; font-size: 13px; transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
-.sidebar .menu-item:hover { background: var(--gray-50); color: var(--primary); }
-.sidebar .menu-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
-.sidebar .menu-item .menu-icon { width: 20px; margin-right: 10px; text-align: center; font-size: 14px; }
-.main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 24px; min-height: calc(100vh - var(--header-height)); }
-.breadcrumb { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-.breadcrumb a { color: var(--primary); text-decoration: none; }
-.breadcrumb span.sep { color: var(--gray-400); }
-.page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
-.card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
-.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100); }
-.card-title { font-size: 16px; font-weight: 600; color: var(--gray-800); }
-.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
-.stat-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
-.stat-card .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.stat-card .stat-info .stat-value { font-size: 26px; font-weight: 700; color: var(--gray-900); }
-.stat-card .stat-info .stat-label { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
-.stat-card.blue .stat-icon { background: #e8f0fe; }
-.stat-card.green .stat-icon { background: #e6f4ea; }
-.stat-card.orange .stat-icon { background: #fef7e0; }
-.stat-card.red .stat-icon { background: #fce8e6; }
-.stat-card.purple .stat-icon { background: #f3e8fd; }
-.filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px 18px; background: var(--gray-50); border-radius: var(--radius); margin-bottom: 16px; }
-.filter-bar label { font-size: 13px; color: var(--gray-700); white-space: nowrap; }
-.filter-bar input, .filter-bar select { padding: 7px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
-.filter-bar input:focus, .filter-bar select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-.filter-bar input { min-width: 180px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; transition: var(--transition); text-decoration: none; gap: 6px; white-space: nowrap; }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-primary:hover { background: var(--primary-dark); }
-.btn-success { background: var(--success); color: #fff; }
-.btn-success:hover { background: #2d9249; }
-.btn-warning { background: var(--warning); color: #202124; }
-.btn-warning:hover { background: #e5ac00; }
-.btn-danger { background: var(--danger); color: #fff; }
-.btn-danger:hover { background: #d33426; }
-.btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
-.btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
-.btn-sm { padding: 5px 10px; font-size: 12px; }
-.btn-lg { padding: 10px 24px; font-size: 15px; }
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-table th { background: var(--gray-100); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--gray-700); border-bottom: 2px solid var(--gray-200); white-space: nowrap; }
-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-800); }
-table tbody tr:hover { background: var(--gray-50); }
-table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
-table tbody tr:nth-child(even):hover { background: var(--gray-50); }
-.tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
-.tag-blue { background: #e8f0fe; color: #1a73e8; }
-.tag-green { background: #e6f4ea; color: #137333; }
-.tag-orange { background: #fef7e0; color: #b06000; }
-.tag-red { background: #fce8e6; color: #c5221f; }
-.tag-gray { background: #f1f3f4; color: #5f6368; }
-.pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 16px; padding: 12px 0; }
-.pagination button { padding: 6px 12px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: var(--transition); }
-.pagination button:hover:not(:disabled) { background: var(--gray-50); }
-.pagination button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-.pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-.tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; gap: 0; }
-.tab-btn { padding: 10px 20px; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-size: 14px; font-family: inherit; color: var(--gray-600); transition: var(--transition); font-weight: 500; }
-.tab-btn:hover { color: var(--primary); }
-.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s; }
-.modal { background: #fff; border-radius: 12px; box-shadow: var(--shadow-lg); width: 90%; max-width: 640px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.25s; }
-.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--gray-200); }
-.modal-header h3 { font-size: 17px; color: var(--gray-900); font-weight: 600; }
-.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-500); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
-.modal-close:hover { background: var(--gray-50); color: var(--gray-700); }
-.modal-body { padding: 24px; }
-.modal-footer { padding: 14px 24px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
-.form-group label .required { color: var(--danger); margin-left: 2px; }
-.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px 13px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-.form-group textarea { resize: vertical; min-height: 80px; }
-.form-row { display: flex; gap: 16px; }
-.form-row .form-group { flex: 1; }
-.progress-bar { height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
-.progress-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.4s ease; }
-.upload-zone { border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 40px; text-align: center; cursor: pointer; transition: var(--transition); background: var(--gray-50); }
-.upload-zone:hover { border-color: var(--primary); background: var(--primary-light); }
-.upload-zone .upload-icon { font-size: 36px; margin-bottom: 10px; }
-.upload-zone p { color: var(--gray-600); font-size: 13px; }
-.upload-zone .upload-hint { color: var(--gray-400); font-size: 11px; margin-top: 6px; }
-.alert { padding: 12px 16px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
-.alert-info { background: #e8f0fe; color: #1a56db; border: 1px solid #d2e3fc; }
-.alert-success { background: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
-.alert-warning { background: #fef7e0; color: #b06000; border: 1px solid #feefc3; }
-.alert-danger { background: #fce8e6; color: #c5221f; border: 1px solid #f5c6c2; }
-.steps { display: flex; margin-bottom: 24px; }
-.step { flex: 1; text-align: center; position: relative; font-size: 12px; color: var(--gray-500); }
-.step::before { content: ''; position: absolute; top: 14px; left: 50%; right: -50%; height: 2px; background: var(--gray-200); z-index: 0; }
-.step:last-child::before { display: none; }
-.step .step-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--gray-200); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; position: relative; z-index: 1; }
-.step.active .step-circle { background: var(--primary); color: #fff; }
-.step.active { color: var(--primary); font-weight: 600; }
-.step.done .step-circle { background: var(--success); color: #fff; }
-.step.done { color: var(--success); }
-.step.done::before { background: var(--success); }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@media (max-width: 1024px) { .sidebar { width: 60px; } .sidebar .menu-item span { display: none; } .sidebar .menu-group-title { display: none; } .main-content { margin-left: 60px; } }
-</style></head><body><div class="header"><a href="index.html" class="logo" style="color:#fff;text-decoration:none;">生命医学主题库应用</a><div class="header-nav"><a href="眼底图像输入.html">AI眼底疾病筛查</a><a href="临床数据开放共享.html">生命医学开放数据平台</a><a href="基础课程.html">生命医学AI教育平台</a><a href="临床决策支撑.html">眼病/慢病专家系统</a></div><div class="header-right"><span class="user-info" id="headerUserName">管理员</span><button class="btn-logout" onclick="logout()">退出</button></div></div><a href="#">跨领域数据应用</a><span class="sep">></span><span>基因诊断应用</span></div><h1 class="page-title">基于基因的眼病/慢病诊断应用</h1><div class="card"><div class="card-header"><span class="card-title">基因数据分析</span></div><div class="alert alert-info">基于基因组学数据与临床表型数据的关联分析，辅助眼病/慢病早期诊断和风险评估</div><div class="filter-bar"><label>疾病类型</label><select><option>全部</option><option>遗传性视网膜病变</option><option>年龄相关性黄斑变性</option><option>青光眼</option><option>糖尿病视网膜病变</option></select><label>基因位点</label><input placeholder="如 VEGFA、CFH、ARMS2..."><button class="btn btn-primary btn-sm">搜索</button><button class="btn btn-outline btn-sm">重置</button></div><div class="table-wrap"><table><thead><tr><th>患者ID</th><th>临床诊断</th><th>关联基因</th><th>突变类型</th><th>致病性评级</th><th>诊断置信度</th><th>操作</th></tr></thead><tbody><tr><td>GP001</td><td>遗传性视网膜色素变性</td><td>RPGR</td><td>无义突变</td><td><span class='tag tag-red'>致病</span></td><td>95.2%</td><td><a class='btn btn-sm btn-outline'>详情</a></td></tr><tr><td>GP002</td><td>AMD(湿性)</td><td>CFH/ARMS2</td><td>错义突变</td><td><span class='tag tag-red'>致病</span></td><td>92.8%</td><td><a class='btn btn-sm btn-outline'>详情</a></td></tr><tr><td>GP003</td><td>原发性开角型青光眼</td><td>MYOC</td><td>错义突变</td><td><span class='tag tag-orange'>疑似致病</span></td><td>85.6%</td><td><a class='btn btn-sm btn-outline'>详情</a></td></tr><tr><td>GP004</td><td>DR(增殖期)</td><td>VEGFA</td><td>启动子变异</td><td><span class='tag tag-orange'>风险位点</span></td><td>78.3%</td><td><a class='btn btn-sm btn-outline'>详情</a></td></tr></tbody></table></div><div class="pagination"><button disabled>上一页</button><button class="active">1</button><button>2</button><button>3</button><button>下一页</button></div></div><div class="card"><div class="card-header"><span class="card-title">基因-表型关联网络</span></div><div style="padding:16px;background:var(--gray-50);border-radius:8px;text-align:center;"><div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;"><span class="tag tag-blue">VEGFA → DR</span><span class="tag tag-green">CFH → AMD</span><span class="tag tag-orange">ARMS2 → AMD</span><span class="tag tag-purple">MYOC → 青光眼</span><span class="tag tag-blue">RPGR → RP</span><span class="tag tag-green">OPTN → 青光眼</span><span class="tag tag-orange">CYP1B1 → 青光眼</span><span class="tag tag-blue">ABCA4 → STGD</span></div><p style="font-size:12px;color:var(--gray-500);margin-top:8px;">基因-疾病关联网络（节点大小表示关联强度）</p></div></div></div><script>
-// Common JavaScript for all pages
-function navigateTo(url) { window.location.href = url; }
-function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
-function openModal(id) { var el = document.getElementById(id); if(el) el.style.display = 'flex'; }
-function closeModal(id) { var el = document.getElementById(id); if(el) el.style.display = 'none'; }
-function switchTab(group, name) {
-    var btns = document.querySelectorAll('[data-tab-group="' + group + '"]');
-    var contents = document.querySelectorAll('[data-tab-content="' + group + '"]');
-    btns.forEach(function(b) { b.classList.remove('active'); });
-    contents.forEach(function(c) { c.classList.remove('active'); });
-    var btn = document.querySelector('[data-tab-group="' + group + '"][data-tab="' + name + '"]');
-    var content = document.querySelector('[data-tab-content="' + group + '"][data-tab="' + name + '"]');
-    if (btn) btn.classList.add('active');
-    if (content) content.classList.add('active');
+/* ===== Sidebar Menu ===== */
+.side-group{margin-bottom:2px}
+.side-group-header{
+  display:flex;align-items:center;gap:8px;padding:10px 16px;cursor:pointer;
+  font-size:13px;font-weight:700;color:var(--text);transition:.14s;
+  user-select:none;position:relative;
 }
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        var user = JSON.parse(localStorage.getItem('life_med_user'));
-        if (user && user.name) {
-            document.getElementById('headerUserName').textContent = user.name;
-        }
-    } catch(e) {}
+.side-group-header:hover{background:#f8fafc}
+.side-group-header .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;
+}
+.side-group-header .arrow{
+  margin-left:auto;font-size:10px;color:var(--soft);transition:transform .2s;
+}
+.side-group-header.collapsed .arrow{transform:rotate(-90deg)}
+.side-group-items{overflow:hidden;transition:max-height .25s ease}
+.side-group-items.collapsed{max-height:0 !important}
+.side-item{
+  display:block;padding:8px 16px 8px 30px;font-size:12.5px;color:var(--soft);
+  cursor:pointer;transition:.14s;border-left:3px solid transparent;white-space:nowrap;
+}
+.side-item:hover{background:#f8fafc;color:var(--text)}
+.side-item.active{color:var(--blue);background:var(--blue-light);border-left-color:var(--blue);font-weight:700}
 
-    var path = window.location.pathname.replace(/\\/g, '/');
-    var currentPage = path.split('/').pop();
-    var menuItems = document.querySelectorAll('.sidebar .menu-item');
-    menuItems.forEach(function(item) {
-        var href = item.getAttribute('href');
-        if (href && (href === currentPage || href.endsWith('/' + currentPage))) {
-            item.classList.add('active');
-        }
-    });
+/* ===== Common Components ===== */
+.page-section{display:none}
+.page-section.active{display:block}
+.section-title{font-size:18px;font-weight:800;color:#1a1a2e;margin-bottom:20px}
+.section-subtitle{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px}
+
+.card{
+  background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:20px;margin-bottom:16px;
+}
+.card-header{font-size:14px;font-weight:700;margin-bottom:14px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+.card-header .badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+
+.flex-row{display:flex;gap:16px;flex-wrap:wrap}
+.flex-2>*{flex:1;min-width:0}
+.flex-3>*{flex:1;min-width:0}
+
+/* Buttons */
+.btn{
+  min-height:34px;padding:0 16px;border-radius:8px;border:0;font:inherit;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-weight:600;font-size:13px;transition:.16s;
+}
+.btn:hover{filter:brightness(1.06)}
+.btn-primary{background:linear-gradient(135deg,#1a56db,#3b82f6);color:#fff;box-shadow:0 2px 8px rgba(22,93,255,0.2)}
+.btn-success{background:linear-gradient(135deg,#059669,#10b981);color:#fff}
+.btn-warning{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff}
+.btn-danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff}
+.btn-outline{border:1.5px solid var(--line);background:#fff;color:var(--text)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:6px}
+.btn-xs{min-height:24px;padding:0 8px;font-size:11px;border-radius:5px}
+
+/* Form controls */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12.5px;font-weight:600;color:var(--soft);margin-bottom:4px}
+.form-input,.form-select{
+  width:100%;height:36px;padding:0 10px;border:1.5px solid var(--line);border-radius:7px;
+  font:inherit;font-size:13px;background:#fff;outline:none;transition:.16s;
+}
+.form-input:focus,.form-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,93,255,0.08)}
+textarea.form-input{min-height:80px;padding:10px;resize:vertical}
+
+/* Tables */
+.data-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.data-table th,.data-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+.data-table thead th{
+  background:linear-gradient(180deg,#f0f4ff,#e8edf8);font-weight:700;color:#374151;
+  border-bottom:2px solid #d0d7e8;white-space:nowrap;font-size:12px;
+}
+.data-table tbody tr:hover{background:#f8faff}
+.data-table .text-center{text-align:center}
+.data-table .text-right{text-align:right}
+
+/* Status badges */
+.status-tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.status-done{background:var(--green-light);color:#065f46}
+.status-pending{background:var(--yellow-light);color:#92400e}
+.status-failed{background:var(--red-light);color:#991b1b}
+
+/* Risk labels */
+.risk-high{background:var(--red-light);color:#991b1b;padding:2px 10px;border-radius:10px;font-weight:700;font-size:12px}
+.risk-mid{background:var(--yellow-light);color:#92400e;padding:2px 10px;border-radius:10px;font-weight:700;font-size:12px}
+.risk-low{background:var(--green-light);color:#065f46;padding:2px 10px;border-radius:10px;font-weight:700;font-size:12px}
+
+/* Modal */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;
+  align-items:center;justify-content:center;
+}
+.modal-overlay.show{display:flex}
+.modal-box{
+  background:#fff;border-radius:12px;padding:24px;max-width:560px;width:90%;
+  max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-box.wide{max-width:780px}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-header h3{font-size:16px;font-weight:800}
+.modal-close{width:28px;height:28px;border-radius:50%;border:0;background:#f3f4f6;cursor:pointer;font-size:16px;line-height:1;transition:.14s}
+.modal-close:hover{background:#e5e7eb}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+
+/* Upload zone */
+.upload-zone{
+  border:2px dashed #cbd5e1;border-radius:10px;padding:32px;text-align:center;
+  color:var(--soft);cursor:pointer;transition:.16s;background:#fafcfd;
+}
+.upload-zone:hover{border-color:var(--blue);background:#f0f6ff;color:var(--blue)}
+
+/* Progress bar */
+.progress-bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#1a56db,#3b82f6);transition:width .3s}
+
+/* Gauge circle */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.gauge-circle{
+  position:relative;width:100px;height:100px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:conic-gradient(var(--gc,var(--green)) 0deg var(--gd,180deg),#e5e7eb var(--gd,180deg) 360deg);
+}
+.gauge-inner{
+  width:70px;height:70px;border-radius:50%;background:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.gauge-inner .score{font-size:22px;font-weight:800;line-height:1}
+.gauge-inner .unit{font-size:10px;color:var(--soft)}
+
+/* Heatmap grid */
+.heatmap-grid{display:grid;gap:2px}
+.heatmap-cell{border-radius:3px;min-height:28px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.heatmap-axis{font-size:10px;color:var(--soft);padding:4px}
+
+/* Scatter plot */
+.scatter-plot{position:relative;width:100%;height:260px;background:#fafcfd;border:1px solid var(--line);border-radius:8px}
+.scatter-dot{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--blue);transform:translate(-50%,-50%);cursor:pointer}
+.scatter-dot:hover{width:12px;height:12px;z-index:2}
+
+/* Bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:180px;padding:0 8px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-fill{border-radius:5px 5px 0 0;width:100%;min-width:18px;transition:height .4s}
+.bar-label{font-size:10px;color:var(--soft);white-space:nowrap}
+
+/* Page-specific */
+.panel-grid{display:grid;gap:16px}
+.panel-grid.cols-2{grid-template-columns:1fr 1fr}
+.panel-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.panel-grid.cols-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.split-lr{display:flex;gap:20px}
+.split-lr>*:first-child{flex:0 0 260px;min-width:0}
+.split-lr>*:last-child{flex:1;min-width:0}
+
+.log-panel{
+  background:#1e293b;color:#cbd5e1;border-radius:8px;padding:14px;font-family:'Consolas','Courier New',monospace;
+  font-size:12px;max-height:220px;overflow-y:auto;line-height:1.7;
+}
+.log-panel .log-info{color:#60a5fa}
+.log-panel .log-ok{color:#34d399}
+.log-panel .log-warn{color:#fbbf24}
+
+.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;padding:14px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow)}
+.filter-bar input,.filter-bar select{height:34px;padding:0 10px;border:1.5px solid var(--line);border-radius:7px;font:inherit;font-size:13px}
+
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px}
+.pagination button{
+  min-width:30px;height:30px;border:1.5px solid var(--line);border-radius:6px;
+  background:#fff;cursor:pointer;font-size:12px;transition:.14s;
+}
+.pagination button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pagination button:hover:not(.active){border-color:var(--blue);color:var(--blue)}
+
+/* Annotation overlay */
+.img-holder{
+  position:relative;width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#1a1a2e,#16213e);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);
+  overflow:hidden;font-size:14px;
+}
+.img-holder .annot{
+  position:absolute;border:2px solid;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;cursor:pointer;
+  transition:.16s;white-space:nowrap;
+}
+.img-holder .annot:hover{z-index:5;transform:scale(1.05)}
+.annot-red{border-color:#ef4444;color:#ef4444;background:rgba(239,68,68,0.12)}
+.annot-yellow{border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,0.12)}
+.annot-blue{border-color:#3b82f6;color:#3b82f6;background:rgba(59,130,246,0.12)}
+.annot-green{border-color:#10b981;color:#10b981;background:rgba(16,185,129,0.12)}
+
+/* Member list */
+.member-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;transition:.14s}
+.member-item:hover{background:#f8fafc}
+.member-avatar{
+  width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;color:#fff;flex-shrink:0;
+}
+.member-info{font-size:12px;line-height:1.4}
+.member-info .name{font-weight:700;color:var(--text)}
+.member-info .dept{color:var(--soft);font-size:11px}
+.online-dot{width:7px;height:7px;border-radius:50%;margin-left:auto;flex-shrink:0}
+.online-dot.on{background:#10b981}
+.online-dot.off{background:#d1d5db}
+
+/* Chat area */
+.chat-area{background:#fff;border-radius:8px;box-shadow:var(--shadow);display:flex;flex-direction:column;height:480px}
+.chat-header{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700}
+.chat-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.chat-msg{display:flex;gap:10px;align-items:flex-start}
+.chat-msg .c-avatar{
+  width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:#fff;flex-shrink:0;
+}
+.chat-msg .c-bubble{background:#f3f4f6;border-radius:10px;padding:10px 14px;max-width:80%;font-size:12.5px;line-height:1.5}
+.chat-msg .c-meta{font-size:10px;color:var(--soft);margin-top:2px}
+.chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.chat-input input{flex:1;height:38px;padding:0 12px;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:13px}
+
+/* Report preview */
+.report-preview{
+  background:#fff;border:1px solid var(--line);border-radius:8px;padding:32px;
+  font-size:14px;line-height:1.8;max-height:600px;overflow-y:auto;
+}
+.report-preview h2{font-size:20px;text-align:center;margin-bottom:8px}
+.report-preview .r-header{text-align:center;border-bottom:2px solid #1a56db;padding-bottom:16px;margin-bottom:20px}
+.report-preview .r-header .r-meta{font-size:12px;color:var(--soft)}
+.report-preview .r-section{margin-bottom:20px}
+.report-preview .r-section h4{font-size:14px;color:#1a56db;border-left:3px solid #1a56db;padding-left:8px;margin-bottom:8px}
+
+/* Treatment card */
+.treat-card{
+  background:linear-gradient(135deg,#e8f3ff,#f0f6ff);border:1.5px solid #bfdbfe;
+  border-radius:10px;padding:18px;margin-bottom:12px;
+}
+.treat-card .t-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.treat-card .t-head h4{font-size:15px;font-weight:800}
+.treat-card .t-match{font-size:22px;font-weight:800;color:var(--blue)}
+
+/* Info card */
+.info-card{background:#f9fafb;border-radius:8px;padding:14px;border:1px solid var(--line)}
+.info-card .info-row{display:flex;gap:8px;margin-bottom:6px;font-size:12.5px}
+.info-card .info-row .info-label{color:var(--soft);min-width:80px;flex-shrink:0}
+
+/* Toast */
+.toast{
+  position:fixed;left:50%;top:20px;z-index:300;
+  transform:translate(-50%,-10px);padding:12px 16px;min-width:220px;
+  border-radius:10px;background:rgba(23,32,49,.95);color:#fff;
+  text-align:center;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;box-shadow:0 14px 40px rgba(41,76,131,0.2);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .main-content{margin-left:0}
+  .panel-grid.cols-2,.panel-grid.cols-3,.panel-grid.cols-4{grid-template-columns:1fr}
+  .split-lr{flex-direction:column}
+  .split-lr>*:first-child{flex:auto}
+}
+</style>
+</head>
+<body>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- ===== Topbar ===== -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <span class="topbar-logo">医</span>
+    <span>生命医学智能平台</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="index.html">← 返回门户</a>
+    <div class="topbar-user" id="userArea">
+      <span class="avatar-sm" id="userAvatar">张</span>
+      <span id="userName">张教授</span>
+      <button id="logoutBtn" class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:#fff;border:0">退出登录</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== App Shell ===== -->
+<div class="app-shell">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="side-group" data-group="0">
+      <div class="side-group-header" onclick="toggleGroup(this)">
+        <span class="dot"></span>多模态数据接入与统一管理<span class="arrow">▼</span>
+      </div>
+      <div class="side-group-items" id="group-items-0">
+        <div class="side-item active" data-page="page-data-mgmt" onclick="switchPage(this,'page-data-mgmt')">多模态数据接入与统一管理</div>
+      </div>
+    </div>
+    <div class="side-group" data-group="1">
+      <div class="side-group-header" onclick="toggleGroup(this)">
+        <span class="dot"></span>疾病风险评估<span class="arrow">▼</span>
+      </div>
+      <div class="side-group-items" id="group-items-1">
+        <div class="side-item" data-page="page-gene-prep" onclick="switchPage(this,'page-gene-prep')">基因序列数据预处理与特征提取</div>
+        <div class="side-item" data-page="page-img-prep" onclick="switchPage(this,'page-img-prep')">眼底医学影像预处理与特征提取</div>
+        <div class="side-item" data-page="page-fusion" onclick="switchPage(this,'page-fusion')">多模态特征融合</div>
+        <div class="side-item" data-page="page-vis" onclick="switchPage(this,'page-vis')">结果可视化与交互展示</div>
+        <div class="side-item" data-page="page-report-gen" onclick="switchPage(this,'page-report-gen')">报告生成与导出</div>
+      </div>
+    </div>
+    <div class="side-group" data-group="2">
+      <div class="side-group-header collapsed" onclick="toggleGroup(this)">
+        <span class="dot"></span>综合评估报告<span class="arrow">▼</span>
+      </div>
+      <div class="side-group-items collapsed" id="group-items-2" style="max-height:0">
+        <div class="side-item" data-page="page-mutation" onclick="switchPage(this,'page-mutation')">基因突变位点信息解析录入</div>
+        <div class="side-item" data-page="page-score" onclick="switchPage(this,'page-score')">基因易感性评分</div>
+        <div class="side-item" data-page="page-anomaly" onclick="switchPage(this,'page-anomaly')">影像异常识别提示</div>
+        <div class="side-item" data-page="page-auto-report" onclick="switchPage(this,'page-auto-report')">自动生成结构化报告</div>
+        <div class="side-item" data-page="page-core-vis" onclick="switchPage(this,'page-core-vis')">核心评估内容可视化呈现</div>
+        <div class="side-item" data-page="page-report-export" onclick="switchPage(this,'page-report-export')">报告导出与归档管理</div>
+      </div>
+    </div>
+    <div class="side-group" data-group="3">
+      <div class="side-group-header collapsed" onclick="toggleGroup(this)">
+        <span class="dot"></span>临床辅助与决策支持<span class="arrow">▼</span>
+      </div>
+      <div class="side-group-items collapsed" id="group-items-3" style="max-height:0">
+        <div class="side-item" data-page="page-consult" onclick="switchPage(this,'page-consult')">多学科联合会诊支撑</div>
+        <div class="side-item" data-page="page-research" onclick="switchPage(this,'page-research')">科研数据分析支撑</div>
+        <div class="side-item" data-page="page-treatment" onclick="switchPage(this,'page-treatment')">个体化治疗方案推荐</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+
+<!-- ===== Page 0: 多模态数据接入与统一管理 ===== -->
+<div class="page-section active" id="page-data-mgmt">
+  <h2 class="section-title">多模态数据接入与统一管理</h2>
+  <div class="filter-bar">
+    <input type="text" placeholder="搜索患者ID / 姓名..." style="width:200px" oninput="filterDataTable(this,'data-mgmt-table')">
+    <select onchange="filterDataTable(this,'data-mgmt-table')" data-col="2">
+      <option value="">数据类型：全部</option><option value="基因序列">基因序列</option><option value="眼底影像">眼底影像</option><option value="OCT">OCT</option>
+    </select>
+    <select onchange="filterDataTable(this,'data-mgmt-table')" data-col="7">
+      <option value="">上传状态：全部</option><option value="已处理">已处理</option><option value="待处理">待处理</option><option value="失败">失败</option>
+    </select>
+    <button class="btn btn-primary" onclick="showModal('modal-upload')">+ 新增数据</button>
+  </div>
+  <div class="card">
+    <table class="data-table" id="data-mgmt-table">
+      <thead><tr><th>患者ID</th><th>姓名</th><th>数据类型</th><th>文件名</th><th>格式</th><th>文件大小</th><th>上传时间</th><th>处理状态</th><th>操作</th></tr></thead>
+      <tbody id="data-mgmt-tbody"></tbody>
+    </table>
+    <div class="pagination" id="data-mgmt-pager"></div>
+  </div>
+</div>
+
+<!-- ===== Page 1: 基因序列数据预处理与特征提取 ===== -->
+<div class="page-section" id="page-gene-prep">
+  <h2 class="section-title">基因序列数据预处理与特征提取</h2>
+  <div class="split-lr">
+    <div class="card">
+      <div class="card-header">预处理工具</div>
+      <div class="form-group"><label>选择患者</label><select class="form-select" id="gene-patient-select"><option>P0001 - 王建国</option><option>P0002 - 李明华</option><option>P0004 - 赵丽</option></select></div>
+      <div class="form-group"><label>基因序列文件</label><select class="form-select"><option>WJG_genome_2026.vcf</option><option>LMH_WES_2026.fasta</option><option>ZL_panel.vcf</option></select></div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+        <button class="btn btn-outline btn-sm" onclick="appendLog('gene-log','[INFO] 开始清洗数据...')">开始清洗</button>
+        <button class="btn btn-outline btn-sm" onclick="appendLog('gene-log','[INFO] 格式解析中...')">格式解析</button>
+        <button class="btn btn-outline btn-sm" onclick="appendLog('gene-log','[OK] 标准化处理完成')">标准化处理</button>
+      </div>
+      <div class="form-group"><label>目标基因位点（多选）</label>
+        <div style="display:flex;flex-wrap:wrap;gap:4px 12px">
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> CFH</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> ARMS2</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox"> HTRA1</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox"> C3</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> VEGFA</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox"> COL8A2</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox"> CFI</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> HMCN1</label>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="appendLog('gene-log','[INFO] 开始特征提取...');showGeneFeatures()">开始特征提取</button>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-header">预处理日志</div>
+        <div class="log-panel" id="gene-log">
+          <span class="log-info">[INFO]</span> 系统就绪，等待预处理操作...<br>
+          <span class="log-info">[INFO]</span> 已加载患者 P0001 - 王建国 基因数据
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">特征提取结果 <span class="badge status-done">8个位点</span></div>
+        <div style="overflow-x:auto">
+        <table class="data-table" id="gene-feature-table">
+          <thead><tr><th>位点ID</th><th>染色体位置</th><th>变异类型</th><th>参考基因型</th><th>变异基因型</th><th>致病等级</th><th>特征向量值</th></tr></thead>
+          <tbody>
+            <tr><td>rs1061170</td><td>1q31.3</td><td>SNP</td><td>T</td><td>C</td><td><span class="risk-high">Pathogenic</span></td><td>0.872</td></tr>
+            <tr><td>rs10490924</td><td>10q26.13</td><td>SNP</td><td>G</td><td>T</td><td><span class="risk-high">Pathogenic</span></td><td>0.915</td></tr>
+            <tr><td>rs11200638</td><td>10q26.13</td><td>SNP</td><td>G</td><td>A</td><td><span class="risk-mid">Likely Pathogenic</span></td><td>0.634</td></tr>
+            <tr><td>rs2230199</td><td>19p13.3</td><td>SNP</td><td>C</td><td>G</td><td><span class="risk-low">VUS</span></td><td>0.241</td></tr>
+            <tr><td>rs3025039</td><td>6p21.1</td><td>INDEL</td><td>-</td><td>insT</td><td><span class="risk-high">Pathogenic</span></td><td>0.793</td></tr>
+            <tr><td>rs12041391</td><td>1p34.3</td><td>CNV</td><td>2</td><td>3</td><td><span class="risk-mid">Likely Pathogenic</span></td><td>0.568</td></tr>
+            <tr><td>rs267606751</td><td>10q26.13</td><td>SNP</td><td>A</td><td>G</td><td><span class="risk-high">Pathogenic</span></td><td>0.841</td></tr>
+            <tr><td>rs56317512</td><td>1q31.3</td><td>SNP</td><td>C</td><td>T</td><td><span class="risk-mid">Likely Pathogenic</span></td><td>0.447</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 2: 眼底医学影像预处理与特征提取 ===== -->
+<div class="page-section" id="page-img-prep">
+  <h2 class="section-title">眼底医学影像预处理与特征提取</h2>
+  <div class="card"><div class="flex-row" style="align-items:flex-end">
+    <div class="form-group" style="margin-bottom:0"><label>选择患者</label><select class="form-select" style="width:180px"><option>P0001 - 王建国</option><option>P0002 - 李明华</option><option>P0003 - 张伟</option></select></div>
+    <div class="form-group" style="margin-bottom:0"><label>影像文件</label><select class="form-select" style="width:200px"><option>WJG_fundus_od.dcm</option><option>ZW_fundus.jpg</option></select></div>
+  </div></div>
+  <div class="panel-grid cols-2">
+    <div class="card"><div class="card-header">原始影像</div>
+      <div class="img-holder" style="aspect-ratio:1/1">眼底彩照 - 原始图像</div>
+    </div>
+    <div class="card"><div class="card-header">预处理后影像</div>
+      <div class="img-holder" style="aspect-ratio:1/1;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364)">
+        <div class="annot annot-red" style="top:25%;left:40%">渗出</div>
+        <div class="annot annot-yellow" style="top:45%;left:55%">微血管瘤</div>
+        <div class="annot annot-blue" style="top:60%;left:30%">血管异常</div>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div class="card-header">预处理操作</div>
+    <div class="flex-row" style="align-items:center;gap:10px">
+      <button class="btn btn-outline btn-sm" onclick="simProgress('img-progress','img-progress-fill',this)">去噪</button>
+      <button class="btn btn-outline btn-sm" onclick="simProgress('img-progress','img-progress-fill',this)">增强</button>
+      <button class="btn btn-outline btn-sm" onclick="simProgress('img-progress','img-progress-fill',this)">分割</button>
+      <button class="btn btn-outline btn-sm" onclick="simProgress('img-progress','img-progress-fill',this)">病灶标注</button>
+      <span style="font-size:12px;color:var(--soft);margin-left:8px" id="img-progress">就绪</span>
+      <div class="progress-bar" style="width:160px;display:none" id="img-progress-bar"><div class="progress-fill" style="width:0%" id="img-progress-fill"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">特征提取</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:12px">
+      <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> 病灶形态</label>
+      <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> 血管密度</label>
+      <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> 视网膜厚度</label>
+      <label style="font-size:12px;cursor:pointer"><input type="checkbox"> 黄斑结构</label>
+      <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> 视盘形态</label>
+      <label style="font-size:12px;cursor:pointer"><input type="checkbox"> 出血区域</label>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="showImgFeatures()">提取特征</button>
+    <div style="overflow-x:auto;margin-top:12px">
+    <table class="data-table" id="img-feature-table">
+      <thead><tr><th>特征名称</th><th>特征值</th><th>参考范围</th><th>偏差</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>血管密度</td><td>0.178 mm²</td><td>0.15-0.22</td><td>+0.028</td><td><span class="status-tag status-done">正常</span></td></tr>
+        <tr><td>视网膜厚度</td><td>287 μm</td><td>250-310</td><td>-23</td><td><span class="status-tag status-done">正常</span></td></tr>
+        <tr><td>渗出面积</td><td>2.4 mm²</td><td>&lt;0.5</td><td>+1.9</td><td><span class="status-tag status-failed">异常</span></td></tr>
+        <tr><td>视盘形态</td><td>C/D 0.62</td><td>0.3-0.5</td><td>+0.12</td><td><span class="status-tag status-failed">异常</span></td></tr>
+        <tr><td>黄斑中心凹厚度</td><td>245 μm</td><td>200-280</td><td>-35</td><td><span class="status-tag status-pending">待确认</span></td></tr>
+        <tr><td>出血区域面积</td><td>0.8 mm²</td><td>&lt;0.1</td><td>+0.7</td><td><span class="status-tag status-failed">异常</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 3: 多模态特征融合 ===== -->
+<div class="page-section" id="page-fusion">
+  <h2 class="section-title">多模态特征融合</h2>
+  <div class="split-lr">
+    <div class="card">
+      <div class="card-header">分析参数配置</div>
+      <div class="form-group"><label>选择患者</label><select class="form-select" id="fusion-patient"><option>P0001 - 王建国</option><option>P0002 - 李明华</option></select></div>
+      <div class="info-card" style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px">患者数据概要</div>
+        <div class="info-row"><span class="info-label">基因特征:</span>8个位点已提取</div>
+        <div class="info-row"><span class="info-label">影像特征:</span>6项特征已提取</div>
+        <div class="info-row"><span class="info-label">特征维度:</span>14维向量</div>
+      </div>
+      <div class="form-group"><label>融合算法</label>
+        <div style="display:flex;gap:16px">
+          <label style="font-size:13px;cursor:pointer"><input type="radio" name="fusion-algo" checked> 注意力机制融合</label>
+          <label style="font-size:13px;cursor:pointer"><input type="radio" name="fusion-algo"> 特征拼接融合</label>
+        </div>
+      </div>
+      <div class="form-group"><label>分析目标</label>
+        <div style="display:flex;gap:16px">
+          <label style="font-size:13px;cursor:pointer"><input type="radio" name="fusion-target" checked> 疾病风险评估</label>
+          <label style="font-size:13px;cursor:pointer"><input type="radio" name="fusion-target"> 风险预测</label>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="runFusion()">开始融合分析</button>
+      <div id="fusion-progress-area" style="margin-top:12px;display:none">
+        <div class="progress-bar"><div class="progress-fill" id="fusion-progress" style="width:0%"></div></div>
+        <div style="font-size:11px;color:var(--soft);text-align:center" id="fusion-status">数据加载中...</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-header">关联度热力图</div>
+        <div id="heatmap-container" style="overflow-x:auto"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">特征权重分布</div>
+        <table class="data-table" id="weight-table">
+          <thead><tr><th>特征名称</th><th>模态来源</th><th>权重值</th><th>排名</th></tr></thead>
+          <tbody id="weight-tbody"></tbody>
+        </table>
+      </div>
+      <div class="card" id="fusion-conclusion" style="display:none">
+        <div class="card-header">融合分析结论</div>
+        <p style="font-size:13px;line-height:1.7">
+          基于注意力机制融合分析，该患者基因特征与眼底影像特征存在显著跨模态关联。
+          关键基因位点 <strong>rs10490924(ARMS2)</strong> 与 <strong>rs1061170(CFH)</strong> 的变异
+          与眼底影像中 <strong>黄斑区渗出</strong> 和 <strong>视盘形态异常</strong> 高度相关（p&lt;0.001）。
+          综合风险评估等级为 <span class="risk-high">高风险</span>，建议进一步临床检查。
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 4: 结果可视化与交互展示 ===== -->
+<div class="page-section" id="page-vis">
+  <h2 class="section-title">结果可视化与交互展示</h2>
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn btn-outline btn-sm">缩放</button>
+    <button class="btn btn-outline btn-sm">平移</button>
+    <button class="btn btn-outline btn-sm">标注</button>
+    <button class="btn btn-outline btn-sm">截图导出</button>
+    <button class="btn btn-outline btn-sm">添加批注</button>
+  </div>
+  <div class="panel-grid cols-2">
+    <div class="card">
+      <div class="card-header">基因序列变异位点图谱</div>
+      <div id="gene-locus-plot" style="padding:10px">
+        <div style="position:relative;height:200px;border-left:2px solid var(--blue);margin:10px 20px">
+          <div class="gene-locus" style="top:10%;left:40%;width:60px" data-locus="CFH" onclick="highlightLocus(this)"><span class="risk-high">CFH</span><br><small>SNP·Pathogenic</small></div>
+          <div class="gene-locus" style="top:35%;left:55%;width:70px" data-locus="ARMS2" onclick="highlightLocus(this)"><span class="risk-high">ARMS2</span><br><small>SNP·Pathogenic</small></div>
+          <div class="gene-locus" style="top:55%;left:30%;width:65px" data-locus="HTRA1" onclick="highlightLocus(this)"><span class="risk-mid">HTRA1</span><br><small>SNP·LP</small></div>
+          <div class="gene-locus" style="top:75%;left:60%;width:60px" data-locus="VEGFA" onclick="highlightLocus(this)"><span class="risk-high">VEGFA</span><br><small>INDEL·P</small></div>
+          <div class="gene-locus" style="top:20%;left:25%;width:50px" data-locus="C3" onclick="highlightLocus(this)"><span class="risk-low">C3</span><br><small>SNP·VUS</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">眼底影像标注图</div>
+      <div class="img-holder" style="aspect-ratio:1/1;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364)">
+        <div class="annot annot-red" style="top:18%;left:42%" data-locus="CFH" id="img-annot-1">CFH关联·黄斑渗出</div>
+        <div class="annot annot-yellow" style="top:42%;left:58%" data-locus="ARMS2" id="img-annot-2">ARMS2关联·微血管瘤</div>
+        <div class="annot annot-blue" style="top:58%;left:32%" data-locus="HTRA1" id="img-annot-3">HTRA1关联·血管异常</div>
+        <div class="annot annot-red" style="top:72%;left:48%" data-locus="VEGFA" id="img-annot-4">VEGFA关联·出血区域</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel-grid cols-2">
+    <div class="card"><div class="card-header">基因-影像特征相关性散点图</div>
+      <div class="scatter-plot" id="scatter-plot">
+        <div class="scatter-dot" style="top:20%;left:15%;background:#ef4444" title="CFH-渗出"></div>
+        <div class="scatter-dot" style="top:25%;left:30%;background:#f59e0b" title="ARMS2-血管密度"></div>
+        <div class="scatter-dot" style="top:45%;left:50%;background:#ef4444" title="HTRA1-视网膜厚度"></div>
+        <div class="scatter-dot" style="top:60%;left:70%;background:#3b82f6" title="VEGFA-出血"></div>
+        <div class="scatter-dot" style="top:35%;left:42%;background:#10b981" title="CFH-视盘"></div>
+        <div class="scatter-dot" style="top:70%;left:35%;background:#f59e0b" title="C3-黄斑"></div>
+        <div class="scatter-dot" style="top:50%;left:25%;background:#3b82f6" title="HMCN1-渗出"></div>
+        <div class="scatter-dot" style="top:15%;left:65%;background:#ef4444" title="ARMS2-微血管瘤"></div>
+        <div style="position:absolute;bottom:8px;left:50%;font-size:10px;color:var(--soft);transform:translateX(-50%)">基因特征值 (x) →</div>
+        <div style="position:absolute;left:-12px;top:50%;font-size:10px;color:var(--soft);transform:translateY(-50%) rotate(-90deg)">影像特征值 (y) →</div>
+      </div>
+    </div>
+    <div class="card"><div class="card-header">特征分布箱线图</div>
+      <div class="bar-chart" style="height:150px;align-items:flex-end;padding-top:20px">
+        <div class="bar-col"><div class="bar-fill" style="height:85%;background:linear-gradient(180deg,#ef4444,#fca5a5)"></div><span class="bar-label">CFH</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:92%;background:linear-gradient(180deg,#f59e0b,#fcd34d)"></div><span class="bar-label">ARMS2</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:58%;background:linear-gradient(180deg,#3b82f6,#93c5fd)"></div><span class="bar-label">HTRA1</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:73%;background:linear-gradient(180deg,#10b981,#6ee7b7)"></div><span class="bar-label">VEGFA</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:35%;background:linear-gradient(180deg,#8b5cf6,#c4b5fd)"></div><span class="bar-label">C3</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:48%;background:linear-gradient(180deg,#ec4899,#f9a8d4)"></div><span class="bar-label">HMCN1</span></div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:16px;font-size:11px;margin-top:4px">
+        <span style="color:#ef4444">● 高风险</span><span style="color:#f59e0b">● 中风险</span><span style="color:#10b981">● 低风险</span><span style="color:#3b82f6">● 关注</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 5: 报告生成与导出 ===== -->
+<div class="page-section" id="page-report-gen">
+  <h2 class="section-title">报告生成与导出</h2>
+  <div class="split-lr">
+    <div class="card">
+      <div class="card-header">报告配置</div>
+      <div class="form-group"><label>报告模板</label><select class="form-select"><option>标准模板</option><option>详细模板</option><option>简洁模板</option></select></div>
+      <div class="form-group"><label>投放模块（多选）</label>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> 关联热力图</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> 特征权重表</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> 影像标注图</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox"> 基因位点表</label>
+          <label style="font-size:12px;cursor:pointer"><input type="checkbox" checked> 风险总结</label>
+        </div>
+      </div>
+      <div class="form-group"><label>报告标题</label><input class="form-input" value="多模态融合分析报告 - 王建国"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="showReportPreview()">生成报告</button>
+    </div>
+    <div class="card" id="report-preview-area">
+      <div class="card-header">报告预览</div>
+      <div class="report-preview" id="report-preview-content">
+        <div class="r-header"><h2>多模态融合分析报告</h2><div class="r-meta">报告编号：RPT-2026-0701-0001 | 生成时间：2026-07-01 10:30 | 生命医学智能平台</div></div>
+        <div class="r-section"><h4>患者基本信息</h4>
+          <div class="info-card"><div class="info-row"><span class="info-label">患者ID:</span>P0001</div><div class="info-row"><span class="info-label">姓名:</span>王建国</div><div class="info-row"><span class="info-label">性别:</span>男</div><div class="info-row"><span class="info-label">年龄:</span>58岁</div></div>
+        </div>
+        <div class="r-section"><h4>基因数据概况</h4>
+          <p>基因序列文件：WJG_genome_2026.vcf (VCF格式, 2.3MB)。共检测到8个有效变异位点，其中Pathogenic 4个、Likely Pathogenic 3个、VUS 1个。关键变异位点涉及CFH、ARMS2、VEGFA等AMD相关基因。</p>
+        </div>
+        <div class="r-section"><h4>眼底影像概况</h4>
+          <p>眼底彩照（DICOM格式）：黄斑区可见点状出血及硬性渗出，视盘C/D比增大(0.62)，血管密度偏低，提示老年黄斑变性(AMD)可能。</p>
+        </div>
+        <div class="r-section"><h4>跨模态特征关联分析</h4>
+          <p>ARMS2 rs10490924变异与黄斑区微血管瘤高度相关(r=0.87)；CFH rs1061170变异与黄斑渗出面积显著相关(r=0.79)；VEGFA rs3025039 INDEL与出血区域面积中等相关(r=0.65)。</p>
+        </div>
+        <div class="r-section"><h4>关键结论与解读</h4>
+          <p>综合评估：该患者AMD遗传风险 <span class="risk-high">高风险</span>（评分78分），建议定期眼底检查（每6个月），必要时行抗VEGF治疗。青光眼风险 <span class="risk-mid">中风险</span>（评分45分），建议监测眼压。</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-primary btn-sm">导出PDF</button>
+        <button class="btn btn-outline btn-sm">导出Word</button>
+        <button class="btn btn-outline btn-sm">一键保存图表</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 6: 基因突变位点信息解析录入 ===== -->
+<div class="page-section" id="page-mutation">
+  <h2 class="section-title">基因突变位点信息解析录入</h2>
+  <div class="filter-bar">
+    <input type="text" placeholder="搜索位点ID / 基因名称..." style="width:200px" oninput="filterDataTable(this,'mutation-table')">
+    <button class="btn btn-primary btn-sm" onclick="showModal('modal-batch-import')">批量导入</button>
+    <button class="btn btn-outline btn-sm" onclick="showModal('modal-mutation-add')">手动新增</button>
+  </div>
+  <div class="card">
+    <div style="overflow-x:auto">
+    <table class="data-table" id="mutation-table">
+      <thead><tr><th>位点ID</th><th>基因名称</th><th>染色体位置</th><th>变异类型</th><th>参考序列</th><th>变异序列</th><th>致病等级</th><th>关联疾病</th><th>证据等级</th><th>录入时间</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr><td>VAR001</td><td>CFH</td><td>1q31.3</td><td>SNP</td><td>C</td><td>T</td><td><span class="risk-high">Pathogenic</span></td><td>老年黄斑变性</td><td>A</td><td>2026-06-20</td><td><button class="btn btn-outline btn-xs">查看</button> <button class="btn btn-outline btn-xs">编辑</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>
+        <tr><td>VAR002</td><td>ARMS2</td><td>10q26.13</td><td>INDEL</td><td>-</td><td>insGC</td><td><span class="risk-mid">Likely Pathogenic</span></td><td>AMD</td><td>B</td><td>2026-06-20</td><td><button class="btn btn-outline btn-xs">查看</button> <button class="btn btn-outline btn-xs">编辑</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>
+        <tr><td>VAR003</td><td>HTRA1</td><td>10q26.13</td><td>SNP</td><td>G</td><td>A</td><td><span class="risk-mid">Likely Pathogenic</span></td><td>AMD</td><td>B</td><td>2026-06-22</td><td><button class="btn btn-outline btn-xs">查看</button> <button class="btn btn-outline btn-xs">编辑</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>
+        <tr><td>VAR004</td><td>C3</td><td>19p13.3</td><td>SNP</td><td>C</td><td>G</td><td><span class="risk-low">VUS</span></td><td>AMD</td><td>C</td><td>2026-06-22</td><td><button class="btn btn-outline btn-xs">查看</button> <button class="btn btn-outline btn-xs">编辑</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>
+        <tr><td>VAR005</td><td>VEGFA</td><td>6p21.1</td><td>INDEL</td><td>-</td><td>insT</td><td><span class="risk-high">Pathogenic</span></td><td>糖尿病视网膜病变</td><td>A</td><td>2026-06-24</td><td><button class="btn btn-outline btn-xs">查看</button> <button class="btn btn-outline btn-xs">编辑</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>
+        <tr><td>VAR006</td><td>COL8A2</td><td>1p34.3</td><td>SNP</td><td>A</td><td>G</td><td><span class="risk-low">VUS</span></td><td>青光眼</td><td>C</td><td>2026-06-24</td><td><button class="btn btn-outline btn-xs">查看</button> <button class="btn btn-outline btn-xs">编辑</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>
+        <tr><td>VAR007</td><td>CFI</td><td>4q25</td><td>CNV</td><td>2</td><td>3</td><td><span class="risk-mid">Likely Pathogenic</span></td><td>AMD</td><td>B</td><td>2026-06-26</td><td><button class="btn btn-outline btn-xs">查看</button> <button class="btn btn-outline btn-xs">编辑</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>
+        <tr><td>VAR008</td><td>HMCN1</td><td>1q31.1</td><td>SNP</td><td>T</td><td>C</td><td><span class="risk-low">VUS</span></td><td>白内障</td><td>D</td><td>2026-06-28</td><td><button class="btn btn-outline btn-xs">查看</button> <button class="btn btn-outline btn-xs">编辑</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 7: 基因易感性评分 ===== -->
+<div class="page-section" id="page-score">
+  <h2 class="section-title">基因易感性评分</h2>
+  <div class="card">
+    <div class="form-group" style="max-width:220px"><label>选择患者</label><select class="form-select"><option>P0001 - 王建国</option><option>P0002 - 李明华</option></select></div>
+  </div>
+  <div class="panel-grid cols-4">
+    <div class="card" style="text-align:center">
+      <div class="gauge-wrap">
+        <div class="gauge-circle" style="--gc:#ef4444;--gd:280deg"><div class="gauge-inner"><span class="score" style="color:#ef4444">78</span><span class="unit">分</span></div></div>
+        <span style="font-weight:700">老年黄斑变性(AMD)</span>
+        <span class="risk-high">高风险</span>
+      </div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="gauge-wrap">
+        <div class="gauge-circle" style="--gc:#f59e0b;--gd:162deg"><div class="gauge-inner"><span class="score" style="color:#f59e0b">45</span><span class="unit">分</span></div></div>
+        <span style="font-weight:700">青光眼</span>
+        <span class="risk-mid">中风险</span>
+      </div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="gauge-wrap">
+        <div class="gauge-circle" style="--gc:#10b981;--gd:115deg"><div class="gauge-inner"><span class="score" style="color:#10b981">32</span><span class="unit">分</span></div></div>
+        <span style="font-weight:700">糖尿病视网膜病变</span>
+        <span class="risk-low">低风险</span>
+      </div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="gauge-wrap">
+        <div class="gauge-circle" style="--gc:#10b981;--gd:65deg"><div class="gauge-inner"><span class="score" style="color:#10b981">18</span><span class="unit">分</span></div></div>
+        <span style="font-weight:700">白内障</span>
+        <span class="risk-low">低风险</span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">评分详情</div>
+    <table class="data-table">
+      <thead><tr><th>疾病名称</th><th>评分</th><th>等级</th><th>关键基因位点</th><th>基因依据说明</th></tr></thead>
+      <tbody>
+        <tr><td>老年黄斑变性(AMD)</td><td><strong>78</strong></td><td><span class="risk-high">高风险</span></td><td>CFH, ARMS2, HTRA1, C3</td><td>CFH rs1061170 T>C 与 ARMS2 rs10490924 G>T 均为AMD高风险致病位点，联合致病风险增加3.2倍</td></tr>
+        <tr><td>青光眼</td><td><strong>45</strong></td><td><span class="risk-mid">中风险</span></td><td>COL8A2</td><td>COL8A2 rs12041391 与原发性开角型青光眼中等关联</td></tr>
+        <tr><td>糖尿病视网膜病变(DR)</td><td><strong>32</strong></td><td><span class="risk-low">低风险</span></td><td>VEGFA</td><td>VEGFA rs3025039 携带者DR风险略增，但综合评分处于低风险区间</td></tr>
+        <tr><td>白内障</td><td><strong>18</strong></td><td><span class="risk-low">低风险</span></td><td>HMCN1</td><td>HMCN1 rs267606751 与白内障弱相关，遗传风险较低</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:10px">
+    <button class="btn btn-primary btn-sm">一键刷新评分</button>
+    <button class="btn btn-outline btn-sm">查看测算逻辑</button>
+  </div>
+</div>
+
+<!-- ===== Page 8: 影像异常识别提示 ===== -->
+<div class="page-section" id="page-anomaly">
+  <h2 class="section-title">影像异常识别提示</h2>
+  <div class="panel-grid cols-2">
+    <div class="card">
+      <div class="card-header">眼底影像查看器 <span style="font-size:11px;font-weight:400;color:var(--soft);margin-left:8px">患者: P0001 王建国</span></div>
+      <div class="img-holder" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);aspect-ratio:4/3">
+        <div class="annot annot-red" style="top:12%;left:35%;cursor:pointer" onclick="highlightAnnot(this)" data-id="A1">A1·出血点</div>
+        <div class="annot annot-yellow" style="top:38%;left:52%;cursor:pointer" onclick="highlightAnnot(this)" data-id="A2">A2·渗出</div>
+        <div class="annot annot-blue" style="top:55%;left:28%;cursor:pointer" onclick="highlightAnnot(this)" data-id="A3">A3·血管异常</div>
+        <div class="annot annot-green" style="top:42%;left:68%;cursor:pointer" onclick="highlightAnnot(this)" data-id="A4">A4·黄斑异常</div>
+        <div class="annot annot-red" style="top:68%;left:45%;cursor:pointer" onclick="highlightAnnot(this)" data-id="A5">A5·出血点</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btn-outline btn-xs">放大查看</button>
+        <button class="btn btn-outline btn-xs">历史影像对比</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">异常清单</div>
+      <table class="data-table">
+        <thead><tr><th>编号</th><th>异常位点</th><th>异常类型</th><th>严重程度</th><th>坐标位置</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr id="anomaly-row-A1"><td>A1</td><td>视盘上方</td><td><span style="color:#ef4444;font-weight:700">出血点</span></td><td><span class="risk-high">中度</span></td><td>(120,85)</td><td>点状出血，直径约0.3mm</td></tr>
+          <tr id="anomaly-row-A2"><td>A2</td><td>黄斑区</td><td><span style="color:#f59e0b;font-weight:700">渗出</span></td><td><span class="risk-mid">轻度</span></td><td>(200,150)</td><td>硬性渗出，范围约1.0mm²</td></tr>
+          <tr id="anomaly-row-A3"><td>A3</td><td>颞侧血管</td><td><span style="color:#3b82f6;font-weight:700">血管异常</span></td><td><span class="risk-high">中度</span></td><td>(160,200)</td><td>血管迂曲，管径不规则</td></tr>
+          <tr id="anomaly-row-A4"><td>A4</td><td>黄斑中心凹</td><td><span style="color:#10b981;font-weight:700">黄斑异常</span></td><td><span class="risk-mid">轻度</span></td><td>(250,180)</td><td>中心凹反射减弱</td></tr>
+          <tr id="anomaly-row-A5"><td>A5</td><td>下方视网膜</td><td><span style="color:#ef4444;font-weight:700">出血点</span></td><td><span class="risk-low">轻度</span></td><td>(180,260)</td><td>少量散在出血点</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 9: 自动生成结构化报告 ===== -->
+<div class="page-section" id="page-auto-report">
+  <h2 class="section-title">自动生成结构化报告</h2>
+  <div class="card">
+    <div class="report-preview" style="max-height:550px">
+      <div class="r-header"><h2>结构化诊断报告</h2><div class="r-meta">报告编号：DG-2026-0701-0001 | 生成时间：2026-07-01 14:20 | 生命医学智能平台</div></div>
+      <div class="r-section"><h4>一、患者基本信息</h4>
+        <div class="info-card"><div class="info-row"><span class="info-label">患者ID:</span>P0001</div><div class="info-row"><span class="info-label">姓名:</span>王建国</div><div class="info-row"><span class="info-label">性别:</span>男</div><div class="info-row"><span class="info-label">年龄:</span>58岁</div><div class="info-row"><span class="info-label">就诊日期:</span>2026-07-01</div></div>
+      </div>
+      <div class="r-section"><h4>二、疾病风险评估汇总</h4>
+        <div style="display:flex;gap:24px;justify-content:center;align-items:center;flex-wrap:wrap">
+          <div style="text-align:center"><div style="font-size:36px;font-weight:800;color:#ef4444">78</div><span class="risk-high" style="font-size:14px">AMD - 高风险</span></div>
+          <div style="text-align:center"><div style="font-size:36px;font-weight:800;color:#f59e0b">45</div><span class="risk-mid" style="font-size:14px">青光眼 - 中风险</span></div>
+          <div style="text-align:center"><div style="font-size:36px;font-weight:800;color:#10b981">32</div><span class="risk-low" style="font-size:14px">DR - 低风险</span></div>
+          <div style="text-align:center"><div style="font-size:36px;font-weight:800;color:#10b981">18</div><span class="risk-low" style="font-size:14px">白内障 - 低风险</span></div>
+        </div>
+      </div>
+      <div class="r-section"><h4>三、基因突变解读</h4>
+        <table class="data-table" style="width:100%"><thead><tr><th>基因</th><th>位点</th><th>变异</th><th>致病等级</th><th>关联疾病</th></tr></thead>
+        <tbody><tr><td>CFH</td><td>rs1061170</td><td>T>C</td><td><span class="risk-high">Pathogenic</span></td><td>AMD</td></tr>
+        <tr><td>ARMS2</td><td>rs10490924</td><td>G>T</td><td><span class="risk-high">Pathogenic</span></td><td>AMD</td></tr>
+        <tr><td>VEGFA</td><td>rs3025039</td><td>insT</td><td><span class="risk-high">Pathogenic</span></td><td>DR</td></tr></tbody></table>
+      </div>
+      <div class="r-section"><h4>四、影像异常标注</h4>
+        <p>眼底彩照提示：黄斑区硬性渗出(A2)、视盘上方点状出血(A1)、颞侧血管迂曲(A3)。综合AMD遗传风险高，建议行OCT+FFA进一步检查。</p>
+      </div>
+      <div class="r-section"><h4>五、综合结论与建议</h4>
+        <p><strong>诊断意见：</strong>老年黄斑变性(AMD)高风险，伴轻度青光眼风险。建议：①每6个月OCT随访；②抗VEGF治疗评估；③眼压监测；④补充叶黄素/玉米黄质。</p>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:12px">
+    <button class="btn btn-primary btn-sm">导出PDF</button>
+    <button class="btn btn-outline btn-sm">导出Word</button>
+    <button class="btn btn-outline btn-sm">归档保存</button>
+  </div>
+</div>
+
+<!-- ===== Page 10: 核心评估内容可视化呈现 ===== -->
+<div class="page-section" id="page-core-vis">
+  <h2 class="section-title">核心评估内容可视化呈现</h2>
+  <div class="panel-grid cols-2">
+    <div class="card" style="text-align:center">
+      <div class="card-header">疾病风险等级仪表盘</div>
+      <div class="gauge-wrap">
+        <div class="gauge-circle" style="width:160px;height:160px;--gc:#ef4444;--gd:280deg">
+          <div class="gauge-inner" style="width:110px;height:110px">
+            <span class="score" style="font-size:36px;color:#ef4444">78</span>
+            <span class="unit">AMD风险分</span>
+          </div>
+        </div>
+      </div>
+      <span class="risk-high" style="font-size:16px;margin-top:6px;display:inline-block">高风险 - 建议积极干预</span>
+    </div>
+    <div class="card">
+      <div class="card-header">眼底影像 + 病灶标注</div>
+      <div class="img-holder" style="background:linear-gradient(135deg,#0f2027,#203a43);aspect-ratio:4/3">
+        <div class="annot annot-red" style="top:15%;left:35%">出血</div>
+        <div class="annot annot-yellow" style="top:40%;left:55%">渗出</div>
+        <div class="annot annot-blue" style="top:58%;left:30%">血管异常</div>
+        <div class="annot annot-green" style="top:45%;left:70%">黄斑异常</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel-grid cols-2">
+    <div class="card">
+      <div class="card-header">基因变异解读</div>
+      <table class="data-table">
+        <thead><tr><th>基因</th><th>位点ID</th><th>变异类型</th><th>致病性</th><th>关联疾病</th></tr></thead>
+        <tbody>
+          <tr><td>CFH</td><td>rs1061170</td><td>SNP</td><td><span class="risk-high">Pathogenic</span></td><td>老年黄斑变性</td></tr>
+          <tr><td>ARMS2</td><td>rs10490924</td><td>SNP</td><td><span class="risk-high">Pathogenic</span></td><td>AMD</td></tr>
+          <tr><td>HTRA1</td><td>rs11200638</td><td>SNP</td><td><span class="risk-mid">Likely Pathogenic</span></td><td>AMD</td></tr>
+          <tr><td>VEGFA</td><td>rs3025039</td><td>INDEL</td><td><span class="risk-high">Pathogenic</span></td><td>糖尿病视网膜病变</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">影像特征说明</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div class="info-card" style="flex:1;min-width:140px"><strong>黄斑渗出</strong><br><span style="font-size:11px;color:var(--soft)">硬性渗出面积2.4mm²，超出正常范围</span></div>
+        <div class="info-card" style="flex:1;min-width:140px"><strong>视盘异常</strong><br><span style="font-size:11px;color:var(--soft)">C/D比0.62，杯盘比增大</span></div>
+        <div class="info-card" style="flex:1;min-width:140px"><strong>血管迂曲</strong><br><span style="font-size:11px;color:var(--soft)">颞侧血管形态不规则</span></div>
+        <div class="info-card" style="flex:1;min-width:140px"><strong>出血点</strong><br><span style="font-size:11px;color:var(--soft)">视盘上方点状出血</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 11: 报告导出与归档管理 ===== -->
+<div class="page-section" id="page-report-export">
+  <h2 class="section-title">报告导出与归档管理</h2>
+  <div class="filter-bar">
+    <input type="text" placeholder="搜索患者姓名..." style="width:180px">
+    <select class="form-select" style="width:150px;height:34px"><option>报告类型：全部</option><option>多模态融合分析报告</option><option>结构化诊断报告</option><option>综合评估报告</option></select>
+    <input type="date" style="height:34px;border:1.5px solid var(--line);border-radius:7px;padding:0 8px;font:inherit"> -
+    <input type="date" style="height:34px;border:1.5px solid var(--line);border-radius:7px;padding:0 8px;font:inherit">
+  </div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr><th>报告编号</th><th>患者姓名</th><th>报告类型</th><th>生成时间</th><th>格式</th><th>大小</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr><td>RPT-2026-0701-0001</td><td>王建国</td><td>多模态融合分析报告</td><td>2026-07-01 10:30</td><td>PDF</td><td>2.4MB</td><td><button class="btn btn-outline btn-xs">下载</button> <button class="btn btn-danger btn-xs">删除</button> <button class="btn btn-outline btn-xs">归档</button></td></tr>
+        <tr><td>DG-2026-0701-0001</td><td>王建国</td><td>结构化诊断报告</td><td>2026-07-01 14:20</td><td>Word</td><td>1.8MB</td><td><button class="btn btn-outline btn-xs">下载</button> <button class="btn btn-danger btn-xs">删除</button> <button class="btn btn-outline btn-xs">归档</button></td></tr>
+        <tr><td>RPT-2026-0628-0003</td><td>李明华</td><td>综合评估报告</td><td>2026-06-28 09:15</td><td>PDF</td><td>3.1MB</td><td><button class="btn btn-outline btn-xs">下载</button> <button class="btn btn-danger btn-xs">删除</button> <button class="btn btn-outline btn-xs">归档</button></td></tr>
+        <tr><td>DG-2026-0625-0002</td><td>李明华</td><td>结构化诊断报告</td><td>2026-06-25 16:40</td><td>Word</td><td>1.5MB</td><td><button class="btn btn-outline btn-xs">下载</button> <button class="btn btn-danger btn-xs">删除</button> <button class="btn btn-outline btn-xs">归档</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== Page 12: 多学科联合会诊支撑 ===== -->
+<div class="page-section" id="page-consult">
+  <h2 class="section-title">多学科联合会诊支撑</h2>
+  <div style="display:flex;gap:16px">
+    <div class="card" style="width:180px;flex-shrink:0">
+      <div class="card-header" style="font-size:13px">在线成员 (4)</div>
+      <div class="member-item"><div class="member-avatar" style="background:#3b82f6">张</div><div class="member-info"><div class="name">张教授</div><div class="dept">眼科</div></div><div class="online-dot on"></div></div>
+      <div class="member-item"><div class="member-avatar" style="background:#10b981">李</div><div class="member-info"><div class="name">李主任</div><div class="dept">内科</div></div><div class="online-dot on"></div></div>
+      <div class="member-item"><div class="member-avatar" style="background:#8b5cf6">王</div><div class="member-info"><div class="name">王医师</div><div class="dept">遗传科</div></div><div class="online-dot on"></div></div>
+      <div class="member-item"><div class="member-avatar" style="background:#d1d5db;color:#6b7280">赵</div><div class="member-info"><div class="name">赵博士</div><div class="dept">放射科</div></div><div class="online-dot off"></div></div>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div class="chat-area">
+        <div class="chat-header">会诊讨论 - 患者：王建国 (P0001) | AMD高风险</div>
+        <div class="chat-body">
+          <div class="chat-msg"><div class="c-avatar" style="background:#3b82f6">张</div><div class="c-bubble">该患者AMD遗传风险评分78分，眼底彩照提示黄斑区硬性渗出，建议行OCT+抗VEGF治疗评估。<div class="c-meta">张教授·眼科 · 14:05</div></div></div>
+          <div class="chat-msg"><div class="c-avatar" style="background:#10b981">李</div><div class="c-bubble">从内科角度看，患者无高血压/糖尿病病史，排除继发性因素。同意抗VEGF方案。<div class="c-meta">李主任·内科 · 14:08</div></div></div>
+          <div class="chat-msg"><div class="c-avatar" style="background:#8b5cf6">王</div><div class="c-bubble">基因检测显示CFH+ARMS2双高风险位点，家族史调查建议纳入。建议患者直系亲属也做AMD基因筛查。<div class="c-meta">王医师·遗传科 · 14:12</div></div></div>
+        </div>
+        <div class="chat-input"><input type="text" placeholder="输入讨论内容..."><button class="btn btn-primary btn-sm">发送</button></div>
+      </div>
+    </div>
+    <div class="card" style="width:220px;flex-shrink:0">
+      <div class="card-header" style="font-size:13px">共享资料</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start">📋 基因变异解读</button>
+        <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start">🖼 影像异常标注</button>
+        <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start">📊 风险评估报告</button>
+        <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start">📝 历史病历</button>
+        <hr style="border-color:var(--line)">
+        <button class="btn btn-primary btn-sm" style="width:100%">生成会诊纪要</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 13: 科研数据分析支撑 ===== -->
+<div class="page-section" id="page-research">
+  <h2 class="section-title">科研数据分析支撑</h2>
+  <div class="card">
+    <div class="card-header">筛选条件</div>
+    <div class="flex-row" style="align-items:flex-end;gap:12px;flex-wrap:wrap">
+      <div class="form-group" style="margin-bottom:0"><label>疾病类型</label><select class="form-select" style="width:180px" multiple size="4"><option selected>老年黄斑变性</option><option selected>青光眼</option><option>糖尿病视网膜病变</option><option>白内障</option></select></div>
+      <div class="form-group" style="margin-bottom:0"><label>基因变异位点</label><select class="form-select" style="width:180px" multiple size="4"><option selected>CFH</option><option selected>ARMS2</option><option>HTRA1</option><option>VEGFA</option></select></div>
+      <div class="form-group" style="margin-bottom:0"><label>影像异常特征</label><select class="form-select" style="width:180px" multiple size="4"><option selected>渗出</option><option>出血</option><option>血管异常</option><option>黄斑异常</option></select></div>
+      <div class="form-group" style="margin-bottom:0"><label>时间范围</label><div><input type="date" style="height:34px"> - <input type="date" style="height:34px"></div></div>
+      <button class="btn btn-primary btn-sm">开始分析</button>
+    </div>
+  </div>
+  <div class="panel-grid cols-4">
+    <div class="card" style="text-align:center"><div style="font-size:28px;font-weight:800;color:var(--blue)">156</div><div style="font-size:12px;color:var(--soft)">筛选患者数</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:28px;font-weight:800;color:#10b981">2,340</div><div style="font-size:12px;color:var(--soft)">数据条目数</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:28px;font-weight:800;color:#8b5cf6">28</div><div style="font-size:12px;color:var(--soft)">基因变异种类数</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:28px;font-weight:800;color:#f59e0b">12</div><div style="font-size:12px;color:var(--soft)">影像异常种类数</div></div>
+  </div>
+  <div class="panel-grid cols-2">
+    <div class="card"><div class="card-header">各疾病类型患者分布</div>
+      <div class="bar-chart" style="height:160px">
+        <div class="bar-col"><div class="bar-fill" style="height:80%;background:linear-gradient(180deg,#ef4444,#fca5a5)"></div><span class="bar-label">AMD</span><span style="font-size:10px;font-weight:700">89</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:45%;background:linear-gradient(180deg,#f59e0b,#fcd34d)"></div><span class="bar-label">青光眼</span><span style="font-size:10px;font-weight:700">48</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:28%;background:linear-gradient(180deg,#3b82f6,#93c5fd)"></div><span class="bar-label">DR</span><span style="font-size:10px;font-weight:700">32</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:18%;background:linear-gradient(180deg,#10b981,#6ee7b7)"></div><span class="bar-label">白内障</span><span style="font-size:10px;font-weight:700">21</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height:12%;background:linear-gradient(180deg,#8b5cf6,#c4b5fd)"></div><span class="bar-label">其他</span><span style="font-size:10px;font-weight:700">14</span></div>
+      </div>
+    </div>
+    <div class="card"><div class="card-header">基因变异频率趋势</div>
+      <div style="position:relative;height:160px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);margin:10px 20px 30px 30px">
+        <svg viewBox="0 0 300 160" style="position:absolute;inset:0;width:100%;height:100%"><polyline points="20,40 80,30 140,70 200,50 260,20" fill="none" stroke="#3b82f6" stroke-width="2.5"/><polyline points="20,100 80,90 140,120 200,80 260,60" fill="none" stroke="#f59e0b" stroke-width="2.5"/></svg>
+        <div style="position:absolute;bottom:-22px;left:20px;font-size:10px;color:var(--soft)">2022</div>
+        <div style="position:absolute;bottom:-22px;left:80px;font-size:10px;color:var(--soft)">2023</div>
+        <div style="position:absolute;bottom:-22px;left:140px;font-size:10px;color:var(--soft)">2024</div>
+        <div style="position:absolute;bottom:-22px;left:200px;font-size:10px;color:var(--soft)">2025</div>
+        <div style="position:absolute;bottom:-22px;left:260px;font-size:10px;color:var(--soft)">2026</div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:20px;font-size:11px">
+        <span style="color:#3b82f6">━ CFH变异频率</span><span style="color:#f59e0b">━ ARMS2变异频率</span>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div class="card-header">基因-疾病关联热力图</div>
+    <div style="overflow-x:auto">
+    <table class="data-table"><thead><tr><th></th><th>AMD</th><th>青光眼</th><th>DR</th><th>白内障</th></tr></thead>
+    <tbody>
+      <tr><td><strong>CFH</strong></td><td><span style="background:#ef4444;color:#fff;padding:2px 12px;border-radius:4px">0.87</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.12</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.08</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.15</span></td></tr>
+      <tr><td><strong>ARMS2</strong></td><td><span style="background:#ef4444;color:#fff;padding:2px 12px;border-radius:4px">0.82</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.05</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.10</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.03</span></td></tr>
+      <tr><td><strong>HTRA1</strong></td><td><span style="background:#f59e0b;color:#fff;padding:2px 12px;border-radius:4px">0.56</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.22</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.14</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.19</span></td></tr>
+      <tr><td><strong>VEGFA</strong></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.25</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.18</span></td><td><span style="background:#ef4444;color:#fff;padding:2px 12px;border-radius:4px">0.74</span></td><td><span style="background:#f3f4f6;padding:2px 12px;border-radius:4px">0.08</span></td></tr>
+    </tbody></table>
+    </div>
+  </div>
+  <div style="margin-top:12px;text-align:right">
+    <button class="btn btn-primary btn-sm">导出分析数据</button>
+  </div>
+</div>
+
+<!-- ===== Page 14: 个体化治疗方案推荐 ===== -->
+<div class="page-section" id="page-treatment">
+  <h2 class="section-title">个体化治疗方案推荐</h2>
+  <div class="card"><div class="card-header">方案推荐区 <span class="badge status-done">AI推荐</span></div>
+    <div class="treat-card">
+      <div class="t-head"><h4>方案A：抗VEGF玻璃体腔注射 + 营养支持</h4><span class="t-match">94%</span></div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px">
+        <div><strong>核心药物：</strong>雷珠单抗(Ranibizumab)</div>
+        <div><strong>剂量：</strong>0.5mg/次</div>
+        <div><strong>途径：</strong>玻璃体腔注射</div>
+        <div><strong>频次：</strong>每月1次×3，后按需</div>
+        <div><strong>周期：</strong>12个月</div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--soft)"><strong>推荐理由：</strong>基于CFH+ARMS2双高风险基因型，结合黄斑渗出影像特征，AMD临床诊疗指南推荐一线抗VEGF治疗。94%同类病例获得视力改善。</div>
+      <div style="margin-top:8px"><strong style="font-size:12px">随访计划：</strong><span style="font-size:12px;color:var(--soft)">治疗第1/3/6/12个月行OCT+视力检查，第6个月行FFA评估</span></div>
+    </div>
+    <div class="treat-card" style="background:linear-gradient(135deg,#f9fafb,#f3f4f6);border-color:#e5e7eb">
+      <div class="t-head"><h4>方案B：光动力疗法(PDT) + 营养支持</h4><span class="t-match" style="color:#6b7280">76%</span></div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px">
+        <div><strong>核心药物：</strong>维替泊芬(Verteporfin)</div>
+        <div><strong>剂量：</strong>6mg/m²</div>
+        <div><strong>途径：</strong>静脉注射+激光</div>
+        <div><strong>频次：</strong>每3个月1次</div>
+        <div><strong>周期：</strong>12个月</div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--soft)"><strong>推荐理由：</strong>适用于典型性CNV患者，76%历史病例有效。但该患者基因型对抗VEGF更敏感，PDT作为备选方案。</div>
+    </div>
+  </div>
+  <div class="card"><div class="card-header">方案编排区 <span style="font-size:11px;font-weight:400;color:var(--soft)">医生可手动调整</span></div>
+    <div class="flex-row" style="align-items:flex-end;gap:12px;flex-wrap:wrap">
+      <div class="form-group" style="margin-bottom:0"><label>药物选择</label><select class="form-select" style="width:180px"><option>雷珠单抗</option><option>阿柏西普</option><option>贝伐珠单抗</option><option>维替泊芬</option></select></div>
+      <div class="form-group" style="margin-bottom:0"><label>剂量调整</label><input class="form-input" style="width:120px" value="0.5 mg"></div>
+      <div class="form-group" style="margin-bottom:0"><label>治疗周期</label><select class="form-select" style="width:140px"><option>12个月</option><option>6个月</option><option>24个月</option></select></div>
+      <div class="form-group" style="margin-bottom:0"><label>频次</label><select class="form-select" style="width:150px"><option>每月1次×3，后按需</option><option>每月1次</option><option>每2月1次</option></select></div>
+    </div>
+    <div class="form-group" style="margin-top:12px"><label>补充备注</label><textarea class="form-input" style="min-height:60px" placeholder="输入临床用药经验与患者个体情况备注..."></textarea></div>
+    <button class="btn btn-primary btn-sm" style="margin-top:8px">确认调整方案</button>
+  </div>
+  <div class="card"><div class="card-header">历史参考区</div>
+    <table class="data-table">
+      <thead><tr><th>病例ID</th><th>疾病类型</th><th>治疗方案</th><th>治疗效果</th><th>随访结果</th><th>相似度</th></tr></thead>
+      <tbody>
+        <tr><td>CASE-042</td><td>AMD</td><td>雷珠单抗 0.5mg</td><td><span class="status-tag status-done">视力改善</span></td><td>12个月稳定</td><td>96%</td></tr>
+        <tr><td>CASE-087</td><td>AMD</td><td>阿柏西普 2mg</td><td><span class="status-tag status-done">视力改善</span></td><td>18个月稳定</td><td>91%</td></tr>
+        <tr><td>CASE-156</td><td>AMD+青光眼</td><td>雷珠单抗+噻吗洛尔</td><td><span class="status-tag status-done">视力改善</span></td><td>9个月稳定</td><td>84%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<!-- ===== Modals ===== -->
+<!-- 新增数据弹窗 -->
+<div class="modal-overlay" id="modal-upload">
+  <div class="modal-box">
+    <div class="modal-header"><h3>新增多模态数据</h3><button class="modal-close" onclick="hideModal('modal-upload')">×</button></div>
+    <div class="form-group"><label>选择患者</label><select class="form-select"><option>P0001 - 王建国</option><option>P0002 - 李明华</option><option>P0003 - 张伟</option><option>P0004 - 赵丽</option><option value="new">+ 新增患者</option></select></div>
+    <div class="form-group"><label>数据类型</label>
+      <div style="display:flex;gap:16px">
+        <label style="font-size:13px;cursor:pointer"><input type="radio" name="data-type" checked> 基因序列</label>
+        <label style="font-size:13px;cursor:pointer"><input type="radio" name="data-type"> 眼底影像</label>
+        <label style="font-size:13px;cursor:pointer"><input type="radio" name="data-type"> OCT</label>
+      </div>
+    </div>
+    <div class="form-group"><label>文件上传</label><div class="upload-zone" onclick="toast('模拟文件选择')">点击或拖拽文件到此处上传<br><span style="font-size:11px">支持 FASTA / VCF / DICOM / PNG / JPG 格式</span></div></div>
+    <div class="form-group"><label>备注说明</label><textarea class="form-input" style="min-height:60px" placeholder="请输入备注..."></textarea></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="hideModal('modal-upload')">取消</button><button class="btn btn-primary" onclick="hideModal('modal-upload');toast('数据上传成功')">确认上传</button></div>
+  </div>
+</div>
+
+<!-- 批量导入弹窗 -->
+<div class="modal-overlay" id="modal-batch-import">
+  <div class="modal-box">
+    <div class="modal-header"><h3>批量导入基因突变位点</h3><button class="modal-close" onclick="hideModal('modal-batch-import')">×</button></div>
+    <div class="form-group"><label>导入文件</label><div class="upload-zone" onclick="toast('模拟文件选择')">点击上传CSV/Excel文件<br><span style="font-size:11px">支持 .csv / .xlsx 格式</span></div></div>
+    <div style="margin-top:8px"><a href="#" style="color:var(--blue);font-size:12px" onclick="toast('模板下载中...');return false">下载导入模板</a></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="hideModal('modal-batch-import')">取消</button><button class="btn btn-primary" onclick="hideModal('modal-batch-import');toast('导入成功')">确认导入</button></div>
+  </div>
+</div>
+
+<!-- 手动新增弹窗 -->
+<div class="modal-overlay" id="modal-mutation-add">
+  <div class="modal-box wide">
+    <div class="modal-header"><h3>手动新增基因突变位点</h3><button class="modal-close" onclick="hideModal('modal-mutation-add')">×</button></div>
+    <div class="flex-row">
+      <div class="form-group" style="flex:1"><label>位点ID</label><input class="form-input" placeholder="如 VAR009"></div>
+      <div class="form-group" style="flex:1"><label>基因名称</label><input class="form-input" placeholder="如 CFH"></div>
+      <div class="form-group" style="flex:1"><label>染色体位置</label><input class="form-input" placeholder="如 1q31.3"></div>
+    </div>
+    <div class="flex-row">
+      <div class="form-group" style="flex:1"><label>变异类型</label><select class="form-select"><option>SNP</option><option>INDEL</option><option>CNV</option></select></div>
+      <div class="form-group" style="flex:1"><label>参考序列</label><input class="form-input" placeholder="如 C"></div>
+      <div class="form-group" style="flex:1"><label>变异序列</label><input class="form-input" placeholder="如 T"></div>
+    </div>
+    <div class="flex-row">
+      <div class="form-group" style="flex:1"><label>致病等级</label><select class="form-select"><option>Pathogenic</option><option>Likely Pathogenic</option><option>VUS</option><option>Likely Benign</option><option>Benign</option></select></div>
+      <div class="form-group" style="flex:1"><label>关联疾病</label><input class="form-input" placeholder="如 老年黄斑变性"></div>
+      <div class="form-group" style="flex:1"><label>证据等级</label><select class="form-select"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="hideModal('modal-mutation-add')">取消</button><button class="btn btn-primary" onclick="hideModal('modal-mutation-add');toast('新增成功')">确认新增</button></div>
+  </div>
+</div>
+
+<!-- 导出进度弹窗 -->
+<div class="modal-overlay" id="modal-export-progress">
+  <div class="modal-box">
+    <div class="modal-header"><h3>报告导出中...</h3></div>
+    <div class="progress-bar"><div class="progress-fill" id="export-progress" style="width:0%"></div></div>
+    <div style="text-align:center;font-size:12px;color:var(--soft);margin-top:8px" id="export-status">准备导出...</div>
+    <div class="modal-footer"><button class="btn btn-outline" id="export-cancel-btn" onclick="hideModal('modal-export-progress')">取消</button></div>
+  </div>
+</div>
+
+<script>
+/* ===== Toast ===== */
+function toast(text) {
+  var el = document.getElementById('toast');
+  el.textContent = text; el.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
+}
+
+/* ===== Auth ===== */
+(function(){
+  try {
+    var user = JSON.parse(localStorage.getItem('life_med_user'));
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('userAvatar').textContent = user.name.charAt(0);
+    document.getElementById('userName').textContent = user.name;
+  } catch(e) { window.location.href = 'login.html'; }
+})();
+
+document.getElementById('logoutBtn').addEventListener('click', function(){
+  localStorage.removeItem('life_med_user');
+  toast('已退出登录');
+  setTimeout(function(){ window.location.href = 'login.html'; }, 500);
 });
-</script></body></html>
+
+/* ===== Sidebar ===== */
+function toggleGroup(header) {
+  header.classList.toggle('collapsed');
+  var items = header.nextElementSibling;
+  if (items) items.classList.toggle('collapsed');
+}
+
+function switchPage(item, pageId) {
+  document.querySelectorAll('.side-item').forEach(function(el){ el.classList.remove('active'); });
+  item.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(function(el){ el.classList.remove('active'); });
+  var page = document.getElementById(pageId);
+  if (page) page.classList.add('active');
+}
+
+/* Initialize groups: group 1 items visible, others collapsed */
+(function(){
+  var groups = document.querySelectorAll('.side-group-items');
+  groups.forEach(function(g, i) {
+    if (i !== 1) { g.classList.add('collapsed'); g.style.maxHeight = '0'; }
+    else { g.style.maxHeight = g.scrollHeight + 'px'; }
+  });
+})();
+
+/* ===== Modals ===== */
+function showModal(id) {
+  var modal = document.getElementById(id);
+  if (modal) modal.classList.add('show');
+}
+function hideModal(id) {
+  var modal = document.getElementById(id);
+  if (modal) modal.classList.remove('show');
+}
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('show');
+});
+
+/* ===== Data Management Table ===== */
+var dataMgmtRows = [
+  ['P0001','王建国','基因序列','WJG_genome_2026.vcf','VCF','2.3MB','2026-06-28','已处理'],
+  ['P0001','王建国','眼底影像','WJG_fundus_od.dcm','DICOM','15.7MB','2026-06-28','已处理'],
+  ['P0002','李明华','基因序列','LMH_WES_2026.fasta','FASTA','1.8MB','2026-06-25','已处理'],
+  ['P0002','李明华','OCT','LMH_oct_2026.png','PNG','4.2MB','2026-06-25','待处理'],
+  ['P0003','张伟','眼底影像','ZW_fundus.jpg','JPG','3.1MB','2026-06-22','失败'],
+  ['P0004','赵丽','基因序列','ZL_panel.vcf','VCF','1.1MB','2026-06-20','已处理']
+];
+
+function renderDataMgmtTable(data) {
+  var tbody = document.getElementById('data-mgmt-tbody');
+  var html = '';
+  data.forEach(function(r){
+    var statusClass = r[7]==='已处理'?'status-done':(r[7]==='待处理'?'status-pending':'status-failed');
+    html += '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td>'+r[5]+'</td><td>'+r[6]+'</td><td><span class="status-tag '+statusClass+'">'+r[7]+'</span></td><td><button class="btn btn-outline btn-xs">预览</button> <button class="btn btn-outline btn-xs">下载</button> <button class="btn btn-danger btn-xs">删除</button></td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+renderDataMgmtTable(dataMgmtRows);
+
+function filterDataTable(input, tableId) {
+  var keyword = input.tagName==='INPUT' ? input.value.trim().toLowerCase() : '';
+  var colIdx = input.getAttribute('data-col');
+  var val = input.tagName==='SELECT' ? input.value : '';
+  var tbody = document.getElementById(tableId).querySelector('tbody') || document.getElementById(tableId);
+  var rows = tbody.querySelectorAll('tr');
+  rows.forEach(function(row){
+    var show = true;
+    var cells = row.querySelectorAll('td');
+    if (keyword && cells.length > 0) {
+      var txt = Array.from(cells).map(function(c){return c.textContent.trim().toLowerCase()}).join(' ');
+      show = txt.includes(keyword);
+    }
+    if (val && colIdx && cells.length > parseInt(colIdx)) {
+      var cellVal = cells[parseInt(colIdx)].textContent.trim();
+      if (val && cellVal !== val) show = false;
+    }
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+/* ===== Log ===== */
+function appendLog(logId, msg) {
+  var log = document.getElementById(logId);
+  var cls = msg.indexOf('[OK]')>=0?'log-ok':(msg.indexOf('[WARN]')>=0?'log-warn':'log-info');
+  log.innerHTML += '<span class="'+cls+'">'+msg+'</span><br>';
+  log.scrollTop = log.scrollHeight;
+}
+
+/* ===== Progress Sim ===== */
+function simProgress(labelId, fillId, btn) {
+  var label = document.getElementById(labelId);
+  var fill = document.getElementById(fillId);
+  var bar = fill.parentElement.parentElement;
+  bar.style.display = '';
+  var w = 0;
+  label.textContent = '处理中...';
+  var timer = setInterval(function(){
+    w += 15;
+    if (w >= 100) { w = 100; clearInterval(timer); label.textContent = '完成'; btn.style.borderColor = '#10b981'; btn.style.color = '#10b981'; }
+    fill.style.width = w + '%';
+  }, 150);
+}
+
+/* ===== Fusion ===== */
+function runFusion() {
+  var area = document.getElementById('fusion-progress-area');
+  var fill = document.getElementById('fusion-progress');
+  var status = document.getElementById('fusion-status');
+  area.style.display = 'block';
+  fill.style.width = '0%';
+  var steps = [{w:25,t:'数据加载中...'},{w:50,t:'特征对齐中...'},{w:75,t:'融合建模中...'},{w:100,t:'结果生成完成'}];
+  var i = 0;
+  function next() {
+    if (i >= steps.length) return;
+    fill.style.width = steps[i].w + '%';
+    status.textContent = steps[i].t;
+    i++;
+    if (i < steps.length) setTimeout(next, 800);
+    else {
+      setTimeout(function(){
+        showHeatmap();
+        showWeights();
+        document.getElementById('fusion-conclusion').style.display = '';
+        toast('融合分析完成');
+      }, 400);
+    }
+  }
+  next();
+}
+
+function showHeatmap() {
+  var traits = ['CFH','ARMS2','HTRA1','VEGFA','C3','HMCN1'];
+  var imgFeatures = ['渗出','微血管瘤','血管密度','视网膜厚度','视盘形态','出血'];
+  var data = [[0.87,0.45,0.32,0.21,0.18,0.09],[0.52,0.79,0.38,0.25,0.14,0.11],[0.35,0.56,0.72,0.18,0.22,0.15],[0.19,0.15,0.28,0.65,0.41,0.58],[0.12,0.22,0.15,0.11,0.35,0.08],[0.08,0.14,0.11,0.25,0.09,0.42]];
+  var gs = '60px repeat('+(imgFeatures.length+1)+',1fr)';
+  var html = '<div class="heatmap-grid" style="grid-template-columns:'+gs+'"><div class="heatmap-cell heatmap-axis"></div>';
+  imgFeatures.forEach(function(f){ html += '<div class="heatmap-cell heatmap-axis">'+f+'</div>'; });
+  traits.forEach(function(t,ri){
+    html += '<div class="heatmap-cell heatmap-axis" style="font-weight:700">'+t+'</div>';
+    data[ri].forEach(function(v){
+      var alpha = Math.round(v * 255);
+      var r = v > 0.6 ? 239 : (v > 0.3 ? 245 : 59);
+      var g = v > 0.6 ? 68 : (v > 0.3 ? 158 : 130);
+      var b = v > 0.6 ? 68 : (v > 0.3 ? 11 : 246);
+      html += '<div class="heatmap-cell" style="background:rgba('+r+','+g+','+b+','+v+');color:'+(v>0.5?'#fff':'#374151')+'">'+v.toFixed(2)+'</div>';
+    });
+  });
+  html += '</div>';
+  document.getElementById('heatmap-container').innerHTML = html;
+}
+
+function showWeights() {
+  var weights = [['CFH(SNP)','基因序列',0.872,1],['ARMS2(SNP)','基因序列',0.915,2],['VEGFA(INDEL)','基因序列',0.793,3],['HTRA1(SNP)','基因序列',0.634,4],['血管密度','眼底影像',0.781,5],['视网膜厚度','眼底影像',0.743,6],['视盘形态','眼底影像',0.689,7],['渗出面积','眼底影像',0.654,8]];
+  var html = '';
+  weights.forEach(function(w){
+    html += '<tr><td>'+w[0]+'</td><td>'+w[1]+'</td><td style="font-weight:700">'+w[2].toFixed(3)+'</td><td>'+w[3]+'</td></tr>';
+  });
+  document.getElementById('weight-tbody').innerHTML = html;
+}
+
+/* ===== Gene Locus Plot ===== */
+function highlightLocus(el) {
+  document.querySelectorAll('.gene-locus').forEach(function(l){ l.style.opacity='0.5'; });
+  el.style.opacity='1'; el.style.transform='scale(1.1)';
+  var locus = el.getAttribute('data-locus');
+  document.querySelectorAll('#page-vis .annot').forEach(function(a){ a.style.opacity='0.4'; });
+  document.querySelectorAll('#page-vis .annot[data-locus="'+locus+'"]').forEach(function(a){ a.style.opacity='1'; a.style.transform='scale(1.08)'; });
+}
+
+/* ===== Anomaly Highlight ===== */
+function highlightAnnot(el) {
+  var id = el.getAttribute('data-id');
+  document.querySelectorAll('#anomaly-row-A1,#anomaly-row-A2,#anomaly-row-A3,#anomaly-row-A4,#anomaly-row-A5').forEach(function(r){ r.style.background=''; });
+  var row = document.getElementById('anomaly-row-'+id);
+  if (row) row.style.background = '#fef3c7';
+}
+
+/* ===== Report Preview ===== */
+function showReportPreview() {
+  document.getElementById('report-preview-area').scrollIntoView({behavior:'smooth'});
+  toast('报告已生成');
+}
+
+/* ===== Gene Features ===== */
+function showGeneFeatures() {
+  toast('特征提取完成，共8个位点');
+}
+
+/* ===== Image Features ===== */
+function showImgFeatures() {
+  toast('影像特征提取完成，共6项特征');
+}
+
+/* ===== CSS for gene locus plot ===== */
+var style = document.createElement('style');
+style.textContent = '.gene-locus{position:absolute;background:#fff;border:2px solid var(--blue);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;transition:.2s;text-align:center;line-height:1.3}.gene-locus:hover{z-index:3;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.gene-locus small{font-size:9px;color:var(--soft)}';
+document.head.appendChild(style);
+
+/* ===== Click outside to close sidebar group tooltip fix ===== */
+</script>
+</body>
+</html>

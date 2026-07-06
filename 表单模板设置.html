@@ -35,6 +35,111 @@ body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
 .btn-outline:hover { background: var(--gray-50); }
+
+/* ====== 筛选栏 ====== */
+.filter-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.filter-row select { padding: 7px 28px 7px 10px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--gray-700); background: #fff; outline: none; cursor: pointer; appearance: auto; }
+.filter-row select:focus { border-color: var(--primary); }
+.filter-row .search-input { flex: 1; min-width: 200px; padding: 7px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.filter-row .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+
+/* ====== 表格 ====== */
+.table-wrap { overflow-x: auto; }
+.table-wrap table { width: 100%; border-collapse: collapse; }
+.table-wrap thead th { background: #f8f9fb; font-weight: 600; font-size: 13px; color: var(--gray-700); padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+.table-wrap tbody td { padding: 14px 14px; font-size: 13px; color: var(--gray-800); border-bottom: 1px solid #f0f0f0; }
+.table-wrap tbody tr:hover { background: #f8f9fb; }
+.table-wrap tbody tr:last-child td { border-bottom: none; }
+
+/* 状态点 */
+.status-dot { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+.status-dot .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.status-active .dot { background: #34a853; }
+.status-active { color: #34a853; }
+.status-inactive .dot { background: #9aa0a6; }
+.status-inactive { color: #9aa0a6; }
+.status-draft .dot { background: #e37400; }
+.status-draft { color: #e37400; }
+
+/* 操作列 */
+.action-links { display: flex; align-items: center; gap: 0; white-space: nowrap; }
+.action-links a, .action-links span.action-link { text-decoration: none; font-size: 13px; cursor: pointer; }
+.action-links a:hover, .action-links span.action-link:hover { text-decoration: underline; }
+.action-sep { color: #d0d5dd; margin: 0 6px; user-select: none; }
+
+/* 标签 */
+.tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.tag-blue { background: #e8f0fe; color: var(--primary); }
+.tag-orange { background: #fef3e0; color: #e37400; }
+
+/* ====== 分页 ====== */
+.pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--gray-200); }
+.pagination-info { font-size: 13px; color: var(--gray-500); }
+.pagination-nav { display: flex; align-items: center; gap: 6px; }
+.pagination-nav button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--gray-300); background: #fff; color: var(--gray-700); font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: var(--transition); }
+.pagination-nav button:hover:not(:disabled):not(.active) { border-color: var(--primary); color: var(--primary); }
+.pagination-nav button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.pagination-nav button:disabled { color: var(--gray-400); cursor: not-allowed; background: var(--gray-50); }
+.pagination-nav .ellipsis { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; color: var(--gray-500); user-select: none; }
+
+/* ====== Toast ====== */
+.toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; background: var(--gray-900); color: #fff; padding: 10px 24px; border-radius: 6px; font-size: 13px; box-shadow: var(--shadow-lg); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+.toast.show { opacity: 1; }
+
+/* ====== 弹窗通用 ====== */
+.modal-overlay { position: fixed; inset: 0; z-index: 9990; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.modal-box { background: #fff; border-radius: 10px; box-shadow: var(--shadow-lg); padding: 0; max-width: 420px; width: 90%; overflow: hidden; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--gray-200); }
+.modal-header .modal-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: var(--gray-900); }
+.modal-header .modal-title .modal-icon { color: var(--primary); font-size: 18px; }
+.modal-header .btn-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--gray-100); color: var(--gray-600); font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: var(--transition); flex-shrink: 0; }
+.modal-header .btn-close:hover { background: var(--gray-200); color: var(--gray-800); }
+.modal-body { padding: 24px; max-height: 60vh; overflow-y: auto; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; }
+
+/* 预览弹窗 */
+.preview-modal { max-width: 700px; }
+.preview-header-actions { display: flex; align-items: center; gap: 8px; }
+.preview-form-title { text-align: center; margin-bottom: 4px; font-size: 20px; font-weight: 700; color: var(--gray-900); }
+.preview-form-version { text-align: center; font-size: 12px; color: var(--gray-500); margin-bottom: 16px; }
+.preview-form-divider { border: none; border-top: 1px solid var(--gray-200); margin-bottom: 20px; }
+.preview-field { margin-bottom: 18px; }
+.preview-field .preview-label { font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+.preview-field .preview-label .required-star { color: var(--danger); }
+.preview-field input, .preview-field textarea, .preview-field select { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; background: var(--gray-50); color: var(--gray-600); pointer-events: none; }
+.preview-field textarea { resize: none; }
+.preview-field select { appearance: none; }
+.preview-radio-group { display: flex; gap: 24px; }
+.preview-radio-group label { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 4px; }
+.preview-radio-group input[type="radio"] { width: auto; accent-color: var(--primary); }
+.preview-checkbox-group { display: flex; flex-wrap: wrap; gap: 16px; }
+.preview-checkbox-group label { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 4px; }
+.preview-checkbox-group input[type="checkbox"] { width: auto; accent-color: var(--primary); }
+.preview-date-wrap { position: relative; }
+.preview-date-wrap .calendar-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; pointer-events: none; }
+.preview-upload-area { border: 2px dashed var(--gray-300); border-radius: 6px; padding: 20px; text-align: center; color: var(--gray-400); font-size: 13px; }
+
+/* 发布/草稿弹窗 */
+.publish-modal { max-width: 600px; }
+.draft-modal { max-width: 500px; }
+.draft-modal .modal-body { text-align: center; }
+.draft-success-icon { width: 64px; height: 64px; border-radius: 50%; background: #F0FFF4; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; color: #34a853; margin-bottom: 16px; }
+.draft-info-card { background: #f8f9fb; border-radius: 8px; padding: 16px; text-align: left; margin: 16px 0; }
+.draft-info-card .info-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+.draft-info-card .info-row .info-label { color: var(--gray-500); }
+.draft-info-card .info-row .info-value { color: var(--gray-800); }
+.draft-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+.draft-actions .btn { min-width: 120px; }
+
+/* 发布弹窗表单 */
+.publish-form-group { margin-bottom: 16px; }
+.publish-form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+.publish-form-group input, .publish-form-group select, .publish-form-group textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.publish-form-group input:focus, .publish-form-group select:focus, .publish-form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.publish-form-group textarea { resize: vertical; min-height: 70px; }
+
+/* ====== 设计器 ====== */
 .form-designer { display: grid; grid-template-columns: 240px 1fr 260px; gap: 16px; height: calc(100vh - var(--header-height) - 120px); }
 .designer-panel { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
 .panel-header { padding: 14px 16px; border-bottom: 1px solid var(--gray-200); font-weight: 600; font-size: 14px; color: var(--gray-800); background: var(--gray-50); display: flex; align-items: center; justify-content: space-between; }
@@ -52,24 +157,27 @@ body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-
 .form-field:hover { border-color: var(--primary); }
 .form-field.selected { border-color: var(--primary); border-style: solid; background: var(--primary-light); }
 .form-field .field-label { font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+.form-field .field-label .required-star { color: var(--danger); margin-left: 2px; }
 .form-field .field-input { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; background: var(--gray-50); color: var(--gray-400); pointer-events: none; }
+.form-field .field-textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; background: var(--gray-50); color: var(--gray-400); pointer-events: none; resize: none; }
 .form-field .field-select { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; background: var(--gray-50); color: var(--gray-400); pointer-events: none; }
 .form-field .field-radio { display: flex; gap: 16px; }
-.form-field .field-radio label { font-size: 13px; color: var(--gray-400); display: flex; align-items: center; gap: 4px; }
+.form-field .field-radio label, .form-field .field-checkbox label { font-size: 13px; color: var(--gray-400); display: flex; align-items: center; gap: 4px; }
+.form-field .field-checkbox { display: flex; flex-wrap: wrap; gap: 12px; }
 .form-field .field-delete { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: var(--danger); color: #fff; border: none; cursor: pointer; font-size: 12px; display: none; align-items: center; justify-content: center; }
 .form-field:hover .field-delete { display: flex; }
-.prop-group { margin-bottom: 16px; }
+.prop-group { margin-bottom: 14px; }
 .prop-group label { display: block; font-size: 12px; font-weight: 500; color: var(--gray-600); margin-bottom: 6px; }
 .prop-group input, .prop-group select, .prop-group textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
-.prop-group input:focus, .prop-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.prop-group input:focus, .prop-group select:focus, .prop-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
 .prop-group textarea { resize: vertical; min-height: 60px; }
 .action-bar { display: flex; gap: 10px; padding: 12px 0; }
 </style></head><body>
 <div class="header">
   <a href="index.html" class="logo">生命医学智能平台</a>
   <div class="header-nav">
-    <a href="眼病/慢病数据采集工具.html" class="active">眼病/慢病数据采集工具</a>
-    <a href="眼病/慢病数据录入工具.html">眼病/慢病数据录入工具</a>
+    <a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a>
+    <a href="眼病/慢病数据录入工具.html" class="active">眼病/慢病数据录入工具</a>
     <a href="眼病/慢病影像脱敏工具.html">眼病/慢病影像脱敏工具</a>
     <a href="眼病/慢病影像标注工具.html">眼病/慢病影像标注工具</a>
   </div>
@@ -102,126 +210,884 @@ body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Arial', sans-serif; font-
   </div>
 </div>
 <div class="main-content">
-  <div class="breadcrumb"><a href="index.html">首页</a><span>&gt;</span><a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a><span>&gt;</span><span>表单模板设置</span></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-    <h1 class="page-title" style="margin-bottom:0;">表单模板设置</h1>
-    <div class="action-bar" style="padding:0;">
-      <button class="btn btn-outline" onclick="previewTemplate()">预览</button>
-      <button class="btn btn-primary" onclick="publishTemplate()">发布模板</button>
+  <div class="breadcrumb"><a href="index.html">首页</a><span>&gt;</span><a href="眼病/慢病数据录入工具.html">眼病/慢病数据录入工具</a><span>&gt;</span><span>表单模板设置</span></div>
+
+  <!-- ====== Toast ====== -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ====== 模板列表页 ====== -->
+  <div id="listSection">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h1 class="page-title" style="margin-bottom:0;">表单模板设置</h1>
+      <button class="btn btn-primary" onclick="openNewDesigner()">+ 新建模板</button>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="card" style="margin-bottom:16px;padding:14px 20px;">
+      <div class="filter-row">
+        <select id="filterType" onchange="applyFilters()">
+          <option value="">模板类型</option>
+          <option value="检查类">检查类</option>
+          <option value="记录类">记录类</option>
+          <option value="评估类">评估类</option>
+          <option value="登记类">登记类</option>
+          <option value="文书类">文书类</option>
+        </select>
+        <select id="filterStatus" onchange="applyFilters()">
+          <option value="">状态</option>
+          <option value="启用">启用</option>
+          <option value="停用">停用</option>
+          <option value="草稿">草稿</option>
+        </select>
+        <input id="filterSearch" class="search-input" placeholder="搜索模板名称" oninput="applyFilters()">
+        <button class="btn btn-outline" onclick="applyFilters()">搜索</button>
+        <button class="btn btn-outline" onclick="resetFilters()">重置</button>
+      </div>
+    </div>
+
+    <!-- 模板列表表格 -->
+    <div class="card" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>模板ID</th><th>模板名称</th><th>模板类型</th><th>适用场景</th><th>创建人</th><th>创建时间</th><th>修改时间</th><th>状态</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="templateTableBody"></tbody>
+        </table>
+      </div>
+      <!-- 分页 -->
+      <div class="pagination-bar">
+        <span class="pagination-info" id="paginationInfo">显示 0 到 0 条，共 0 条记录</span>
+        <div class="pagination-nav" id="paginationNav"></div>
+      </div>
     </div>
   </div>
-  <div class="form-designer">
-    <!-- 左侧组件库 -->
-    <div class="designer-panel">
-      <div class="panel-header">组件库</div>
-      <div class="panel-body">
-        <div class="component-list">
-          <div class="comp-item" draggable="true" data-type="text">
-            <div class="comp-icon" style="background:#e8f0fe;">Aa</div>
-            <div class="comp-info"><div class="comp-name">文本输入</div><div class="comp-desc">单行文本</div></div>
-          </div>
-          <div class="comp-item" draggable="true" data-type="textarea">
-            <div class="comp-icon" style="background:#e6f4ea;">T</div>
-            <div class="comp-info"><div class="comp-name">多行文本</div><div class="comp-desc">长文本输入</div></div>
-          </div>
-          <div class="comp-item" draggable="true" data-type="select">
-            <div class="comp-icon" style="background:#fef7e0;">&#x25BC;</div>
-            <div class="comp-info"><div class="comp-name">下拉选择</div><div class="comp-desc">单选/多选</div></div>
-          </div>
-          <div class="comp-item" draggable="true" data-type="radio">
-            <div class="comp-icon" style="background:#fce8e6;">&#x25C9;</div>
-            <div class="comp-info"><div class="comp-name">单选按钮</div><div class="comp-desc">单项选择</div></div>
-          </div>
-          <div class="comp-item" draggable="true" data-type="checkbox">
-            <div class="comp-icon" style="background:#f3e8fd;">&#x2611;</div>
-            <div class="comp-info"><div class="comp-name">复选框</div><div class="comp-desc">多项选择</div></div>
-          </div>
-          <div class="comp-item" draggable="true" data-type="date">
-            <div class="comp-icon" style="background:#e8f5e9;">&#x1F4C5;</div>
-            <div class="comp-info"><div class="comp-name">日期选择</div><div class="comp-desc">日期控件</div></div>
-          </div>
-          <div class="comp-item" draggable="true" data-type="number">
-            <div class="comp-icon" style="background:#e3f2fd;">#</div>
-            <div class="comp-info"><div class="comp-name">数字输入</div><div class="comp-desc">数值范围</div></div>
-          </div>
-          <div class="comp-item" draggable="true" data-type="upload">
-            <div class="comp-icon" style="background:#fff3e0;">&#x1F4C1;</div>
-            <div class="comp-info"><div class="comp-name">文件上传</div><div class="comp-desc">附件上传</div></div>
+
+  <!-- ====== 模板设计器 ====== -->
+  <div id="designerSection" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h1 class="page-title" style="margin-bottom:0;">表单模板设置</h1>
+      <div class="action-bar" style="padding:0;">
+        <button class="btn btn-outline" onclick="showList()">返回模板列表</button>
+        <button class="btn btn-outline" onclick="openPreviewModal()">预览</button>
+        <button class="btn btn-outline" onclick="openSaveDraftModal()">保存草稿</button>
+        <button class="btn btn-primary" onclick="openPublishModal()">发布模板</button>
+      </div>
+    </div>
+    <div class="form-designer">
+      <div class="designer-panel">
+        <div class="panel-header">组件库</div>
+        <div class="panel-body">
+          <div class="component-list">
+            <div class="comp-item" draggable="true" data-type="text">
+              <div class="comp-icon" style="background:#e8f0fe;">Aa</div>
+              <div class="comp-info"><div class="comp-name">文本输入</div><div class="comp-desc">单行文本</div></div>
+            </div>
+            <div class="comp-item" draggable="true" data-type="textarea">
+              <div class="comp-icon" style="background:#e6f4ea;">T</div>
+              <div class="comp-info"><div class="comp-name">多行文本</div><div class="comp-desc">长文本输入</div></div>
+            </div>
+            <div class="comp-item" draggable="true" data-type="select">
+              <div class="comp-icon" style="background:#fef7e0;">&#x25BC;</div>
+              <div class="comp-info"><div class="comp-name">下拉选择</div><div class="comp-desc">单选/多选</div></div>
+            </div>
+            <div class="comp-item" draggable="true" data-type="radio">
+              <div class="comp-icon" style="background:#fce8e6;">&#x25C9;</div>
+              <div class="comp-info"><div class="comp-name">单选按钮</div><div class="comp-desc">单项选择</div></div>
+            </div>
+            <div class="comp-item" draggable="true" data-type="checkbox">
+              <div class="comp-icon" style="background:#f3e8fd;">&#x2611;</div>
+              <div class="comp-info"><div class="comp-name">复选框</div><div class="comp-desc">多项选择</div></div>
+            </div>
+            <div class="comp-item" draggable="true" data-type="date">
+              <div class="comp-icon" style="background:#e8f5e9;">&#x1F4C5;</div>
+              <div class="comp-info"><div class="comp-name">日期选择</div><div class="comp-desc">日期控件</div></div>
+            </div>
+            <div class="comp-item" draggable="true" data-type="number">
+              <div class="comp-icon" style="background:#e3f2fd;">#</div>
+              <div class="comp-info"><div class="comp-name">数字输入</div><div class="comp-desc">数值范围</div></div>
+            </div>
+            <div class="comp-item" draggable="true" data-type="upload">
+              <div class="comp-icon" style="background:#fff3e0;">&#x1F4C1;</div>
+              <div class="comp-info"><div class="comp-name">文件上传</div><div class="comp-desc">附件上传</div></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- 中间表单编辑区 -->
-    <div class="designer-panel">
-      <div class="panel-header">表单编辑区 &mdash; 青光眼初诊评估表</div>
-      <div class="panel-body form-preview" id="formPreview">
-        <div class="form-title">青光眼初诊评估表</div>
-        <div class="form-field" data-field-id="1" data-type="text" onclick="selectField(this)">
-          <div class="field-label">患者姓名</div>
-          <input class="field-input" value="请输入姓名" readonly>
-          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
-        </div>
-        <div class="form-field" data-field-id="2" data-type="select" onclick="selectField(this)">
-          <div class="field-label">性别</div>
-          <select class="field-select"><option>请选择性别</option></select>
-          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
-        </div>
-        <div class="form-field" data-field-id="3" data-type="date" onclick="selectField(this)">
-          <div class="field-label">就诊日期</div>
-          <input class="field-input" value="yyyy-MM-dd" readonly>
-          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
-        </div>
-        <div class="form-field" data-field-id="4" data-type="radio" onclick="selectField(this)">
-          <div class="field-label">眼别</div>
-          <div class="field-radio"><label><input type="radio" disabled>左眼</label><label><input type="radio" disabled>右眼</label><label><input type="radio" disabled>双眼</label></div>
-          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
-        </div>
-        <div class="form-field" data-field-id="5" data-type="textarea" onclick="selectField(this)">
-          <div class="field-label">主诉</div>
-          <textarea class="field-input" style="resize:none;height:50px;" readonly>请输入主诉内容</textarea>
-          <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+      <div class="designer-panel">
+        <div class="panel-header" id="designerHeader">表单编辑区 &mdash; 青光眼初诊评估表</div>
+        <div class="panel-body form-preview" id="formPreview">
+          <div class="form-title" id="formTitle">青光眼初诊评估表</div>
+          <div class="form-field" data-field-id="1" data-type="text" onclick="selectField(this)">
+            <div class="field-label">患者姓名</div>
+            <input class="field-input" value="请输入姓名" readonly>
+            <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+          </div>
+          <div class="form-field" data-field-id="2" data-type="select" onclick="selectField(this)">
+            <div class="field-label">性别</div>
+            <select class="field-select"><option>请选择性别</option></select>
+            <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+          </div>
+          <div class="form-field" data-field-id="3" data-type="date" onclick="selectField(this)">
+            <div class="field-label">就诊日期</div>
+            <input class="field-input" value="yyyy-MM-dd" readonly>
+            <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+          </div>
+          <div class="form-field" data-field-id="4" data-type="radio" onclick="selectField(this)">
+            <div class="field-label">眼别</div>
+            <div class="field-radio"><label><input type="radio" disabled>左眼</label><label><input type="radio" disabled>右眼</label><label><input type="radio" disabled>双眼</label></div>
+            <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+          </div>
+          <div class="form-field" data-field-id="5" data-type="textarea" onclick="selectField(this)">
+            <div class="field-label">主诉</div>
+            <textarea class="field-textarea" style="height:50px;" readonly>请输入主诉内容</textarea>
+            <button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- 右侧属性配置 -->
-    <div class="designer-panel">
-      <div class="panel-header">字段属性</div>
-      <div class="panel-body" id="propPanel">
-        <p style="color:var(--gray-500);font-size:13px;text-align:center;padding:40px 0;">请选择一个字段以编辑其属性</p>
+      <div class="designer-panel">
+        <div class="panel-header">字段属性</div>
+        <div class="panel-body" id="propPanel">
+          <p style="color:var(--gray-500);font-size:13px;text-align:center;padding:40px 0;">请选择一个字段以编辑其属性</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 <script>
+/* ====== 模板数据 ====== */
+var templateData = [
+  { id: 'TMP001', name: '眼科基础检查表单', type: '检查类', scene: '门诊初筛', creator: '张医生', createTime: '2026-06-15', updateTime: '2026-06-20', status: '启用' },
+  { id: 'TMP002', name: '眼底影像采集记录', type: '记录类', scene: '影像科', creator: '李主任', createTime: '2026-06-10', updateTime: '2026-06-18', status: '启用' },
+  { id: 'TMP003', name: '慢病随访评估表', type: '评估类', scene: '慢病管理', creator: '王医生', createTime: '2026-06-05', updateTime: '2026-06-22', status: '启用' },
+  { id: 'TMP004', name: '基因检测信息登记', type: '登记类', scene: '基因检测', creator: '赵研究员', createTime: '2026-05-28', updateTime: '2026-06-12', status: '启用' },
+  { id: 'TMP005', name: '手术知情同意书', type: '文书类', scene: '手术准备', creator: '陈医生', createTime: '2026-05-20', updateTime: '2026-06-01', status: '停用' },
+  { id: 'TMP006', name: '术后恢复评估表', type: '评估类', scene: '术后随访', creator: '刘主任', createTime: '2026-05-15', updateTime: '2026-06-08', status: '启用' },
+  { id: 'TMP007', name: '眼压监测记录表', type: '检查类', scene: '青光眼门诊', creator: '孙医生', createTime: '2026-05-10', updateTime: '2026-06-03', status: '启用' },
+  { id: 'TMP008', name: '视野检查报告单', type: '检查类', scene: '视神经评估', creator: '周主任', createTime: '2026-05-08', updateTime: '2026-05-25', status: '启用' },
+  { id: 'TMP009', name: '糖尿病视网膜病变筛查表', type: '评估类', scene: '内分泌科', creator: '吴医生', createTime: '2026-05-05', updateTime: '2026-05-20', status: '启用' },
+  { id: 'TMP010', name: '角膜地形图检查记录', type: '记录类', scene: '屈光手术', creator: '郑医生', createTime: '2026-04-28', updateTime: '2026-05-15', status: '停用' },
+  { id: 'TMP011', name: '白内障术前评估表', type: '评估类', scene: '白内障手术', creator: '冯主任', createTime: '2026-04-20', updateTime: '2026-05-10', status: '启用' },
+  { id: 'TMP012', name: '视神经纤维层分析记录', type: '记录类', scene: '青光眼随访', creator: '张医生', createTime: '2026-04-15', updateTime: '2026-05-01', status: '启用' }
+];
+
+var currentPage = 1;
+var pageSize = 5;
+var currentEditingRow = null;
+
+/* ====== 格式化日期 ====== */
+function formatDateTime() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' +
+         String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' + String(d.getSeconds()).padStart(2,'0');
+}
+function formatDate() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+/* ====== 用户/退出 ====== */
 function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+
+/* ====== Toast ====== */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(function(){ t.classList.remove('show'); }, 2000);
+}
+
+/* ====== 确认弹窗 ====== */
+function showConfirm(msg, onConfirm) {
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = '<div class="modal-box"><div class="modal-header"><span class="modal-title">操作确认</span><button class="btn-close" onclick="closeModal(this)">&#x2715;</button></div><div class="modal-body"><p style="color:var(--gray-600);line-height:1.6;">' + msg + '</p></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal(this)">取消</button><button class="btn btn-primary" id="modalOk">确认</button></div></div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector('#modalOk').onclick = function(){ closeModal(this); if (onConfirm) onConfirm(); };
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(overlay); });
+}
+
+/* 关闭弹窗辅助 */
+function closeModal(el) {
+  var overlay = el.closest('.modal-overlay');
+  if (overlay) overlay.remove();
+}
+
+/* ====== 筛选/搜索 ====== */
+function getFilteredData() {
+  var typeFilter = document.getElementById('filterType').value;
+  var statusFilter = document.getElementById('filterStatus').value;
+  var searchKw = (document.getElementById('filterSearch').value || '').trim().toLowerCase();
+  return templateData.filter(function(row){
+    if (typeFilter && row.type !== typeFilter) return false;
+    if (statusFilter && row.status !== statusFilter) return false;
+    if (searchKw) {
+      var searchText = (row.name + ' ' + row.creator + ' ' + row.type + ' ' + row.scene).toLowerCase();
+      if (searchText.indexOf(searchKw) === -1) return false;
+    }
+    return true;
+  });
+}
+
+function applyFilters() {
+  currentPage = 1;
+  renderTable();
+}
+
+function resetFilters() {
+  document.getElementById('filterType').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterSearch').value = '';
+  currentPage = 1;
+  renderTable();
+}
+
+/* ====== 表格渲染 & 分页 ====== */
+function renderTable() {
+  var filtered = getFilteredData();
+  var totalPages = Math.ceil(filtered.length / pageSize) || 1;
+  if (currentPage > totalPages) currentPage = totalPages;
+  var start = (currentPage - 1) * pageSize;
+  var pageData = filtered.slice(start, start + pageSize);
+
+  var tbody = document.getElementById('templateTableBody');
+  var html = '';
+  for (var i = 0; i < pageData.length; i++) {
+    var row = pageData[i];
+    var typeTag = (row.type === '评估类') ? '<span class="tag tag-orange">' + row.type + '</span>' : '<span class="tag tag-blue">' + row.type + '</span>';
+    var statusHtml;
+    if (row.status === '启用') {
+      statusHtml = '<span class="status-dot status-active"><span class="dot"></span>启用</span>';
+    } else if (row.status === '停用') {
+      statusHtml = '<span class="status-dot status-inactive"><span class="dot"></span>停用</span>';
+    } else {
+      statusHtml = '<span class="status-dot status-draft"><span class="dot"></span>草稿</span>';
+    }
+
+    var actions = '<div class="action-links">'
+      + '<span class="action-link" style="color:var(--primary)" onclick="editTemplate(\'' + row.id + '\')">编辑</span>'
+      + '<span class="action-sep">|</span>'
+      + '<span class="action-link" style="color:var(--primary)" onclick="copyTemplate(\'' + row.id + '\')">复制</span>'
+      + '<span class="action-sep">|</span>'
+      + '<span class="action-link" style="color:var(--danger)" onclick="deleteTemplate(\'' + row.id + '\')">删除</span>';
+
+    if (row.status === '启用') {
+      actions += '<span class="action-sep">|</span><span class="action-link" style="color:var(--primary)" onclick="toggleStatus(\'' + row.id + '\')">停用</span>';
+    } else if (row.status === '停用') {
+      actions += '<span class="action-sep">|</span><span class="action-link" style="color:var(--primary)" onclick="toggleStatus(\'' + row.id + '\')">启用</span>';
+    }
+    actions += '</div>';
+
+    html += '<tr>'
+      + '<td>' + row.id + '</td>'
+      + '<td>' + row.name + '</td>'
+      + '<td>' + typeTag + '</td>'
+      + '<td>' + row.scene + '</td>'
+      + '<td>' + row.creator + '</td>'
+      + '<td>' + row.createTime + '</td>'
+      + '<td>' + row.updateTime + '</td>'
+      + '<td>' + statusHtml + '</td>'
+      + '<td>' + actions + '</td>'
+      + '</tr>';
+  }
+  tbody.innerHTML = html;
+
+  /* 分页信息 */
+  var infoStart = filtered.length === 0 ? 0 : start + 1;
+  var infoEnd = Math.min(start + pageSize, filtered.length);
+  document.getElementById('paginationInfo').textContent = '显示 ' + infoStart + ' 到 ' + infoEnd + ' 条，共 ' + filtered.length + ' 条记录';
+
+  /* 分页导航 */
+  var navHtml = '';
+  navHtml += '<button ' + (currentPage === 1 ? 'disabled' : 'onclick="goPage(' + (currentPage - 1) + ')"') + '>&lt;</button>';
+  for (var p = 1; p <= totalPages; p++) {
+    if (totalPages <= 7 || p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)) {
+      navHtml += '<button class="' + (p === currentPage ? 'active' : '') + '" onclick="goPage(' + p + ')">' + p + '</button>';
+    } else if (p === 2 || p === totalPages - 1) {
+      navHtml += '<span class="ellipsis">...</span>';
+    }
+  }
+  navHtml += '<button ' + (currentPage === totalPages ? 'disabled' : 'onclick="goPage(' + (currentPage + 1) + ')"') + '>&gt;</button>';
+  document.getElementById('paginationNav').innerHTML = navHtml;
+}
+
+function goPage(p) {
+  currentPage = p;
+  renderTable();
+}
+
+/* ====== 编辑 ====== */
+function editTemplate(id) {
+  var row = null;
+  for (var i = 0; i < templateData.length; i++) {
+    if (templateData[i].id === id) { row = templateData[i]; break; }
+  }
+  if (!row) return;
+  currentEditingRow = row;
+  showDesigner(row);
+}
+
+/* ====== 复制 ====== */
+function copyTemplate(id) {
+  var source = null;
+  for (var i = 0; i < templateData.length; i++) {
+    if (templateData[i].id === id) { source = templateData[i]; break; }
+  }
+  if (!source) return;
+
+  var newRow = {};
+  for (var k in source) { if (source.hasOwnProperty(k)) newRow[k] = source[k]; }
+
+  var maxNum = 0;
+  for (var j = 0; j < templateData.length; j++) {
+    var num = parseInt(templateData[j].id.replace('TMP','').replace('DRAFT_',''), 10);
+    if (num > maxNum) maxNum = num;
+  }
+  newRow.id = 'TMP' + String(maxNum + 1).padStart(3, '0');
+  newRow.name = newRow.name + ' - 副本';
+  var dateStr = formatDate();
+  newRow.createTime = dateStr;
+  newRow.updateTime = dateStr;
+
+  templateData.push(newRow);
+  renderTable();
+  showToast('模板已复制');
+}
+
+/* ====== 删除 ====== */
+function deleteTemplate(id) {
+  var row = null;
+  for (var i = 0; i < templateData.length; i++) {
+    if (templateData[i].id === id) { row = templateData[i]; break; }
+  }
+  if (!row) return;
+  showConfirm('确定要删除模板 <b>' + row.name + '</b> 吗？', function(){
+    for (var j = 0; j < templateData.length; j++) {
+      if (templateData[j].id === id) { templateData.splice(j, 1); break; }
+    }
+    var filtered = getFilteredData();
+    var totalPages = Math.ceil(filtered.length / pageSize) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    renderTable();
+    showToast('模板已删除');
+  });
+}
+
+/* ====== 停用/启用 ====== */
+function toggleStatus(id) {
+  var row = null;
+  for (var i = 0; i < templateData.length; i++) {
+    if (templateData[i].id === id) { row = templateData[i]; break; }
+  }
+  if (!row) return;
+  var newStatus = row.status === '启用' ? '停用' : '启用';
+  row.status = newStatus;
+  row.updateTime = formatDate();
+  renderTable();
+  showToast(newStatus === '启用' ? '模板已启用' : '模板已停用');
+}
+
+/* ====== 生成新ID ====== */
+function generateNewId() {
+  var maxNum = 0;
+  for (var i = 0; i < templateData.length; i++) {
+    var num = parseInt(templateData[i].id.replace('TMP','').replace('DRAFT_',''), 10);
+    if (num > maxNum) maxNum = num;
+  }
+  return 'TMP' + String(maxNum + 1).padStart(3, '0');
+}
+
+function generateDraftId() {
+  var maxDraft = 0;
+  for (var i = 0; i < templateData.length; i++) {
+    if (templateData[i].id.indexOf('DRAFT_') === 0) {
+      var num = parseInt(templateData[i].id.replace('DRAFT_',''), 10);
+      if (num > maxDraft) maxDraft = num;
+    }
+  }
+  return 'DRAFT_' + String(maxDraft + 1).padStart(3, '0');
+}
+
+/* ====== 获取当前设计器表单标题 ====== */
+function getDesignerTitle() {
+  var editable = document.getElementById('editableFormName');
+  if (editable) return editable.textContent.trim();
+  return document.getElementById('formTitle').textContent.trim();
+}
+
+/* ====== 列表/设计器切换 ====== */
+function showDesigner(rowData) {
+  document.getElementById('listSection').style.display = 'none';
+  document.getElementById('designerSection').style.display = 'block';
+  if (rowData) {
+    document.getElementById('designerHeader').innerHTML = '表单编辑区 &mdash; <span contenteditable="true" id="editableFormName" style="border-bottom:1px dashed var(--primary);outline:none;min-width:120px;">' + rowData.name + '</span>';
+    document.getElementById('formTitle').textContent = rowData.name;
+  } else {
+    document.getElementById('designerHeader').innerHTML = '表单编辑区 &mdash; <span contenteditable="true" id="editableFormName" style="border-bottom:1px dashed var(--primary);outline:none;min-width:120px;">新建表单模板</span>';
+    document.getElementById('formTitle').textContent = '新建表单模板';
+    currentEditingRow = null;
+  }
+}
+
+function openNewDesigner() {
+  currentEditingRow = null;
+  document.getElementById('formPreview').querySelectorAll('.form-field').forEach(function(f){ f.remove(); });
+  showDesigner(null);
+}
+
+function showList() {
+  document.getElementById('designerSection').style.display = 'none';
+  document.getElementById('listSection').style.display = 'block';
+  if (currentEditingRow) {
+    var editableEl = document.getElementById('editableFormName');
+    if (editableEl) {
+      var newName = editableEl.textContent.trim();
+      if (newName && newName !== currentEditingRow.name) {
+        currentEditingRow.name = newName;
+        document.getElementById('formTitle').textContent = newName;
+        currentEditingRow.updateTime = formatDate();
+      }
+    }
+    renderTable();
+  }
+}
+
+/* ====== 预览弹窗 ====== */
+function openPreviewModal() {
+  var formTitle = getDesignerTitle();
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+
+  /* 渲染预览字段 */
+  var fieldsHtml = '';
+  var fields = document.getElementById('formPreview').querySelectorAll('.form-field');
+  fields.forEach(function(f){
+    var type = f.getAttribute('data-type');
+    var labelEl = f.querySelector('.field-label');
+    var labelText = labelEl ? labelEl.textContent : '未命名字段';
+    var hasStar = labelEl && labelEl.querySelector('.required-star') !== null;
+    var starMarkup = hasStar ? '<span class="required-star">*</span>' : '';
+
+    var inputHtml = '';
+    switch(type) {
+      case 'text':
+        var inputEl = f.querySelector('.field-input');
+        var ph = inputEl ? inputEl.getAttribute('placeholder') || inputEl.value : '请输入内容';
+        inputHtml = '<input value="" placeholder="' + ph + '" readonly>';
+        break;
+      case 'textarea':
+        var taEl = f.querySelector('.field-textarea');
+        var ph2 = taEl ? taEl.getAttribute('placeholder') || taEl.textContent : '请输入内容';
+        inputHtml = '<textarea rows="3" readonly placeholder="' + ph2 + '"></textarea>';
+        break;
+      case 'select':
+        var selEl = f.querySelector('.field-select');
+        var opts = '';
+        if (selEl) {
+          var optionEls = selEl.querySelectorAll('option');
+          optionEls.forEach(function(o){ opts += '<option>' + o.textContent + '</option>'; });
+        }
+        inputHtml = '<select disabled>' + opts + '</select>';
+        break;
+      case 'radio':
+        var radioLabels = f.querySelectorAll('.field-radio label');
+        var radiosHtml = '';
+        radioLabels.forEach(function(lbl){ radiosHtml += '<label><input type="radio" disabled>' + lbl.textContent + '</label>'; });
+        inputHtml = '<div class="preview-radio-group">' + radiosHtml + '</div>';
+        break;
+      case 'checkbox':
+        var cbLabels = f.querySelectorAll('.field-checkbox label');
+        var cbsHtml = '';
+        cbLabels.forEach(function(lbl){ cbsHtml += '<label><input type="checkbox" disabled>' + lbl.textContent + '</label>'; });
+        inputHtml = '<div class="preview-checkbox-group">' + (cbsHtml || '<label><input type="checkbox" disabled>选项1</label><label><input type="checkbox" disabled>选项2</label>') + '</div>';
+        break;
+      case 'date':
+        inputHtml = '<div class="preview-date-wrap"><input value="" placeholder="yyyy-MM-dd" readonly><span class="calendar-icon">&#x1F4C5;</span></div>';
+        break;
+      case 'number':
+        var numEl = f.querySelector('.field-input');
+        var numPh = numEl ? numEl.getAttribute('placeholder') || numEl.value : '请输入数字';
+        inputHtml = '<input type="number" placeholder="' + numPh + '" readonly>';
+        break;
+      case 'upload':
+        inputHtml = '<div class="preview-upload-area">点击或拖拽文件到此处上传</div>';
+        break;
+      default:
+        inputHtml = '<input value="" placeholder="请输入内容" readonly>';
+    }
+
+    fieldsHtml += '<div class="preview-field"><div class="preview-label">' + labelText + starMarkup + '</div>' + inputHtml + '</div>';
+  });
+
+  overlay.innerHTML = '<div class="modal-box preview-modal">'
+    + '<div class="modal-header">'
+    + '<span class="modal-title"><span class="modal-icon">&#x1F441;</span>预览表单</span>'
+    + '<div class="preview-header-actions">'
+    + '<button class="btn btn-outline" onclick="alert(\'打印功能\')" style="font-size:12px;padding:6px 12px;">打印</button>'
+    + '<button class="btn btn-outline" onclick="alert(\'导出PDF功能\')" style="font-size:12px;padding:6px 12px;">导出PDF</button>'
+    + '<button class="btn-close" onclick="closeModal(this)">&#x2715;</button>'
+    + '</div>'
+    + '</div>'
+    + '<div class="modal-body">'
+    + '<div class="preview-form-title">' + formTitle + '</div>'
+    + '<div class="preview-form-version">版本: v1.0.0</div>'
+    + '<hr class="preview-form-divider">'
+    + fieldsHtml
+    + '</div>'
+    + '<div class="modal-footer">'
+    + '<button class="btn btn-outline" onclick="closeModal(this)">取消</button>'
+    + '<button class="btn btn-primary" onclick="closeModal(this)">确认</button>'
+    + '</div></div>';
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(overlay); });
+}
+
+/* ====== 发布弹窗 ====== */
+function openPublishModal() {
+  var formTitle = getDesignerTitle();
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+
+  overlay.innerHTML = '<div class="modal-box publish-modal">'
+    + '<div class="modal-header">'
+    + '<span class="modal-title"><span class="modal-icon" style="color:var(--primary);">&#x1F4E4;</span>发布模板</span>'
+    + '<button class="btn-close" onclick="closeModal(this)">&#x2715;</button>'
+    + '</div>'
+    + '<div class="modal-body">'
+    + '<div class="publish-form-group"><label>模板名称</label><input id="publishName" value="' + formTitle + '"></div>'
+    + '<div class="publish-form-group"><label>模板类型</label><select id="publishType"><option>检查类</option><option>记录类</option><option>评估类</option><option>登记类</option><option>文书类</option></select></div>'
+    + '<div class="publish-form-group"><label>适用场景</label><input id="publishScene" placeholder="如：青光眼门诊"></div>'
+    + '<div class="publish-form-group"><label>版本号</label><input id="publishVersion" value="v1.0.0"></div>'
+    + '<div class="publish-form-group"><label>发布说明</label><textarea id="publishDesc" placeholder="请描述本次发布的变更内容..."></textarea></div>'
+    + '<div class="publish-form-group"><label>可见范围</label><select id="publishScope"><option>全部用户</option><option>指定科室</option><option>仅自己</option></select></div>'
+    + '</div>'
+    + '<div class="modal-footer">'
+    + '<button class="btn btn-outline" onclick="closeModal(this)">取消</button>'
+    + '<button class="btn btn-primary" id="btnConfirmPublish">确认发布</button>'
+    + '</div></div>';
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('#btnConfirmPublish').onclick = function(){
+    var name = document.getElementById('publishName').value.trim();
+    if (!name) { showToast('请输入模板名称'); return; }
+    var type = document.getElementById('publishType').value;
+    var scene = document.getElementById('publishScene').value.trim() || '未指定';
+    var version = document.getElementById('publishVersion').value.trim() || 'v1.0.0';
+    var now = formatDate();
+
+    /* 判断是新建还是更新 */
+    if (currentEditingRow && currentEditingRow.id.indexOf('DRAFT_') === 0) {
+      /* 草稿转正式模板 */
+      var newId = generateNewId();
+      currentEditingRow.id = newId;
+      currentEditingRow.name = name;
+      currentEditingRow.type = type;
+      currentEditingRow.scene = scene;
+      currentEditingRow.status = '启用';
+      currentEditingRow.updateTime = now;
+      currentEditingRow.createTime = now;
+    } else if (currentEditingRow) {
+      /* 更新已有模板 */
+      currentEditingRow.name = name;
+      currentEditingRow.type = type;
+      currentEditingRow.scene = scene;
+      currentEditingRow.status = '启用';
+      currentEditingRow.updateTime = now;
+    } else {
+      /* 完全新建 */
+      var newId2 = generateNewId();
+      templateData.push({
+        id: newId2, name: name, type: type, scene: scene,
+        creator: '张教授', createTime: now, updateTime: now, status: '启用'
+      });
+      currentEditingRow = templateData[templateData.length - 1];
+    }
+
+    closeModal(overlay);
+    showList();
+    renderTable();
+    showToast('模板发布成功');
+  };
+
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(overlay); });
+}
+
+/* ====== 保存草稿弹窗 ====== */
+function openSaveDraftModal() {
+  var formTitle = getDesignerTitle();
+  var saveTime = formatDateTime();
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+
+  overlay.innerHTML = '<div class="modal-box draft-modal">'
+    + '<div class="modal-header">'
+    + '<span class="modal-title"></span>'
+    + '<button class="btn-close" onclick="closeModal(this)">&#x2715;</button>'
+    + '</div>'
+    + '<div class="modal-body">'
+    + '<div class="draft-success-icon">&#x2714;</div>'
+    + '<h3 style="margin-bottom:8px;">草稿保存成功</h3>'
+    + '<p style="color:var(--gray-500);font-size:13px;margin-bottom:16px;">"' + formTitle + '"已保存为草稿，您可以随时继续编辑</p>'
+    + '<div class="draft-info-card">'
+    + '<div class="info-row"><span class="info-label">模板名称</span><span class="info-value">' + formTitle + '</span></div>'
+    + '<div class="info-row"><span class="info-label">版本号</span><span class="info-value">v1.0.0（草稿）</span></div>'
+    + '<div class="info-row"><span class="info-label">保存时间</span><span class="info-value">' + saveTime + '</span></div>'
+    + '</div>'
+    + '<div class="draft-actions">'
+    + '<button class="btn btn-outline" id="btnGoToList">去模板列表</button>'
+    + '<button class="btn btn-primary" id="btnContinueEdit">继续编辑</button>'
+    + '</div>'
+    + '</div></div>';
+
+  document.body.appendChild(overlay);
+
+  /* 保存草稿到 templateData */
+  if (currentEditingRow && currentEditingRow.id.indexOf('DRAFT_') === 0) {
+    /* 更新已有草稿 */
+    currentEditingRow.name = formTitle;
+    currentEditingRow.updateTime = saveTime;
+  } else if (!currentEditingRow) {
+    /* 新建草稿 */
+    var draftId = generateDraftId();
+    templateData.push({
+      id: draftId, name: formTitle, type: '检查类', scene: '未指定',
+      creator: '张教授', createTime: formatDate(), updateTime: saveTime, status: '草稿'
+    });
+    currentEditingRow = templateData[templateData.length - 1];
+  } else {
+    /* 编辑已有模板，存为草稿 */
+    currentEditingRow.updateTime = saveTime;
+  }
+
+  overlay.querySelector('#btnGoToList').onclick = function(){
+    closeModal(overlay);
+    showList();
+    renderTable();
+  };
+  overlay.querySelector('#btnContinueEdit').onclick = function(){
+    closeModal(overlay);
+  };
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(overlay); });
+}
+
+/* ====== 字段属性面板（根据组件类型动态渲染） ====== */
 function selectField(el) {
   document.querySelectorAll('.form-field').forEach(function(f){ f.classList.remove('selected'); });
   el.classList.add('selected');
   var type = el.getAttribute('data-type');
-  var label = el.querySelector('.field-label').textContent;
-  document.getElementById('propPanel').innerHTML =
-    '<div class="prop-group"><label>字段标签</label><input value="' + label + '" onchange="updateFieldLabel(this.value)"></div>' +
-    '<div class="prop-group"><label>字段类型</label><select><option selected>' + type + '</option><option>text</option><option>textarea</option><option>select</option><option>radio</option><option>checkbox</option><option>date</option><option>number</option></select></div>' +
-    '<div class="prop-group"><label>是否必填</label><select><option>否</option><option>是</option></select></div>' +
-    '<div class="prop-group"><label>占位提示</label><input value="请输入' + label + '"></div>' +
-    '<div class="prop-group"><label>字段标识</label><input value="field_' + (new Date()).getTime() + '" readonly style="background:var(--gray-50);"></div>';
+  var labelEl = el.querySelector('.field-label');
+  var labelText = labelEl ? labelEl.textContent.replace(/\*/g, '').trim() : '';
+  var hasRequired = labelEl && labelEl.querySelector('.required-star') !== null;
+  var inputEl = el.querySelector('.field-input');
+  var textareaEl = el.querySelector('.field-textarea');
+
+  var html = '';
+  html += '<div class="prop-group"><label>字段标签</label><input id="propLabel" value="' + labelText + '" oninput="updateFieldLabel(this.value)"></div>';
+
+  switch(type) {
+    case 'text':
+      html += '<div class="prop-group"><label>占位提示</label><input id="propPlaceholder" value="' + (inputEl ? inputEl.value : '') + '" oninput="updateFieldPlaceholder(this.value)"></div>';
+      html += '<div class="prop-group"><label>是否必填</label><select id="propRequired" onchange="updateFieldRequired(this.value)"><option value="否"' + (hasRequired?'':' selected') + '>否</option><option value="是"' + (hasRequired?' selected':'') + '>是</option></select></div>';
+      html += '<div class="prop-group"><label>最大长度</label><input id="propMaxLength" type="number" value="100" oninput="updateFieldMaxLength(this.value)"></div>';
+      html += '<div class="prop-group"><label>默认值</label><input id="propDefault" value="' + (inputEl ? inputEl.getAttribute('data-default') || '' : '') + '" oninput="updateFieldDefault(this.value)"></div>';
+      break;
+
+    case 'textarea':
+      html += '<div class="prop-group"><label>占位提示</label><input id="propPlaceholder" value="' + (textareaEl ? (textareaEl.placeholder || textareaEl.textContent) : '') + '" oninput="updateFieldPlaceholder(this.value)"></div>';
+      html += '<div class="prop-group"><label>是否必填</label><select id="propRequired" onchange="updateFieldRequired(this.value)"><option value="否"' + (hasRequired?'':' selected') + '>否</option><option value="是"' + (hasRequired?' selected':'') + '>是</option></select></div>';
+      html += '<div class="prop-group"><label>行数</label><input id="propRows" type="number" value="3" oninput="updateFieldRows(this.value)"></div>';
+      html += '<div class="prop-group"><label>默认值</label><textarea id="propDefault" oninput="updateFieldDefault(this.value)" style="min-height:60px;"></textarea></div>';
+      break;
+
+    case 'select':
+      var selEl = el.querySelector('.field-select');
+      var optsArr = [];
+      if (selEl) {
+        var opts = selEl.querySelectorAll('option');
+        opts.forEach(function(o){ optsArr.push(o.textContent); });
+      }
+      html += '<div class="prop-group"><label>是否必填</label><select id="propRequired" onchange="updateFieldRequired(this.value)"><option value="否"' + (hasRequired?'':' selected') + '>否</option><option value="是"' + (hasRequired?' selected':'') + '>是</option></select></div>';
+      html += '<div class="prop-group"><label>选项列表</label><textarea id="propOptions" oninput="updateFieldOptions()" placeholder="每行一个选项，如：\n选项1\n选项2\n选项3">' + optsArr.join('\n') + '</textarea></div>';
+      html += '<div class="prop-group"><label>是否多选</label><select id="propMultiple" onchange="updateFieldMultiple(this.value)"><option value="否">否</option><option value="是">是</option></select></div>';
+      break;
+
+    case 'radio':
+      var radioLabels = el.querySelectorAll('.field-radio label');
+      var radioOpts = [];
+      radioLabels.forEach(function(lbl){ radioOpts.push(lbl.textContent); });
+      html += '<div class="prop-group"><label>是否必填</label><select id="propRequired" onchange="updateFieldRequired(this.value)"><option value="否"' + (hasRequired?'':' selected') + '>否</option><option value="是"' + (hasRequired?' selected':'') + '>是</option></select></div>';
+      html += '<div class="prop-group"><label>选项列表</label><textarea id="propOptions" oninput="updateFieldOptions()" placeholder="每行一个选项，如：\n男\n女">' + radioOpts.join('\n') + '</textarea></div>';
+      html += '<div class="prop-group"><label>默认选中</label><input id="propDefaultChecked" placeholder="输入默认选中的选项名"></div>';
+      break;
+
+    case 'checkbox':
+      var cbLabels = el.querySelectorAll('.field-checkbox label');
+      var cbOpts = [];
+      cbLabels.forEach(function(lbl){ cbOpts.push(lbl.textContent); });
+      html += '<div class="prop-group"><label>是否必填</label><select id="propRequired" onchange="updateFieldRequired(this.value)"><option value="否"' + (hasRequired?'':' selected') + '>否</option><option value="是"' + (hasRequired?' selected':'') + '>是</option></select></div>';
+      html += '<div class="prop-group"><label>选项列表</label><textarea id="propOptions" oninput="updateFieldOptions()" placeholder="每行一个选项">' + (cbOpts.join('\n') || '选项1\n选项2') + '</textarea></div>';
+      break;
+
+    case 'date':
+      html += '<div class="prop-group"><label>是否必填</label><select id="propRequired" onchange="updateFieldRequired(this.value)"><option value="否"' + (hasRequired?'':' selected') + '>否</option><option value="是"' + (hasRequired?' selected':'') + '>是</option></select></div>';
+      html += '<div class="prop-group"><label>日期格式</label><select id="propDateFormat"><option>yyyy-MM-dd</option><option>yyyy/MM/dd</option><option>MM-dd-yyyy</option></select></div>';
+      html += '<div class="prop-group"><label>默认日期</label><input id="propDefaultDate" type="date"></div>';
+      break;
+
+    case 'number':
+      html += '<div class="prop-group"><label>是否必填</label><select id="propRequired" onchange="updateFieldRequired(this.value)"><option value="否"' + (hasRequired?'':' selected') + '>否</option><option value="是"' + (hasRequired?' selected':'') + '>是</option></select></div>';
+      html += '<div class="prop-group"><label>最小值</label><input id="propMin" type="number" value="0"></div>';
+      html += '<div class="prop-group"><label>最大值</label><input id="propMax" type="number" value="999"></div>';
+      html += '<div class="prop-group"><label>单位</label><input id="propUnit" placeholder="如：mmHg、mm" value="" oninput="updateFieldUnit(this.value)"></div>';
+      html += '<div class="prop-group"><label>默认值</label><input id="propDefault" type="number" value="' + (inputEl ? (inputEl.getAttribute('data-default')||'') : '') + '" oninput="updateFieldDefault(this.value)"></div>';
+      break;
+
+    case 'upload':
+      html += '<div class="prop-group"><label>是否必填</label><select id="propRequired" onchange="updateFieldRequired(this.value)"><option value="否"' + (hasRequired?'':' selected') + '>否</option><option value="是"' + (hasRequired?' selected':'') + '>是</option></select></div>';
+      html += '<div class="prop-group"><label>允许文件类型</label><input id="propFileTypes" placeholder="如：.pdf,.jpg,.png" value=".pdf,.jpg,.png"></div>';
+      html += '<div class="prop-group"><label>最大文件大小</label><input id="propMaxSize" placeholder="如：10MB" value="10MB"></div>';
+      html += '<div class="prop-group"><label>是否多文件</label><select id="propMultiFile"><option value="否">否</option><option value="是">是</option></select></div>';
+      break;
+  }
+
+  document.getElementById('propPanel').innerHTML = html;
 }
+
+/* ====== 属性实时更新 ====== */
+function getSelectedField() {
+  return document.querySelector('.form-field.selected');
+}
+
 function updateFieldLabel(val) {
-  var sel = document.querySelector('.form-field.selected');
-  if (sel) sel.querySelector('.field-label').textContent = val;
+  var sel = getSelectedField();
+  if (!sel) return;
+  var labelEl = sel.querySelector('.field-label');
+  if (!labelEl) return;
+  var hasStar = labelEl.querySelector('.required-star') !== null;
+  labelEl.innerHTML = val + (hasStar ? '<span class="required-star">*</span>' : '');
 }
+
+function updateFieldPlaceholder(val) {
+  var sel = getSelectedField();
+  if (!sel) return;
+  var type = sel.getAttribute('data-type');
+  if (type === 'textarea') {
+    var ta = sel.querySelector('.field-textarea');
+    if (ta) { ta.placeholder = val; ta.textContent = val; }
+  } else {
+    var inp = sel.querySelector('.field-input');
+    if (inp) inp.value = val;
+  }
+}
+
+function updateFieldRequired(val) {
+  var sel = getSelectedField();
+  if (!sel) return;
+  var labelEl = sel.querySelector('.field-label');
+  if (!labelEl) return;
+  var text = labelEl.textContent.replace(/\*/g, '').trim();
+  if (val === '是') {
+    labelEl.innerHTML = text + '<span class="required-star">*</span>';
+  } else {
+    labelEl.textContent = text;
+  }
+}
+
+function updateFieldDefault(val) {
+  var sel = getSelectedField();
+  if (!sel) return;
+  var inp = sel.querySelector('.field-input');
+  if (inp) {
+    inp.setAttribute('data-default', val);
+    inp.value = val || inp.value;
+  }
+}
+
+function updateFieldMaxLength(val) {
+  /* 仅存储属性，预览不直接反映 */
+}
+
+function updateFieldRows(val) {
+  var sel = getSelectedField();
+  if (!sel) return;
+  var ta = sel.querySelector('.field-textarea');
+  if (ta) ta.style.height = (parseInt(val) * 20) + 'px';
+}
+
+function updateFieldOptions() {
+  var sel = getSelectedField();
+  if (!sel) return;
+  var type = sel.getAttribute('data-type');
+  var optsEl = document.getElementById('propOptions');
+  if (!optsEl) return;
+  var lines = optsEl.value.split('\n').filter(function(l){ return l.trim(); });
+
+  if (type === 'select') {
+    var selectEl = sel.querySelector('.field-select');
+    if (selectEl) {
+      var html = '';
+      lines.forEach(function(line){ html += '<option>' + line.trim() + '</option>'; });
+      selectEl.innerHTML = html || '<option>请选择</option>';
+    }
+  } else if (type === 'radio') {
+    var radioDiv = sel.querySelector('.field-radio');
+    if (radioDiv) {
+      var html = '';
+      lines.forEach(function(line){ html += '<label><input type="radio" disabled>' + line.trim() + '</label>'; });
+      radioDiv.innerHTML = html || '<label><input type="radio" disabled>选项1</label><label><input type="radio" disabled>选项2</label>';
+    }
+  } else if (type === 'checkbox') {
+    var cbDiv = sel.querySelector('.field-checkbox');
+    if (cbDiv) {
+      var html = '';
+      lines.forEach(function(line){ html += '<label><input type="checkbox" disabled>' + line.trim() + '</label>'; });
+      cbDiv.innerHTML = html || '<label><input type="checkbox" disabled>选项</label>';
+    }
+  }
+}
+
+function updateFieldMultiple(val) {
+  /* 仅标记多选属性 */
+}
+
+function updateFieldUnit(val) {
+  var sel = getSelectedField();
+  if (!sel) return;
+  var inp = sel.querySelector('.field-input');
+  if (inp && sel.getAttribute('data-type') === 'number') {
+    var defVal = inp.getAttribute('data-default') || '';
+    inp.value = defVal ? defVal + (val ? ' ' + val : '') : '请输入数字' + (val ? '（单位：' + val + '）' : '');
+  }
+}
+
+/* ====== 删除字段 ====== */
 function deleteField(el) {
   var field = el.closest('.form-field');
-  if (field) { if (field.classList.contains('selected')) { document.getElementById('propPanel').innerHTML = '<p style="color:var(--gray-500);font-size:13px;text-align:center;padding:40px 0;">请选择一个字段以编辑其属性</p>'; } field.remove(); }
+  if (field) {
+    if (field.classList.contains('selected')) {
+      document.getElementById('propPanel').innerHTML = '<p style="color:var(--gray-500);font-size:13px;text-align:center;padding:40px 0;">请选择一个字段以编辑其属性</p>';
+    }
+    field.remove();
+  }
 }
-function previewTemplate() { alert('预览模板功能'); }
-function publishTemplate() { alert('模板发布成功！'); }
+
+/* ====== 初始化 ====== */
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var user = JSON.parse(localStorage.getItem('life_med_user'));
     if (!user) { window.location.href = 'login.html'; return; }
     document.getElementById('headerUserName').textContent = user.name || '用户';
   } catch(e) { window.location.href = 'login.html'; }
+
+  renderTable();
+
+  /* 组件点击添加 */
   document.querySelectorAll('.comp-item').forEach(function(item) {
     item.addEventListener('click', function() {
       var type = this.getAttribute('data-type');
@@ -233,12 +1099,23 @@ document.addEventListener('DOMContentLoaded', function() {
       div.setAttribute('data-type', type);
       div.setAttribute('onclick', 'selectField(this)');
       var inputHtml;
-      if (type === 'textarea') inputHtml = '<textarea class="field-input" style="resize:none;height:50px;" readonly>请输入' + name + '内容</textarea>';
-      else if (type === 'select') inputHtml = '<select class="field-select"><option>请选择</option></select>';
-      else if (type === 'radio') inputHtml = '<div class="field-radio"><label><input type="radio" disabled>选项1</label><label><input type="radio" disabled>选项2</label></div>';
-      else if (type === 'date') inputHtml = '<input class="field-input" value="yyyy-MM-dd" readonly>';
-      else if (type === 'number') inputHtml = '<input class="field-input" value="请输入数字" readonly>';
-      else inputHtml = '<input class="field-input" value="请输入' + name + '" readonly>';
+      if (type === 'textarea') {
+        inputHtml = '<textarea class="field-textarea" style="resize:none;height:60px;" readonly placeholder="请输入' + name + '内容"></textarea>';
+      } else if (type === 'select') {
+        inputHtml = '<select class="field-select"><option>请选择</option></select>';
+      } else if (type === 'radio') {
+        inputHtml = '<div class="field-radio"><label><input type="radio" disabled>选项1</label><label><input type="radio" disabled>选项2</label></div>';
+      } else if (type === 'checkbox') {
+        inputHtml = '<div class="field-checkbox"><label><input type="checkbox" disabled>选项1</label><label><input type="checkbox" disabled>选项2</label></div>';
+      } else if (type === 'date') {
+        inputHtml = '<input class="field-input" value="yyyy-MM-dd" readonly>';
+      } else if (type === 'number') {
+        inputHtml = '<input class="field-input" value="请输入数字" readonly>';
+      } else if (type === 'upload') {
+        inputHtml = '<div class="field-input" style="border:2px dashed var(--gray-300);padding:12px;text-align:center;color:var(--gray-400);border-radius:4px;background:var(--gray-50);">点击或拖拽文件到此处上传</div>';
+      } else {
+        inputHtml = '<input class="field-input" value="请输入' + name + '" readonly>';
+      }
       div.innerHTML = '<div class="field-label">' + name + '</div>' + inputHtml + '<button class="field-delete" onclick="event.stopPropagation();deleteField(this)">&#x2715;</button>';
       preview.insertBefore(div, null);
     });

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>图像质量质控</title>
+<title>图像质量质控（分析失败）</title>
 <style>
 :root {
   --primary: #165dff;
@@ -207,6 +207,37 @@ input, select, textarea { font: inherit; outline: none; }
   background: linear-gradient(90deg, #00b42a 0%, #0f9a83 100%);
   transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* Loading Animation */
+@keyframes qc-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.qc-progress-loading .qc-progress-icon {
+  animation: qc-spin 1.5s linear infinite;
+}
+/* Error Panel */
+.error-panel {
+  display: flex; gap: 16px; padding: 16px;
+  border-radius: 10px; background: #fff4df;
+  border: 1px solid #feefc3; margin-bottom: 14px;
+}
+.error-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--warning); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; flex-shrink: 0;
+}
+.error-content { flex: 1; }
+.error-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.error-desc { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.error-reasons { list-style: none; padding: 0; margin: 0; }
+.error-reasons li {
+  font-size: 12px; color: var(--muted); padding: 4px 0;
+  padding-left: 16px; position: relative;
+}
+.error-reasons li::before {
+  content: '·'; position: absolute; left: 4px; color: var(--warning); font-weight: 700;
+}
 
 /* Result Grid */
 .result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
@@ -270,14 +301,14 @@ input, select, textarea { font: inherit; outline: none; }
 <div class="sidebar" id="sidebar">
 <div class="menu-group"><div class="menu-group-title">AI眼底疾病筛查</div>
 <a class="menu-item" href="眼底图像输入.html">眼底图像输入</a>
-<a class="menu-item active" href="图像质量质控.html">图像质量质控</a>
+<a class="menu-item" href="图像质量质控.html">图像质量质控</a>
 <a class="menu-item" href="图像质量质控（不合格）.html">图像质量质控（不合格）</a>
-<a class="menu-item" href="图像质量质控（分析失败）.html">图像质量质控（分析失败）</a>
+<a class="menu-item active" href="图像质量质控（分析失败）.html">图像质量质控（分析失败）</a>
 <a class="menu-item" href="常见疾病筛查.html">常见疾病筛查</a>
 <a class="menu-item" href="多任务联合筛查.html">多任务联合筛查</a>
 <a class="menu-item" href="输出筛查报告.html">输出筛查报告</a></div></div><div class="main-content">
-<div class="breadcrumb"><a href="index.html">首页</a><span>&rsaquo;</span><a href="#">AI眼底疾病筛查</a><span>&rsaquo;</span><strong>图像质量质控</strong></div>
-<h1 class="page-title">图像质量质控</h1>
+<div class="breadcrumb"><a href="index.html">首页</a><span>&rsaquo;</span><a href="#">AI眼底疾病筛查</a><span>&rsaquo;</span><strong>图像质量质控（分析失败）</strong></div>
+<h1 class="page-title">图像质量质控（分析失败）</h1>
 
 <div class="card">
   <div class="card-header"><span class="card-title">质控检测结果</span></div>
@@ -290,28 +321,27 @@ input, select, textarea { font: inherit; outline: none; }
   </div>
 
   <div class="stats">
-    <div class="stat"><span>质控评分</span><strong style="color:var(--success);">96%</strong></div>
-    <div class="stat"><span>图像清晰度</span><strong>优秀</strong></div>
-    <div class="stat"><span>视野完整性</span><strong>完整</strong></div>
-    <div class="stat"><span>曝光均匀度</span><strong>良好</strong></div>
+    <div class="stat"><span>质控评分</span><strong>--</strong></div>
+    <div class="stat"><span>图像清晰度</span><strong>--</strong></div>
+    <div class="stat"><span>视野完整性</span><strong>--</strong></div>
+    <div class="stat"><span>曝光均匀度</span><strong>--</strong></div>
   </div>
 
-  <div class="qc-progress-shell">
+  <div class="qc-progress-shell qc-progress-loading">
     <div class="qc-progress-header">
       <div class="qc-progress-label">
-        <span class="qc-progress-icon">✓</span>
-        <span>图像质量符合AI分析要求</span>
+        <span class="qc-progress-icon">⟳</span>
+        <span>AI分析进行中...</span>
       </div>
-      <span class="qc-progress-pct" id="qcProgressPct">100%</span>
+      <span class="qc-progress-pct">--</span>
     </div>
     <div class="qc-progress-track">
-      <div class="qc-progress-fill" id="qcProgressFill"></div>
+      <div class="qc-progress-fill" id="qcProgressFill" style="width:45%;"></div>
     </div>
   </div>
 
-  <div class="alert alert-info">
-    <strong>质控通过：</strong>图像清晰，视盘、黄斑与血管分布完整，可进入AI分析阶段。
-    <a class="btn primary small" href="常见疾病筛查.html" style="margin-left:12px;">进入疾病筛查</a>
+  <div class="alert alert-warning">
+    <strong>分析超时：</strong>服务器响应超时，AI分析未能完成。请检查网络连接后重试，或重新上传图像。
   </div>
 
   <div class="card-header"><span class="card-title">质控检查项明细</span></div>
@@ -321,37 +351,58 @@ input, select, textarea { font: inherit; outline: none; }
       <tbody>
         <tr>
           <td><strong>图像清晰度</strong></td>
-          <td><span class="tag success">通过</span></td>
-          <td>98%</td>
-          <td>视盘边界清晰，血管细节可见</td>
+          <td><span class="tag gray">分析中断</span></td>
+          <td>--</td>
+          <td>分析未能完成</td>
         </tr>
         <tr>
           <td><strong>曝光均匀度</strong></td>
-          <td><span class="tag success">通过</span></td>
-          <td>95%</td>
-          <td>黄斑区域无明显过曝或欠曝</td>
+          <td><span class="tag gray">分析中断</span></td>
+          <td>--</td>
+          <td>分析未能完成</td>
         </tr>
         <tr>
           <td><strong>视野完整性</strong></td>
-          <td><span class="tag success">通过</span></td>
-          <td>94%</td>
-          <td>视盘与黄斑均在视野内</td>
+          <td><span class="tag gray">分析中断</span></td>
+          <td>--</td>
+          <td>分析未能完成</td>
         </tr>
         <tr>
           <td><strong>色彩真实性</strong></td>
-          <td><span class="tag success">通过</span></td>
-          <td>97%</td>
-          <td>色调正常，无偏色</td>
+          <td><span class="tag gray">分析中断</span></td>
+          <td>--</td>
+          <td>分析未能完成</td>
         </tr>
         <tr>
           <td><strong>分辨率达标</strong></td>
-          <td><span class="tag success">通过</span></td>
-          <td>96%</td>
-          <td>分辨率满足AI模型最低要求</td>
+          <td><span class="tag gray">分析中断</span></td>
+          <td>--</td>
+          <td>分析未能完成</td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <div class="card-header" style="margin-top:20px;"><span class="card-title">错误详情</span></div>
+  <div class="error-panel">
+    <div class="error-icon">!</div>
+    <div class="error-content">
+      <div class="error-title">服务器响应超时</div>
+      <div class="error-desc">AI分析服务在规定时间内未能返回结果，可能原因包括：</div>
+      <ul class="error-reasons">
+        <li>网络连接不稳定</li>
+        <li>服务器负载过高</li>
+        <li>图像文件过大</li>
+        <li>服务端临时故障</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;margin-top:16px;justify-content:flex-end;">
+    <button class="btn secondary" onclick="location.href=&quot;眼底图像输入.html&quot;">取消</button>
+    <button class="btn primary" onclick="retryAnalysis()">重试</button>
+  </div>
+
 </div>
 </div>
 <script>
@@ -376,14 +427,16 @@ document.addEventListener('DOMContentLoaded', function() {
       item.classList.add('active');
     }
   });
-  // 进度条动画
-  setTimeout(function() {
-    var progressBar = document.getElementById('qcProgressFill');
-    if (progressBar) {
-      progressBar.style.width = '100%';
-    }
-  }, 300);
 });
+
+function retryAnalysis() {
+  var btn = event.target;
+  btn.textContent = '分析中...';
+  btn.disabled = true;
+  setTimeout(function() {
+    location.href = '常见疾病筛查.html';
+  }, 2000);
+}
 </script>
 
 </body>

@@ -104,6 +104,10 @@ input, select, textarea { font: inherit; outline: none; }
 }
 .stat span { display: block; color: var(--soft); font-size: 12px; }
 .stat strong { display: block; margin-top: 6px; font-size: 20px; line-height: 1.2; color: var(--text); }
+.stat { cursor: pointer; transition: .18s; }
+.stat:hover { background: #edf2fa; }
+.stat-active { background: var(--primary-soft); border-left: 3px solid var(--primary); }
+.stat-active strong { font-weight: 800; }
 
 /* Tables */
 .table-wrap { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
@@ -152,6 +156,52 @@ input, select, textarea { font: inherit; outline: none; }
   background: #e8f3ff; color: var(--primary); font-size: 24px; font-weight: 400;
 }
 .upload-zone .upload-hint { color: var(--soft); font-size: 12px; margin-top: 6px; }
+
+/* Thumbnail Area */
+#thumbnailArea { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.thumb-card {
+  width: 120px; height: 120px; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--line); position: relative; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center;
+  background: #fff; transition: .18s;
+}
+.thumb-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(22,93,255,.12); }
+.thumb-card img { width: 100%; height: 100%; object-fit: cover; }
+.thumb-card .thumb-placeholder {
+  width: 100%; height: 100%; background: #e8edf5; display: flex;
+  align-items: center; justify-content: center; font-size: 12px;
+  color: var(--muted); font-weight: 700; text-transform: uppercase;
+}
+.thumb-card .thumb-name {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.6); color: #fff; font-size: 11px;
+  padding: 3px 6px; text-overflow: ellipsis; overflow: hidden;
+  white-space: nowrap; text-align: center;
+}
+
+/* Image Preview Overlay */
+.image-preview-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85); z-index: 20000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: .22s ease;
+}
+.image-preview-overlay.show { opacity: 1; visibility: visible; }
+.image-preview-overlay img {
+  max-width: 90vw; max-height: 85vh; object-fit: contain;
+  border-radius: 4px;
+}
+.image-preview-overlay .preview-filename {
+  color: #fff; font-size: 14px; margin-top: 16px; text-align: center;
+}
+.image-preview-overlay .preview-close {
+  position: absolute; top: 24px; right: 24px;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; cursor: pointer; border: 0; transition: .18s;
+}
+.image-preview-overlay .preview-close:hover { background: rgba(255,255,255,0.3); }
 
 /* Forms */
 .form-group { margin-bottom: 14px; }
@@ -399,6 +449,8 @@ input, select, textarea { font: inherit; outline: none; }
     </div>
   </div>
 
+  <div id="thumbnailArea" style="display:none;"></div>
+
   <div id="up" style="margin-top:14px;display:none;"></div>
 
   <div style="margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
@@ -414,50 +466,17 @@ input, select, textarea { font: inherit; outline: none; }
     <button class="btn primary small" onclick="location.href='眼底图像输入.html'">刷新</button>
   </div>
   <div class="stats">
-    <div class="stat"><span>总记录</span><strong>12</strong></div>
-    <div class="stat"><span>质控通过</span><strong>10</strong></div>
-    <div class="stat"><span>质控拦截</span><strong>1</strong></div>
-    <div class="stat"><span>分析失败</span><strong>1</strong></div>
+    <div class="stat stat-active" onclick="switchTab('全部', this)"><span>总记录</span><strong id="statTotal">4</strong></div>
+    <div class="stat" onclick="switchTab('质控通过', this)"><span>质控通过</span><strong id="statQcPass">3</strong></div>
+    <div class="stat" onclick="switchTab('质控不合格', this)"><span>质控拦截</span><strong id="statQcFail">1</strong></div>
+    <div class="stat" onclick="switchTab('分析失败', this)"><span>分析失败</span><strong id="statAnalysisFail">1</strong></div>
   </div>
   <div class="table-wrap">
     <table class="data-table">
       <thead>
         <tr><th>筛查任务</th><th>患者</th><th>上传时间</th><th>质控</th><th>状态</th><th>操作</th></tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><div class="row-main"><strong>右眼_眼底彩照_001.jpg</strong><span>FS-260626-001 · 市中心门诊</span></div></td>
-          <td><div class="row-main"><strong>李*</strong><span>OPD-202606-001</span></div></td>
-          <td>2026-06-26 14:30</td>
-          <td><span class="tag success">质控通过</span></td>
-          <td><span class="tag success">已出报告</span></td>
-          <td><a class="btn secondary small" href="javascript:void(0)" onclick="openReportModal('FS-260626-001', '李*', 'OPD-202606-001', '2026-06-26 14:30')">查看报告</a></td>
-        </tr>
-        <tr class="active">
-          <td><div class="row-main"><strong>右眼_眼底彩照_004.dcm</strong><span>FS-260626-004 · 社区筛查</span></div></td>
-          <td><div class="row-main"><strong>赵*</strong><span>OPD-202606-003</span></div></td>
-          <td>2026-06-26 10:05</td>
-          <td><span class="tag danger">质控不合格</span></td>
-          <td><span class="tag danger">等待重传</span></td>
-          <td><a class="btn secondary small" href="眼底图像输入.html">重新上传</a></td>
-        </tr>
-        <tr>
-          <td><div class="row-main"><strong>左眼_眼底彩照_002.jpg</strong><span>FS-260626-002 · 院内复查</span></div></td>
-          <td><div class="row-main"><strong>王*</strong><span>OPD-202606-002</span></div></td>
-          <td>2026-06-26 14:35</td>
-          <td><span class="tag success">质控通过</span></td>
-          <td><span class="tag warning">分析失败</span></td>
-          <td><a class="btn secondary small" href="图像质量质控.html">重试分析</a></td>
-        </tr>
-        <tr>
-          <td><div class="row-main"><strong>双眼_眼底OCT_003.png</strong><span>FS-260626-003 · 眼科专科门诊</span></div></td>
-          <td><div class="row-main"><strong>陈*</strong><span>OPD-202606-004</span></div></td>
-          <td>2026-06-26 09:12</td>
-          <td><span class="tag success">质控通过</span></td>
-          <td><span class="tag success">已出报告</span></td>
-          <td><a class="btn secondary small" href="javascript:void(0)" onclick="openReportModal('FS-260626-003', '陈*', 'OPD-202606-004', '2026-06-26 09:12')">查看报告</a></td>
-        </tr>
-      </tbody>
+      <tbody id="recordsTableBody"></tbody>
     </table>
   </div>
 </div>
@@ -484,9 +503,101 @@ document.addEventListener('DOMContentLoaded', function() {
       item.classList.add('active');
     }
   });
+  
+  // 初始化表格
+  updateStats();
+  renderTable();
 });
 </script>
 <script>
+/* ====== 筛查记录 Tab 切换 ====== */
+var screeningRecords = [
+  { taskName: '右眼_眼底彩照_001.jpg', taskSub: 'FS-260626-001 · 市中心门诊', patientName: '李*', patientId: 'OPD-202606-001', uploadTime: '2026-06-26 14:30', qcStatus: '质控通过', analysisStatus: '已出报告', taskId: 'FS-260626-001' },
+  { taskName: '右眼_眼底彩照_004.dcm', taskSub: 'FS-260626-004 · 社区筛查', patientName: '赵*', patientId: 'OPD-202606-003', uploadTime: '2026-06-26 10:05', qcStatus: '质控不合格', analysisStatus: '等待重传', taskId: 'FS-260626-004' },
+  { taskName: '左眼_眼底彩照_002.jpg', taskSub: 'FS-260626-002 · 院内复查', patientName: '王*', patientId: 'OPD-202606-002', uploadTime: '2026-06-26 14:35', qcStatus: '质控通过', analysisStatus: '分析失败', taskId: 'FS-260626-002' },
+  { taskName: '双眼_眼底OCT_003.png', taskSub: 'FS-260626-003 · 眼科专科门诊', patientName: '陈*', patientId: 'OPD-202606-004', uploadTime: '2026-06-26 09:12', qcStatus: '质控通过', analysisStatus: '已出报告', taskId: 'FS-260626-003' }
+];
+
+var currentTab = '全部';
+
+function switchTab(tab, el) {
+  currentTab = tab;
+  var stats = document.querySelectorAll('.stats .stat');
+  for (var i = 0; i < stats.length; i++) { stats[i].classList.remove('stat-active'); }
+  el.classList.add('stat-active');
+  updateStats();
+  renderTable();
+}
+
+function updateStats() {
+  var total = screeningRecords.length;
+  var qcPass = 0, qcFail = 0, analysisFail = 0;
+  for (var i = 0; i < screeningRecords.length; i++) {
+    if (screeningRecords[i].qcStatus === '质控通过') qcPass++;
+    if (screeningRecords[i].qcStatus === '质控不合格') qcFail++;
+    if (screeningRecords[i].analysisStatus === '分析失败') analysisFail++;
+  }
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statQcPass').textContent = qcPass;
+  document.getElementById('statQcFail').textContent = qcFail;
+  document.getElementById('statAnalysisFail').textContent = analysisFail;
+}
+
+function getQcTag(status) {
+  if (status === '质控通过') return '<span class="tag success">质控通过</span>';
+  if (status === '质控不合格') return '<span class="tag danger">质控不合格</span>';
+  return '<span class="tag gray">' + status + '</span>';
+}
+
+function getAnalysisTag(status) {
+  if (status === '已出报告') return '<span class="tag success">已出报告</span>';
+  if (status === '分析失败') return '<span class="tag warning">分析失败</span>';
+  if (status === '等待重传') return '<span class="tag danger">等待重传</span>';
+  return '<span class="tag gray">' + status + '</span>';
+}
+
+function getActionBtn(rec) {
+  if (rec.analysisStatus === '已出报告') {
+    return '<a class="btn secondary small" href="javascript:void(0)" onclick="openReportModal(\'' + rec.taskId + '\', \'' + rec.patientName + '\', \'' + rec.patientId + '\', \'' + rec.uploadTime + '\')">查看报告</a>';
+  }
+  if (rec.qcStatus === '质控不合格') {
+    return '<a class="btn secondary small" href="眼底图像输入.html">重新上传</a>';
+  }
+  if (rec.analysisStatus === '分析失败') {
+    return '<a class="btn secondary small" href="图像质量质控.html">重试分析</a>';
+  }
+  return '<span class="tag gray">—</span>';
+}
+
+function renderTable() {
+  var filtered = [];
+  for (var i = 0; i < screeningRecords.length; i++) {
+    var r = screeningRecords[i];
+    if (currentTab === '全部') { filtered.push(r); }
+    else if (currentTab === '质控通过' && r.qcStatus === '质控通过') { filtered.push(r); }
+    else if (currentTab === '质控不合格' && r.qcStatus === '质控不合格') { filtered.push(r); }
+    else if (currentTab === '分析失败' && r.analysisStatus === '分析失败') { filtered.push(r); }
+  }
+
+  // Pagination: first 20
+  var display = filtered.slice(0, 20);
+
+  var html = '';
+  for (var j = 0; j < display.length; j++) {
+    var d = display[j];
+    var isActive = (d.qcStatus === '质控不合格') ? ' class="active"' : '';
+    html += '<tr' + isActive + '>';
+    html += '<td><div class="row-main"><strong>' + d.taskName + '</strong><span>' + d.taskSub + '</span></div></td>';
+    html += '<td><div class="row-main"><strong>' + d.patientName + '</strong><span>' + d.patientId + '</span></div></td>';
+    html += '<td>' + d.uploadTime + '</td>';
+    html += '<td>' + getQcTag(d.qcStatus) + '</td>';
+    html += '<td>' + getAnalysisTag(d.analysisStatus) + '</td>';
+    html += '<td>' + getActionBtn(d) + '</td>';
+    html += '</tr>';
+  }
+  document.getElementById('recordsTableBody').innerHTML = html;
+}
+
 function handleFiles(f) {
   var p = document.getElementById('up');
   p.style.display = 'block';
@@ -496,24 +607,98 @@ function handleFiles(f) {
   }
   p.innerHTML = html;
   document.getElementById('filePickState').textContent = '已选择 ' + f.length + ' 个文件';
+
+  // Generate thumbnails
+  var ta = document.getElementById('thumbnailArea');
+  ta.style.display = 'flex';
+  ta.innerHTML = '';
+  for (var j = 0; j < f.length; j++) {
+    var file = f[j];
+    var card = document.createElement('div');
+    card.className = 'thumb-card';
+
+    var isImage = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tiff?)$/i.test(file.name);
+    if (isImage) {
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.alt = file.name;
+      card.appendChild(img);
+    } else {
+      var ph = document.createElement('div');
+      ph.className = 'thumb-placeholder';
+      var ext = file.name.split('.').pop().toUpperCase();
+      ph.textContent = ext || 'FILE';
+      card.appendChild(ph);
+    }
+
+    var nameLabel = document.createElement('div');
+    nameLabel.className = 'thumb-name';
+    nameLabel.textContent = file.name;
+    card.appendChild(nameLabel);
+
+    card.onclick = (function(fileObj) {
+      return function() {
+        openImagePreview(fileObj);
+      };
+    })(file);
+
+    ta.appendChild(card);
+  }
 }
+
+function openImagePreview(file) {
+  var overlay = document.getElementById('imagePreviewOverlay');
+  var previewImg = document.getElementById('previewImage');
+  var previewName = document.getElementById('previewFilename');
+
+  var isImage = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tiff?)$/i.test(file.name);
+  if (isImage) {
+    previewImg.src = URL.createObjectURL(file);
+    previewImg.style.display = '';
+    previewName.textContent = file.name;
+  } else {
+    previewImg.style.display = 'none';
+    previewName.textContent = file.name + ' (非图片文件，无法预览)';
+  }
+
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImagePreview() {
+  var overlay = document.getElementById('imagePreviewOverlay');
+  overlay.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('imagePreviewOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeImagePreview();
+});
+
 function startProc() {
   if (confirm('确认提交眼底图像进行质控分析？')) {
     alert('已提交，系统将自动进入质控阶段。');
     location.href = '图像质量质控.html';
   }
 }
+
 function resetUp() {
   document.getElementById('fi').value = '';
   document.getElementById('up').style.display = 'none';
   document.getElementById('filePickState').textContent = '尚未选择文件';
+  var ta = document.getElementById('thumbnailArea');
+  ta.style.display = 'none';
+  ta.innerHTML = '';
 }
+
 document.getElementById('uploadZone').addEventListener('dragover', function(e) { e.preventDefault(); this.style.borderColor = 'var(--primary)'; });
 document.getElementById('uploadZone').addEventListener('dragleave', function() { this.style.borderColor = '#b5c7e6'; });
 document.getElementById('uploadZone').addEventListener('drop', function(e) {
   e.preventDefault(); this.style.borderColor = '#b5c7e6';
   if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
 });
+
+// 初始化调用已在 DOMContentLoaded 中执行
 </script>
 
 <!-- 筛查报告弹窗 — 参照原型图设计 -->
@@ -747,6 +932,9 @@ document.getElementById('reportModal').addEventListener('click', function(e) {
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
+    if (document.getElementById('imagePreviewOverlay').classList.contains('show')) {
+      closeImagePreview();
+    }
     if (document.getElementById('reportModal').classList.contains('show')) {
       closeReportModal();
     }
@@ -948,5 +1136,13 @@ function downloadReportPDF() {
   }
 }
 </script>
+
+<!-- 图片预览弹窗 -->
+<div class="image-preview-overlay" id="imagePreviewOverlay">
+  <button class="preview-close" onclick="closeImagePreview()">&times;</button>
+  <img id="previewImage" src="" alt="">
+  <div class="preview-filename" id="previewFilename"></div>
+</div>
+
 </body>
 </html>

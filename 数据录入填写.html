@@ -53,21 +53,77 @@ table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
 .tag-green { background: #e6f4ea; color: #137333; }
 .tag-orange { background: #fef7e0; color: #b06000; }
 .tag-red { background: #fce8e6; color: #c5221f; }
+.tag-gray { background: #f1f3f4; color: #5f6368; }
 .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 16px; padding: 12px 0; }
 .pagination button { padding: 6px 12px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: var(--transition); }
 .pagination button:hover:not(:disabled) { background: var(--gray-50); }
 .pagination button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-.action-links { display: flex; gap: 8px; }
+.action-links { display: flex; gap: 0; white-space: nowrap; }
 .action-links a { color: var(--primary); text-decoration: none; font-size: 12px; cursor: pointer; }
 .action-links a:hover { text-decoration: underline; }
 .action-links a.danger { color: var(--danger); }
+.action-sep { color: #d0d5dd; margin: 0 6px; user-select: none; }
+
+/* Toast */
+.toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; background: var(--gray-900); color: #fff; padding: 10px 24px; border-radius: 6px; font-size: 13px; box-shadow: var(--shadow-lg); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+.toast.show { opacity: 1; }
+.toast.toast-success { background: #137333; }
+
+/* 模板选择卡片 */
+.template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.template-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; cursor: pointer; transition: var(--transition); }
+.template-card:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(26,115,232,0.12); }
+.template-card .tpl-name { font-weight: 600; font-size: 15px; color: var(--gray-800); margin-bottom: 8px; }
+.template-card .tpl-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.template-card .tpl-scene { font-size: 12px; color: var(--gray-500); }
+.template-card .tpl-version { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+/* 空状态 */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--gray-400); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-state .empty-text { font-size: 14px; margin-bottom: 16px; }
+
+/* 表单填写区 */
+.form-section-title { margin-bottom: 4px; }
+.form-section-title h2 { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+.form-section-version { font-size: 12px; color: var(--gray-500); margin-bottom: 16px; }
+.form-section-divider { border: none; border-top: 1px solid var(--gray-200); margin-bottom: 20px; }
+.back-link { display: inline-block; color: var(--primary); font-size: 13px; cursor: pointer; text-decoration: none; margin-bottom: 12px; }
+.back-link:hover { text-decoration: underline; }
+
+.form-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
+.form-field-item { margin-bottom: 20px; }
+.form-field-item .ff-label { font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+.form-field-item .ff-label .required-star { color: var(--danger); margin-left: 2px; }
+.form-field-item input[type="text"],
+.form-field-item input[type="number"],
+.form-field-item input[type="date"],
+.form-field-item select,
+.form-field-item textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: var(--transition); }
+.form-field-item input:focus, .form-field-item select:focus, .form-field-item textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+.form-field-item textarea { resize: vertical; min-height: 70px; }
+.form-field-item .ff-radio-group { display: flex; gap: 24px; flex-wrap: wrap; }
+.form-field-item .ff-radio-group label { font-size: 13px; color: var(--gray-700); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.form-field-item .ff-radio-group input[type="radio"] { width: auto; accent-color: var(--primary); }
+.form-field-item .ff-checkbox-group { display: flex; gap: 16px; flex-wrap: wrap; }
+.form-field-item .ff-checkbox-group label { font-size: 13px; color: var(--gray-700); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.form-field-item .ff-checkbox-group input[type="checkbox"] { width: auto; accent-color: var(--primary); }
+.form-field-item .ff-upload-area { border: 2px dashed var(--gray-300); border-radius: 6px; padding: 24px; text-align: center; color: var(--gray-400); font-size: 13px; background: var(--gray-50); cursor: not-allowed; }
+.form-field-item .ff-error { color: var(--danger); font-size: 12px; margin-top: 4px; display: none; }
+.form-field-item .ff-unit { color: var(--gray-500); font-size: 12px; margin-left: 8px; white-space: nowrap; }
+.form-field-item .ff-number-wrap { display: flex; align-items: center; }
+.form-field-item .ff-number-wrap input { flex: 1; }
+
+/* 底部操作栏 */
+.form-actions { position: sticky; bottom: 0; background: #fff; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding: 16px 0; display: flex; align-items: center; justify-content: space-between; margin-top: 24px; }
+.form-actions .btn { min-width: 100px; }
 </style></head><body>
 <div class="header">
   <a href="index.html" class="logo">生命医学智能平台</a>
   <div class="header-nav">
-    <a href="眼病/慢病数据采集工具.html" class="active">眼病/慢病数据采集工具</a>
-    <a href="眼病/慢病数据录入工具.html">眼病/慢病数据录入工具</a>
+    <a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a>
+    <a href="眼病/慢病数据录入工具.html" class="active">眼病/慢病数据录入工具</a>
     <a href="眼病/慢病影像脱敏工具.html">眼病/慢病影像脱敏工具</a>
     <a href="眼病/慢病影像标注工具.html">眼病/慢病影像标注工具</a>
   </div>
@@ -89,46 +145,732 @@ table tbody tr:nth-child(even) { background: rgba(245,247,250,0.5); }
 </div>
 <div class="main-content">
   <div class="breadcrumb"><a href="index.html">首页</a><span>&gt;</span><a href="眼病/慢病数据采集工具.html">眼病/慢病数据采集工具</a><span>&gt;</span><span>数据录入填写</span></div>
-  <h1 class="page-title">数据录入填写</h1>
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">患者数据录入列表</span>
-      <button class="btn btn-success" onclick="location.href='#'">+ 新增录入</button>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ====== 视图1：录入列表页 ====== -->
+  <div id="listSection">
+    <h1 class="page-title">数据录入填写</h1>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">患者数据录入列表</span>
+        <button class="btn btn-success" onclick="openNewRecord()">+ 新增录入</button>
+      </div>
+      <div class="filter-bar">
+        <label>搜索</label>
+        <input id="filterSearch" placeholder="患者姓名 / ID / 诊断关键词...">
+        <label>录入日期</label>
+        <input type="date" id="filterDateFrom" style="min-width:140px;">
+        <span style="color:var(--gray-400);">至</span>
+        <input type="date" id="filterDateTo" style="min-width:140px;">
+        <label>录入状态</label>
+        <select id="filterStatus"><option value="">全部</option><option value="草稿">草稿</option><option value="待审核">待审核</option><option value="已通过">已通过</option><option value="已驳回">已驳回</option></select>
+        <label>诊断疾病</label>
+        <select id="filterDiagnosis"><option value="">全部</option></select>
+        <button class="btn btn-primary btn-sm" onclick="applyFilters()">搜索</button>
+        <button class="btn btn-outline btn-sm" onclick="resetFilters()">重置</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>患者ID</th><th>姓名</th><th>性别</th><th>诊断疾病</th><th>录入日期</th><th>录入状态</th><th>操作</th></tr></thead>
+          <tbody id="recordTableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="paginationNav"></div>
     </div>
-    <div class="filter-bar">
-      <label>搜索</label>
-      <input placeholder="患者姓名 / ID / 诊断关键词...">
-      <label>录入日期</label>
-      <input type="date" style="min-width:140px;">
-      <span style="color:var(--gray-400);">至</span>
-      <input type="date" style="min-width:140px;">
-      <label>录入状态</label>
-      <select><option>全部</option><option>待审核</option><option>已通过</option><option>已驳回</option></select>
-      <label>诊断疾病</label>
-      <select><option>全部</option><option>青光眼</option><option>糖尿病视网膜病变</option><option>黄斑变性</option></select>
-      <button class="btn btn-primary btn-sm">搜索</button>
-      <button class="btn btn-outline btn-sm">重置</button>
+  </div>
+
+  <!-- ====== 视图2：录入表单页 ====== -->
+  <div id="formSection" style="display:none;">
+    <!-- 第一步：模板选择 -->
+    <div id="templateSelectStep">
+      <h1 class="page-title">数据录入填写</h1>
+      <div class="card">
+        <div class="card-header"><span class="card-title">选择录入模板</span></div>
+        <div id="templateGrid" class="template-grid"></div>
+        <div id="emptyTemplates" class="empty-state" style="display:none;">
+          <div class="empty-icon">&#x1F4C4;</div>
+          <div class="empty-text">暂无可用模板，请先在「表单模板设置」中发布模板</div>
+          <button class="btn btn-primary" onclick="window.location.href='表单模板设置.html'">前往设置</button>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="backToList()">返回列表</button>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>患者ID</th><th>姓名</th><th>性别</th><th>诊断疾病</th><th>录入日期</th><th>录入状态</th><th>操作</th></tr></thead>
-        <tbody>
-          <tr><td>P-2026070101</td><td>王建国</td><td>男</td><td>青光眼</td><td>2026-06-28</td><td><span class="tag tag-green">已通过</span></td><td><div class="action-links"><a href="#">编辑</a><a href="#">查看</a><a class="danger" href="#">删除</a></div></td></tr>
-          <tr><td>P-2026070102</td><td>李秀兰</td><td>女</td><td>糖尿病视网膜病变</td><td>2026-06-27</td><td><span class="tag tag-green">已通过</span></td><td><div class="action-links"><a href="#">编辑</a><a href="#">查看</a><a class="danger" href="#">删除</a></div></td></tr>
-          <tr><td>P-2026070103</td><td>张明华</td><td>男</td><td>黄斑变性</td><td>2026-06-26</td><td><span class="tag tag-orange">待审核</span></td><td><div class="action-links"><a href="#">编辑</a><a href="#">查看</a><a class="danger" href="#">删除</a></div></td></tr>
-          <tr><td>P-2026070104</td><td>赵丽萍</td><td>女</td><td>青光眼</td><td>2026-06-25</td><td><span class="tag tag-red">已驳回</span></td><td><div class="action-links"><a href="#">编辑</a><a href="#">查看</a><a class="danger" href="#">删除</a></div></td></tr>
-          <tr><td>P-2026070105</td><td>刘志强</td><td>男</td><td>糖尿病视网膜病变</td><td>2026-06-24</td><td><span class="tag tag-green">已通过</span></td><td><div class="action-links"><a href="#">编辑</a><a href="#">查看</a><a class="danger" href="#">删除</a></div></td></tr>
-          <tr><td>P-2026070106</td><td>陈晓芳</td><td>女</td><td>黄斑变性</td><td>2026-06-23</td><td><span class="tag tag-orange">待审核</span></td><td><div class="action-links"><a href="#">编辑</a><a href="#">查看</a><a class="danger" href="#">删除</a></div></td></tr>
-          <tr><td>P-2026070107</td><td>杨永强</td><td>男</td><td>青光眼</td><td>2026-06-22</td><td><span class="tag tag-green">已通过</span></td><td><div class="action-links"><a href="#">编辑</a><a href="#">查看</a><a class="danger" href="#">删除</a></div></td></tr>
-        </tbody>
-      </table>
+
+    <!-- 第二步：填写表单 -->
+    <div id="formFillStep" style="display:none;">
+      <a class="back-link" onclick="backToTemplateSelect()">← 返回选择模板</a>
+      <div class="form-section-title"><h2 id="formFillTitle"></h2></div>
+      <div class="form-section-version" id="formFillVersion"></div>
+      <div class="form-section-divider"></div>
+      <div class="form-card" id="formFieldsContainer"></div>
+      <div class="form-actions" id="formActionsBar"></div>
     </div>
-    <div class="pagination"><button disabled>上一页</button><button class="active">1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>下一页</button></div>
   </div>
 </div>
+
 <script>
+/* ====== 工具函数 ====== */
+function formatDateTime() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' +
+         String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' + String(d.getSeconds()).padStart(2,'0');
+}
+function formatDate() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function generateRecordId() {
+  var dt = new Date();
+  var prefix = 'P-' + dt.getFullYear() + String(dt.getMonth()+1).padStart(2,'0') + String(dt.getDate()).padStart(2,'0');
+  var records = getRecords();
+  var maxNum = 0;
+  for (var i = 0; i < records.length; i++) {
+    if (records[i].id.indexOf(prefix) === 0) {
+      var num = parseInt(records[i].id.replace(prefix,''), 10);
+      if (num > maxNum) maxNum = num;
+    }
+  }
+  return prefix + String(maxNum + 1).padStart(3, '0');
+}
+
 function logout() { if (confirm('确定要退出登录吗？')) { localStorage.removeItem('life_med_user'); window.location.href = 'login.html'; } }
+
+/* ====== Toast ====== */
+function showToast(msg, isSuccess) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isSuccess ? ' toast-success' : '');
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(function(){ t.classList.remove('show'); }, 2000);
+}
+
+/* ====== 数据读写 ====== */
+function getRecords() {
+  try { return JSON.parse(localStorage.getItem('life_med_records')) || []; } catch(e) { return []; }
+}
+function saveRecords(arr) { localStorage.setItem('life_med_records', JSON.stringify(arr)); }
+
+function getTemplates() {
+  try { return JSON.parse(localStorage.getItem('life_med_templates')) || []; } catch(e) { return []; }
+}
+function saveTemplates(arr) { localStorage.setItem('life_med_templates', JSON.stringify(arr)); }
+
+/* ====== 确保模板包含fields ====== */
+function ensureTemplateFields() {
+  var templates = getTemplates();
+  var changed = false;
+  var defaultFieldsMap = {
+    '青光眼初诊评估表': [
+      { type: 'text', label: '姓名', required: true },
+      { type: 'radio', label: '性别', required: true, options: ['男', '女'] },
+      { type: 'number', label: '年龄', required: true, unit: '岁' },
+      { type: 'date', label: '就诊日期', required: true },
+      { type: 'text', label: '病历号', required: false },
+      { type: 'select', label: '眼别', required: true, options: ['左眼', '右眼', '双眼'] },
+      { type: 'number', label: '眼压', required: true, unit: 'mmHg' },
+      { type: 'number', label: '视力', required: false, unit: '' },
+      { type: 'textarea', label: '主诉', required: true },
+      { type: 'textarea', label: '诊断意见', required: false }
+    ],
+    '糖尿病视网膜病变筛查表': [
+      { type: 'text', label: '姓名', required: true },
+      { type: 'radio', label: '性别', required: true, options: ['男', '女'] },
+      { type: 'number', label: '年龄', required: true, unit: '岁' },
+      { type: 'date', label: '筛查日期', required: true },
+      { type: 'number', label: '糖尿病病程', required: true, unit: '年' },
+      { type: 'number', label: '糖化血红蛋白', required: false, unit: '%' },
+      { type: 'select', label: '视网膜病变分期', required: true, options: ['无', '轻度NPDR', '中度NPDR', '重度NPDR', 'PDR'] },
+      { type: 'textarea', label: '眼底检查所见', required: true },
+      { type: 'textarea', label: '处理建议', required: false }
+    ],
+    '黄斑变性评估表': [
+      { type: 'text', label: '姓名', required: true },
+      { type: 'radio', label: '性别', required: true, options: ['男', '女'] },
+      { type: 'number', label: '年龄', required: true, unit: '岁' },
+      { type: 'date', label: '评估日期', required: true },
+      { type: 'select', label: '黄斑变性类型', required: true, options: ['干性', '湿性'] },
+      { type: 'select', label: '眼别', required: true, options: ['左眼', '右眼', '双眼'] },
+      { type: 'number', label: '最佳矫正视力', required: true, unit: '' },
+      { type: 'textarea', label: 'OCT检查结果', required: true },
+      { type: 'textarea', label: '治疗建议', required: false }
+    ]
+  };
+
+  for (var i = 0; i < templates.length; i++) {
+    if (!templates[i].fields && defaultFieldsMap[templates[i].name]) {
+      templates[i].fields = defaultFieldsMap[templates[i].name];
+      changed = true;
+    }
+  }
+
+  /* 确保三个核心模板存在 */
+  var coreTemplates = [
+    { id: 'TMP001', name: '青光眼初诊评估表', type: '评估类', scene: '青光眼门诊', creator: '张教授', createTime: '2026-06-15', updateTime: '2026-06-20', status: '启用', version: 'v1.0.0', fields: defaultFieldsMap['青光眼初诊评估表'] },
+    { id: 'TMP002', name: '糖尿病视网膜病变筛查表', type: '评估类', scene: '内分泌科', creator: '张教授', createTime: '2026-06-10', updateTime: '2026-06-18', status: '启用', version: 'v1.0.0', fields: defaultFieldsMap['糖尿病视网膜病变筛查表'] },
+    { id: 'TMP003', name: '黄斑变性评估表', type: '评估类', scene: '眼底病科', creator: '张教授', createTime: '2026-06-05', updateTime: '2026-06-12', status: '启用', version: 'v1.0.0', fields: defaultFieldsMap['黄斑变性评估表'] }
+  ];
+
+  for (var j = 0; j < coreTemplates.length; j++) {
+    var found = false;
+    for (var k = 0; k < templates.length; k++) {
+      if (templates[k].id === coreTemplates[j].id) { found = true; break; }
+    }
+    if (!found) {
+      templates.push(coreTemplates[j]);
+      changed = true;
+    }
+  }
+
+  if (changed) saveTemplates(templates);
+}
+
+/* ====== 初始化示例数据 ====== */
+function initSampleRecords() {
+  var records = getRecords();
+  if (records.length > 0) return;
+
+  var now = formatDateTime();
+  var sampleFieldsGlaucoma = [
+    { type: 'text', label: '姓名', required: true },
+    { type: 'radio', label: '性别', required: true, options: ['男', '女'] },
+    { type: 'number', label: '年龄', required: true, unit: '岁' },
+    { type: 'date', label: '就诊日期', required: true },
+    { type: 'text', label: '病历号', required: false },
+    { type: 'select', label: '眼别', required: true, options: ['左眼', '右眼', '双眼'] },
+    { type: 'number', label: '眼压', required: true, unit: 'mmHg' },
+    { type: 'number', label: '视力', required: false, unit: '' },
+    { type: 'textarea', label: '主诉', required: true },
+    { type: 'textarea', label: '诊断意见', required: false }
+  ];
+  var sampleFieldsDR = [
+    { type: 'text', label: '姓名', required: true },
+    { type: 'radio', label: '性别', required: true, options: ['男', '女'] },
+    { type: 'number', label: '年龄', required: true, unit: '岁' },
+    { type: 'date', label: '筛查日期', required: true },
+    { type: 'number', label: '糖尿病病程', required: true, unit: '年' },
+    { type: 'number', label: '糖化血红蛋白', required: false, unit: '%' },
+    { type: 'select', label: '视网膜病变分期', required: true, options: ['无', '轻度NPDR', '中度NPDR', '重度NPDR', 'PDR'] },
+    { type: 'textarea', label: '眼底检查所见', required: true },
+    { type: 'textarea', label: '处理建议', required: false }
+  ];
+  var sampleFieldsMD = [
+    { type: 'text', label: '姓名', required: true },
+    { type: 'radio', label: '性别', required: true, options: ['男', '女'] },
+    { type: 'number', label: '年龄', required: true, unit: '岁' },
+    { type: 'date', label: '评估日期', required: true },
+    { type: 'select', label: '黄斑变性类型', required: true, options: ['干性', '湿性'] },
+    { type: 'select', label: '眼别', required: true, options: ['左眼', '右眼', '双眼'] },
+    { type: 'number', label: '最佳矫正视力', required: true, unit: '' },
+    { type: 'textarea', label: 'OCT检查结果', required: true },
+    { type: 'textarea', label: '治疗建议', required: false }
+  ];
+
+  var sampleRecords = [
+    { id: 'P-2026070101', templateId: 'TMP001', templateName: '青光眼初诊评估表', patientName: '王建国', gender: '男', diagnosis: '青光眼', formData: { '姓名': '王建国', '性别': '男', '年龄': '58', '就诊日期': '2026-06-28', '病历号': 'G2026062801', '眼别': '右眼', '眼压': '28', '视力': '0.3', '主诉': '右眼胀痛伴视力下降2周', '诊断意见': '原发性开角型青光眼（右眼）' }, fields: sampleFieldsGlaucoma, status: '已通过', enterDate: '2026-06-28', updateTime: '2026-07-02 14:30:25', creator: '张教授' },
+    { id: 'P-2026070102', templateId: 'TMP002', templateName: '糖尿病视网膜病变筛查表', patientName: '李秀兰', gender: '女', diagnosis: '糖尿病视网膜病变', formData: { '姓名': '李秀兰', '性别': '女', '年龄': '65', '筛查日期': '2026-06-27', '糖尿病病程': '12', '糖化血红蛋白': '8.2', '视网膜病变分期': '中度NPDR', '眼底检查所见': '双眼后极部散在微血管瘤及点状出血，黄斑区轻度水肿', '处理建议': '控制血糖，3个月后复查' }, fields: sampleFieldsDR, status: '已通过', enterDate: '2026-06-27', updateTime: '2026-07-01 09:15:00', creator: '张教授' },
+    { id: 'P-2026070103', templateId: 'TMP003', templateName: '黄斑变性评估表', patientName: '张明华', gender: '男', diagnosis: '黄斑变性', formData: { '姓名': '张明华', '性别': '男', '年龄': '72', '评估日期': '2026-06-26', '黄斑变性类型': '湿性', '眼别': '左眼', '最佳矫正视力': '0.1', 'OCT检查结果': '左眼黄斑区视网膜下积液，可见脉络膜新生血管', '治疗建议': '建议抗VEGF玻璃体腔注射治疗' }, fields: sampleFieldsMD, status: '待审核', enterDate: '2026-06-26', updateTime: '2026-06-26 16:20:00', creator: '张教授' },
+    { id: 'P-2026070104', templateId: 'TMP001', templateName: '青光眼初诊评估表', patientName: '赵丽萍', gender: '女', diagnosis: '青光眼', formData: { '姓名': '赵丽萍', '性别': '女', '年龄': '62', '就诊日期': '2026-06-25', '病历号': 'G2026062503', '眼别': '双眼', '眼压': '32', '视力': '0.15', '主诉': '双眼视力进行性下降半年', '诊断意见': '慢性闭角型青光眼（双眼）' }, fields: sampleFieldsGlaucoma, status: '已驳回', enterDate: '2026-06-25', updateTime: '2026-06-26 10:00:00', creator: '张教授' },
+    { id: 'P-2026070105', templateId: 'TMP002', templateName: '糖尿病视网膜病变筛查表', patientName: '刘志强', gender: '男', diagnosis: '糖尿病视网膜病变', formData: { '姓名': '刘志强', '性别': '男', '年龄': '55', '筛查日期': '2026-06-24', '糖尿病病程': '8', '糖化血红蛋白': '7.5', '视网膜病变分期': '轻度NPDR', '眼底检查所见': '双眼少量微血管瘤，未见出血及渗出', '处理建议': '控制血糖，6个月后复查' }, fields: sampleFieldsDR, status: '已通过', enterDate: '2026-06-24', updateTime: '2026-06-30 11:00:00', creator: '张教授' },
+    { id: 'P-2026070106', templateId: 'TMP003', templateName: '黄斑变性评估表', patientName: '陈晓芳', gender: '女', diagnosis: '黄斑变性', formData: { '姓名': '陈晓芳', '性别': '女', '年龄': '68', '评估日期': '2026-06-23', '黄斑变性类型': '干性', '眼别': '右眼', '最佳矫正视力': '0.4', 'OCT检查结果': '右眼黄斑区玻璃膜疣，RPE萎缩', '治疗建议': '定期随访观察' }, fields: sampleFieldsMD, status: '待审核', enterDate: '2026-06-23', updateTime: '2026-06-23 15:45:00', creator: '张教授' },
+    { id: 'P-2026070107', templateId: 'TMP001', templateName: '青光眼初诊评估表', patientName: '杨永强', gender: '男', diagnosis: '青光眼', formData: { '姓名': '杨永强', '性别': '男', '年龄': '48', '就诊日期': '2026-06-22', '病历号': 'G2026062205', '眼别': '左眼', '眼压': '24', '视力': '0.6', '主诉': '左眼偶有胀痛，夜间视物模糊', '诊断意见': '高眼压症（左眼），建议定期随访' }, fields: sampleFieldsGlaucoma, status: '已通过', enterDate: '2026-06-22', updateTime: '2026-06-29 08:30:00', creator: '张教授' }
+  ];
+  saveRecords(sampleRecords);
+}
+
+/* ====== 视图切换 ====== */
+var currentView = 'list';
+var editingRecordId = null;
+var selectedTemplate = null;
+var viewMode = null; /* 'edit' | 'view' */
+
+function showList() {
+  currentView = 'list';
+  document.getElementById('listSection').style.display = 'block';
+  document.getElementById('formSection').style.display = 'none';
+  editingRecordId = null;
+  selectedTemplate = null;
+  viewMode = null;
+}
+
+function showFormSection() {
+  currentView = 'form';
+  document.getElementById('listSection').style.display = 'none';
+  document.getElementById('formSection').style.display = 'block';
+}
+
+/* ====== 列表页 ====== */
+var listCurrentPage = 1;
+var listPageSize = 7;
+
+function getFilteredRecords() {
+  var records = getRecords();
+  var searchKw = (document.getElementById('filterSearch').value || '').trim().toLowerCase();
+  var dateFrom = document.getElementById('filterDateFrom').value;
+  var dateTo = document.getElementById('filterDateTo').value;
+  var statusFilter = document.getElementById('filterStatus').value;
+  var diagnosisFilter = document.getElementById('filterDiagnosis').value;
+
+  return records.filter(function(r) {
+    if (searchKw) {
+      var searchText = (r.id + ' ' + r.patientName + ' ' + r.diagnosis).toLowerCase();
+      if (searchText.indexOf(searchKw) === -1) return false;
+    }
+    if (dateFrom && r.enterDate < dateFrom) return false;
+    if (dateTo && r.enterDate > dateTo) return false;
+    if (statusFilter && r.status !== statusFilter) return false;
+    if (diagnosisFilter && r.diagnosis !== diagnosisFilter) return false;
+    return true;
+  });
+}
+
+function buildDiagnosisOptions() {
+  var records = getRecords();
+  var set = {};
+  for (var i = 0; i < records.length; i++) {
+    if (records[i].diagnosis) set[records[i].diagnosis] = true;
+  }
+  var opts = Object.keys(set).sort();
+  var sel = document.getElementById('filterDiagnosis');
+  var html = '<option value="">全部</option>';
+  for (var j = 0; j < opts.length; j++) {
+    html += '<option value="' + opts[j] + '">' + opts[j] + '</option>';
+  }
+  sel.innerHTML = html;
+}
+
+function renderTable() {
+  var filtered = getFilteredRecords();
+  var totalPages = Math.ceil(filtered.length / listPageSize) || 1;
+  if (listCurrentPage > totalPages) listCurrentPage = totalPages;
+  var start = (listCurrentPage - 1) * listPageSize;
+  var pageData = filtered.slice(start, start + listPageSize);
+
+  var tbody = document.getElementById('recordTableBody');
+  var html = '';
+  for (var i = 0; i < pageData.length; i++) {
+    var r = pageData[i];
+    var statusTag;
+    if (r.status === '已通过') statusTag = '<span class="tag tag-green">已通过</span>';
+    else if (r.status === '待审核') statusTag = '<span class="tag tag-orange">待审核</span>';
+    else if (r.status === '已驳回') statusTag = '<span class="tag tag-red">已驳回</span>';
+    else statusTag = '<span class="tag tag-gray">草稿</span>';
+
+    var actions = '<div class="action-links">';
+    if (r.status !== '已通过') {
+      actions += '<a onclick="editRecord(\'' + r.id + '\')">编辑</a><span class="action-sep">|</span>';
+    }
+    actions += '<a onclick="viewRecord(\'' + r.id + '\')">查看</a><span class="action-sep">|</span>';
+    actions += '<a class="danger" onclick="deleteRecord(\'' + r.id + '\')">删除</a>';
+    actions += '</div>';
+
+    html += '<tr><td>' + r.id + '</td><td>' + r.patientName + '</td><td>' + r.gender + '</td><td>' + r.diagnosis + '</td><td>' + r.enterDate + '</td><td>' + statusTag + '</td><td>' + actions + '</td></tr>';
+  }
+  tbody.innerHTML = html;
+
+  /* 分页 */
+  var navHtml = '';
+  navHtml += '<button ' + (listCurrentPage === 1 ? 'disabled' : 'onclick="goPage(' + (listCurrentPage - 1) + ')"') + '>上一页</button>';
+  for (var p = 1; p <= totalPages; p++) {
+    navHtml += '<button class="' + (p === listCurrentPage ? 'active' : '') + '" onclick="goPage(' + p + ')"' + '>' + p + '</button>';
+  }
+  navHtml += '<button ' + (listCurrentPage === totalPages ? 'disabled' : 'onclick="goPage(' + (listCurrentPage + 1) + ')"') + '>下一页</button>';
+  document.getElementById('paginationNav').innerHTML = navHtml;
+
+  buildDiagnosisOptions();
+}
+
+function goPage(p) {
+  listCurrentPage = p;
+  renderTable();
+}
+
+function applyFilters() {
+  listCurrentPage = 1;
+  renderTable();
+}
+
+function resetFilters() {
+  document.getElementById('filterSearch').value = '';
+  document.getElementById('filterDateFrom').value = '';
+  document.getElementById('filterDateTo').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterDiagnosis').value = '';
+  listCurrentPage = 1;
+  renderTable();
+}
+
+function backToList() {
+  showList();
+  renderTable();
+}
+
+/* ====== 删除记录 ====== */
+function deleteRecord(id) {
+  var records = getRecords();
+  var target = null;
+  for (var i = 0; i < records.length; i++) {
+    if (records[i].id === id) { target = records[i]; break; }
+  }
+  if (!target) return;
+  if (!confirm('确定要删除患者「' + target.patientName + '」的录入记录吗？')) return;
+  for (var j = 0; j < records.length; j++) {
+    if (records[j].id === id) { records.splice(j, 1); break; }
+  }
+  saveRecords(records);
+  renderTable();
+  showToast('记录已删除', true);
+}
+
+/* ====== 新增录入：模板选择 ====== */
+function openNewRecord() {
+  editingRecordId = null;
+  selectedTemplate = null;
+  viewMode = null;
+  showFormSection();
+  document.getElementById('templateSelectStep').style.display = 'block';
+  document.getElementById('formFillStep').style.display = 'none';
+  renderTemplateCards();
+}
+
+function renderTemplateCards() {
+  var templates = getTemplates();
+  var enabled = [];
+  for (var i = 0; i < templates.length; i++) {
+    if (templates[i].status === '启用') enabled.push(templates[i]);
+  }
+
+  var grid = document.getElementById('templateGrid');
+  var empty = document.getElementById('emptyTemplates');
+
+  if (enabled.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  var html = '';
+  for (var j = 0; j < enabled.length; j++) {
+    var t = enabled[j];
+    html += '<div class="template-card" onclick="selectTemplate(\'' + t.id + '\')">'
+      + '<div class="tpl-name">' + t.name + '</div>'
+      + '<div class="tpl-meta"><span class="tag tag-blue">' + (t.type || '评估类') + '</span></div>'
+      + '<div class="tpl-scene">适用场景：' + (t.scene || '未指定') + '</div>'
+      + '<div class="tpl-version">版本：' + (t.version || 'v1.0.0') + '</div>'
+      + '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function selectTemplate(templateId) {
+  var templates = getTemplates();
+  for (var i = 0; i < templates.length; i++) {
+    if (templates[i].id === templateId) {
+      selectedTemplate = templates[i];
+      break;
+    }
+  }
+  if (!selectedTemplate) { showToast('模板未找到'); return; }
+  if (!selectedTemplate.fields || selectedTemplate.fields.length === 0) {
+    showToast('该模板未配置字段，请先在表单模板设置中完善');
+    return;
+  }
+
+  document.getElementById('templateSelectStep').style.display = 'none';
+  document.getElementById('formFillStep').style.display = 'block';
+  document.getElementById('formFillTitle').textContent = selectedTemplate.name;
+  document.getElementById('formFillVersion').textContent = '版本: ' + (selectedTemplate.version || 'v1.0.0');
+  renderFormFields();
+}
+
+/* ====== 编辑/查看记录 ====== */
+function editRecord(id) {
+  var records = getRecords();
+  for (var i = 0; i < records.length; i++) {
+    if (records[i].id === id) { editingRecordId = id; break; }
+  }
+  viewMode = 'edit';
+  enterFormFillFromRecord();
+}
+
+function viewRecord(id) {
+  var records = getRecords();
+  for (var i = 0; i < records.length; i++) {
+    if (records[i].id === id) { editingRecordId = id; break; }
+  }
+  viewMode = 'view';
+  enterFormFillFromRecord();
+}
+
+function enterFormFillFromRecord() {
+  var records = getRecords();
+  var record = null;
+  for (var i = 0; i < records.length; i++) {
+    if (records[i].id === editingRecordId) { record = records[i]; break; }
+  }
+  if (!record) { showToast('记录未找到'); backToList(); return; }
+
+  selectedTemplate = {
+    id: record.templateId,
+    name: record.templateName,
+    fields: record.fields,
+    version: 'v1.0.0'
+  };
+
+  showFormSection();
+  document.getElementById('templateSelectStep').style.display = 'none';
+  document.getElementById('formFillStep').style.display = 'block';
+  document.getElementById('formFillTitle').textContent = record.templateName;
+  document.getElementById('formFillVersion').textContent = '版本: v1.0.0';
+  renderFormFields();
+}
+
+function backToTemplateSelect() {
+  if (editingRecordId) {
+    backToList();
+    return;
+  }
+  document.getElementById('templateSelectStep').style.display = 'block';
+  document.getElementById('formFillStep').style.display = 'none';
+  selectedTemplate = null;
+  renderTemplateCards();
+}
+
+/* ====== 表单字段渲染 ====== */
+function renderFormFields() {
+  var fields = selectedTemplate.fields;
+  var formData = {};
+  if (editingRecordId) {
+    var records = getRecords();
+    for (var i = 0; i < records.length; i++) {
+      if (records[i].id === editingRecordId) { formData = records[i].formData || {}; break; }
+    }
+  }
+
+  var container = document.getElementById('formFieldsContainer');
+  var html = '';
+  for (var j = 0; j < fields.length; j++) {
+    var f = fields[j];
+    var val = formData[f.label] || '';
+    var requiredStar = f.required ? '<span class="required-star">*</span>' : '';
+    var disabledAttr = (viewMode === 'view') ? ' disabled' : '';
+    var readonlyAttr = (viewMode === 'view') ? ' readonly' : '';
+
+    html += '<div class="form-field-item">';
+    html += '<div class="ff-label">' + f.label + requiredStar + '</div>';
+
+    switch (f.type) {
+      case 'text':
+        html += '<input type="text" id="ff_' + j + '" value="' + escapeHtml(val) + '" placeholder="请输入' + f.label + '"' + disabledAttr + readonlyAttr + '>';
+        break;
+      case 'textarea':
+        html += '<textarea id="ff_' + j + '" rows="4" placeholder="请输入' + f.label + '"' + disabledAttr + readonlyAttr + '>' + escapeHtml(val) + '</textarea>';
+        break;
+      case 'select':
+        html += '<select id="ff_' + j + '"' + disabledAttr + '>';
+        html += '<option value="">请选择' + f.label + '</option>';
+        var opts = f.options || [];
+        for (var o = 0; o < opts.length; o++) {
+          html += '<option value="' + escapeHtml(opts[o]) + '"' + (val === opts[o] ? ' selected' : '') + '>' + opts[o] + '</option>';
+        }
+        html += '</select>';
+        break;
+      case 'radio':
+        html += '<div class="ff-radio-group">';
+        var rOpts = f.options || [];
+        for (var r = 0; r < rOpts.length; r++) {
+          html += '<label><input type="radio" name="ff_' + j + '" value="' + escapeHtml(rOpts[r]) + '"' + (val === rOpts[r] ? ' checked' : '') + disabledAttr + '>' + rOpts[r] + '</label>';
+        }
+        html += '</div>';
+        break;
+      case 'checkbox':
+        html += '<div class="ff-checkbox-group">';
+        var cOpts = f.options || [];
+        var checkedVals = (typeof val === 'string') ? val.split(',').map(function(s){ return s.trim(); }) : [];
+        for (var c = 0; c < cOpts.length; c++) {
+          html += '<label><input type="checkbox" name="ff_' + j + '" value="' + escapeHtml(cOpts[c]) + '"' + (checkedVals.indexOf(cOpts[c]) !== -1 ? ' checked' : '') + disabledAttr + '>' + cOpts[c] + '</label>';
+        }
+        html += '</div>';
+        break;
+      case 'date':
+        html += '<input type="date" id="ff_' + j + '" value="' + escapeHtml(val) + '"' + disabledAttr + '>';
+        break;
+      case 'number':
+        html += '<div class="ff-number-wrap">';
+        html += '<input type="number" id="ff_' + j + '" value="' + escapeHtml(val) + '" placeholder="请输入' + f.label + '"' + disabledAttr + '>';
+        if (f.unit) html += '<span class="ff-unit">' + f.unit + '</span>';
+        html += '</div>';
+        break;
+      case 'upload':
+        html += '<div class="ff-upload-area">点击或拖拽文件到此上传</div>';
+        break;
+      default:
+        html += '<input type="text" id="ff_' + j + '" value="' + escapeHtml(val) + '" placeholder="请输入' + f.label + '"' + disabledAttr + readonlyAttr + '>';
+    }
+
+    html += '<div class="ff-error" id="ff_err_' + j + '"></div>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+
+  /* 底部操作栏 */
+  var actionsBar = document.getElementById('formActionsBar');
+  if (viewMode === 'view') {
+    actionsBar.innerHTML = '<button class="btn btn-outline" onclick="backToList()">返回列表</button>';
+  } else {
+    actionsBar.innerHTML = '<button class="btn btn-outline" onclick="saveDraft()">保存草稿</button>'
+      + '<div><button class="btn btn-primary" onclick="submitRecord()">提交</button></div>';
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* ====== 收集表单数据 ====== */
+function collectFormData() {
+  var fields = selectedTemplate.fields;
+  var formData = {};
+  for (var i = 0; i < fields.length; i++) {
+    var f = fields[i];
+    if (f.type === 'radio') {
+      var radio = document.querySelector('input[name="ff_' + i + '"]:checked');
+      formData[f.label] = radio ? radio.value : '';
+    } else if (f.type === 'checkbox') {
+      var checkboxes = document.querySelectorAll('input[name="ff_' + i + '"]:checked');
+      var vals = [];
+      checkboxes.forEach(function(cb){ vals.push(cb.value); });
+      formData[f.label] = vals.join(', ');
+    } else if (f.type === 'upload') {
+      formData[f.label] = '';
+    } else {
+      var el = document.getElementById('ff_' + i);
+      formData[f.label] = el ? el.value : '';
+    }
+  }
+  return formData;
+}
+
+/* ====== 保存草稿 ====== */
+function saveDraft() {
+  var formData = collectFormData();
+  var records = getRecords();
+  var now = formatDateTime();
+
+  if (editingRecordId) {
+    for (var i = 0; i < records.length; i++) {
+      if (records[i].id === editingRecordId) {
+        records[i].formData = formData;
+        records[i].updateTime = now;
+        records[i].patientName = formData['姓名'] || records[i].patientName;
+        records[i].gender = formData['性别'] || records[i].gender;
+        if (records[i].status !== '已通过') records[i].status = '草稿';
+        break;
+      }
+    }
+  } else {
+    var patientName = formData['姓名'] || '未命名';
+    var gender = formData['性别'] || '';
+    var newId = generateRecordId();
+    records.push({
+      id: newId,
+      templateId: selectedTemplate.id,
+      templateName: selectedTemplate.name,
+      patientName: patientName,
+      gender: gender,
+      diagnosis: selectedTemplate.scene || '',
+      formData: formData,
+      fields: selectedTemplate.fields,
+      status: '草稿',
+      enterDate: formatDate(),
+      updateTime: now,
+      creator: '张教授'
+    });
+    editingRecordId = newId;
+  }
+
+  saveRecords(records);
+  showToast('草稿保存成功', true);
+}
+
+/* ====== 提交记录 ====== */
+function submitRecord() {
+  var fields = selectedTemplate.fields;
+  var formData = collectFormData();
+  var errors = [];
+
+  for (var i = 0; i < fields.length; i++) {
+    var f = fields[i];
+    var errEl = document.getElementById('ff_err_' + i);
+    if (errEl) errEl.style.display = 'none';
+
+    if (f.required) {
+      var val = formData[f.label];
+      if (!val || (typeof val === 'string' && val.trim() === '')) {
+        if (errEl) { errEl.textContent = '请填写' + f.label; errEl.style.display = 'block'; }
+        errors.push(f.label);
+      }
+    }
+  }
+
+  if (errors.length > 0) {
+    showToast('请填写所有必填字段');
+    return;
+  }
+
+  var records = getRecords();
+  var now = formatDateTime();
+
+  if (editingRecordId) {
+    for (var j = 0; j < records.length; j++) {
+      if (records[j].id === editingRecordId) {
+        records[j].formData = formData;
+        records[j].updateTime = now;
+        records[j].patientName = formData['姓名'] || records[j].patientName;
+        records[j].gender = formData['性别'] || records[j].gender;
+        records[j].status = '待审核';
+        break;
+      }
+    }
+  } else {
+    var patientName = formData['姓名'] || '未命名';
+    var gender = formData['性别'] || '';
+    var newId = generateRecordId();
+    records.push({
+      id: newId,
+      templateId: selectedTemplate.id,
+      templateName: selectedTemplate.name,
+      patientName: patientName,
+      gender: gender,
+      diagnosis: selectedTemplate.scene || '',
+      formData: formData,
+      fields: selectedTemplate.fields,
+      status: '待审核',
+      enterDate: formatDate(),
+      updateTime: now,
+      creator: '张教授'
+    });
+  }
+
+  saveRecords(records);
+  showToast('提交成功，待审核', true);
+  backToList();
+}
+
+/* ====== 初始化 ====== */
 document.addEventListener('DOMContentLoaded', function() {
-  try { var user = JSON.parse(localStorage.getItem('life_med_user')); if (!user) { window.location.href = 'login.html'; return; } document.getElementById('headerUserName').textContent = user.name || '用户'; } catch(e) { window.location.href = 'login.html'; }
+  try {
+    var user = JSON.parse(localStorage.getItem('life_med_user'));
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('headerUserName').textContent = user.name || '用户';
+  } catch(e) { window.location.href = 'login.html'; }
+
+  ensureTemplateFields();
+  initSampleRecords();
+  renderTable();
 });
 </script></body></html>

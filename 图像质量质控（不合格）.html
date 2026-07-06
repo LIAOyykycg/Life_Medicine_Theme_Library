@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>图像质量质控</title>
+<title>图像质量质控（不合格）</title>
 <style>
 :root {
   --primary: #165dff;
@@ -207,6 +207,52 @@ input, select, textarea { font: inherit; outline: none; }
   background: linear-gradient(90deg, #00b42a 0%, #0f9a83 100%);
   transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* QC Progress - Fail State */
+.qc-progress-shell.qc-progress-fail {
+  box-shadow: inset 0 0 0 1px #f5c6c2;
+}
+.qc-progress-shell.qc-progress-fail .qc-progress-label {
+  color: var(--danger);
+}
+.qc-progress-shell.qc-progress-fail .qc-progress-icon {
+  background: #ffecec; color: var(--danger);
+}
+.qc-progress-icon-fail {
+  background: #ffecec; color: var(--danger);
+}
+.qc-progress-shell.qc-progress-fail .qc-progress-pct {
+  color: var(--danger);
+}
+.qc-progress-pct-fail {
+  color: var(--danger);
+}
+.qc-progress-fill-fail {
+  background: linear-gradient(90deg, #f53f3f 0%, #f59a23 100%) !important;
+}
+/* Collapse Panel */
+.collapse-panel {
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  margin-bottom: 14px;
+}
+.collapse-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--panel-soft); cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--primary);
+  transition: .18s;
+}
+.collapse-header:hover { background: var(--primary-soft); }
+.collapse-arrow { font-size: 10px; transition: .2s; }
+.collapse-panel.open .collapse-arrow { transform: rotate(180deg); }
+.collapse-content {
+  padding: 14px 16px; background: #fff;
+}
+.guide-list { display: grid; gap: 12px; }
+.guide-item {
+  padding: 12px; border-radius: 8px; background: var(--panel-soft);
+  border-left: 3px solid var(--primary);
+}
+.guide-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.guide-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
 /* Result Grid */
 .result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
@@ -270,14 +316,14 @@ input, select, textarea { font: inherit; outline: none; }
 <div class="sidebar" id="sidebar">
 <div class="menu-group"><div class="menu-group-title">AI眼底疾病筛查</div>
 <a class="menu-item" href="眼底图像输入.html">眼底图像输入</a>
-<a class="menu-item active" href="图像质量质控.html">图像质量质控</a>
-<a class="menu-item" href="图像质量质控（不合格）.html">图像质量质控（不合格）</a>
+<a class="menu-item" href="图像质量质控.html">图像质量质控</a>
+<a class="menu-item active" href="图像质量质控（不合格）.html">图像质量质控（不合格）</a>
 <a class="menu-item" href="图像质量质控（分析失败）.html">图像质量质控（分析失败）</a>
 <a class="menu-item" href="常见疾病筛查.html">常见疾病筛查</a>
 <a class="menu-item" href="多任务联合筛查.html">多任务联合筛查</a>
 <a class="menu-item" href="输出筛查报告.html">输出筛查报告</a></div></div><div class="main-content">
-<div class="breadcrumb"><a href="index.html">首页</a><span>&rsaquo;</span><a href="#">AI眼底疾病筛查</a><span>&rsaquo;</span><strong>图像质量质控</strong></div>
-<h1 class="page-title">图像质量质控</h1>
+<div class="breadcrumb"><a href="index.html">首页</a><span>&rsaquo;</span><a href="#">AI眼底疾病筛查</a><span>&rsaquo;</span><strong>图像质量质控（不合格）</strong></div>
+<h1 class="page-title">图像质量质控（不合格）</h1>
 
 <div class="card">
   <div class="card-header"><span class="card-title">质控检测结果</span></div>
@@ -290,28 +336,27 @@ input, select, textarea { font: inherit; outline: none; }
   </div>
 
   <div class="stats">
-    <div class="stat"><span>质控评分</span><strong style="color:var(--success);">96%</strong></div>
-    <div class="stat"><span>图像清晰度</span><strong>优秀</strong></div>
-    <div class="stat"><span>视野完整性</span><strong>完整</strong></div>
-    <div class="stat"><span>曝光均匀度</span><strong>良好</strong></div>
+    <div class="stat"><span>质控评分</span><strong style="color:var(--danger);">68%</strong></div>
+    <div class="stat"><span>图像清晰度</span><strong style="color:var(--danger);">不通过</strong></div>
+    <div class="stat"><span>视野完整性</span><strong style="color:var(--warning);">不足</strong></div>
+    <div class="stat"><span>曝光均匀度</span><strong style="color:var(--success);">良好</strong></div>
   </div>
 
-  <div class="qc-progress-shell">
+  <div class="qc-progress-shell qc-progress-fail">
     <div class="qc-progress-header">
       <div class="qc-progress-label">
-        <span class="qc-progress-icon">✓</span>
-        <span>图像质量符合AI分析要求</span>
+        <span class="qc-progress-icon qc-progress-icon-fail">!</span>
+        <span>图像质量未达AI分析标准</span>
       </div>
-      <span class="qc-progress-pct" id="qcProgressPct">100%</span>
+      <span class="qc-progress-pct qc-progress-pct-fail">68%</span>
     </div>
     <div class="qc-progress-track">
-      <div class="qc-progress-fill" id="qcProgressFill"></div>
+      <div class="qc-progress-fill qc-progress-fill-fail" id="qcProgressFill"></div>
     </div>
   </div>
 
-  <div class="alert alert-info">
-    <strong>质控通过：</strong>图像清晰，视盘、黄斑与血管分布完整，可进入AI分析阶段。
-    <a class="btn primary small" href="常见疾病筛查.html" style="margin-left:12px;">进入疾病筛查</a>
+  <div class="alert alert-danger">
+    <strong>质控未通过：</strong>图像质量未达标准，建议重新拍摄后再上传。
   </div>
 
   <div class="card-header"><span class="card-title">质控检查项明细</span></div>
@@ -321,37 +366,89 @@ input, select, textarea { font: inherit; outline: none; }
       <tbody>
         <tr>
           <td><strong>图像清晰度</strong></td>
-          <td><span class="tag success">通过</span></td>
-          <td>98%</td>
-          <td>视盘边界清晰，血管细节可见</td>
+          <td><span class="tag danger">不通过</span></td>
+          <td>52%</td>
+          <td>视盘边界模糊，血管细节不清晰</td>
         </tr>
         <tr>
           <td><strong>曝光均匀度</strong></td>
           <td><span class="tag success">通过</span></td>
-          <td>95%</td>
-          <td>黄斑区域无明显过曝或欠曝</td>
+          <td>88%</td>
+          <td>整体曝光均匀，无过曝欠曝</td>
         </tr>
         <tr>
           <td><strong>视野完整性</strong></td>
-          <td><span class="tag success">通过</span></td>
-          <td>94%</td>
-          <td>视盘与黄斑均在视野内</td>
+          <td><span class="tag warning">不足</span></td>
+          <td>65%</td>
+          <td>视盘边缘部分出视野，黄斑完整</td>
         </tr>
         <tr>
           <td><strong>色彩真实性</strong></td>
           <td><span class="tag success">通过</span></td>
-          <td>97%</td>
-          <td>色调正常，无偏色</td>
+          <td>92%</td>
+          <td>色彩还原正常</td>
         </tr>
         <tr>
           <td><strong>分辨率达标</strong></td>
-          <td><span class="tag success">通过</span></td>
-          <td>96%</td>
-          <td>分辨率满足AI模型最低要求</td>
+          <td><span class="tag danger">不通过</span></td>
+          <td>45%</td>
+          <td>分辨率低于AI模型最低要求</td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <div class="card-header" style="margin-top:20px;"><span class="card-title">不合格原因分析</span></div>
+  <div class="result-grid">
+    <div class="result-card" style="border-left:3px solid var(--danger);">
+      <div class="result-name" style="color:var(--danger);">图像模糊</div>
+      <div class="result-desc">视盘边界不清，难以完成多任务联合分析。</div>
+      <div class="result-tips">建议：重新拍摄，确保对焦准确。</div>
+    </div>
+    <div class="result-card" style="border-left:3px solid var(--warning);">
+      <div class="result-name" style="color:var(--warning);">视野不足</div>
+      <div class="result-desc">视盘未完整入镜，影响结果可靠性。</div>
+      <div class="result-tips">建议：重新拍摄确保眼底完全入镜。</div>
+    </div>
+  </div>
+
+  <div class="card-header" style="margin-top:20px;"><span class="card-title">拍摄指导</span></div>
+  <div class="collapse-panel" id="shootingGuide">
+    <div class="collapse-header" onclick="toggleCollapse('shootingGuide', 'shootingContent', this)">
+      <span>查看详细拍摄建议</span>
+      <span class="collapse-arrow">▼</span>
+    </div>
+    <div class="collapse-content" id="shootingContent" style="display:none;">
+      <div class="guide-list">
+        <div class="guide-item">
+          <div class="guide-title">1. 确保光线充足</div>
+          <div class="guide-desc">在自然光或柔和的室内灯光下拍摄，避免强光直射或逆光。</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-title">2. 对焦准确</div>
+          <div class="guide-desc">拍摄时确保相机或手机对焦在眼底区域，避免因手抖或对焦不准导致图像模糊。</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-title">3. 完整视野</div>
+          <div class="guide-desc">确保视盘和黄斑都在图像视野范围内，避免部分出视野。</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-title">4. 避免遮挡</div>
+          <div class="guide-desc">确保睫毛、眼睑等不在视野内遮挡，瞳孔充分暴露。</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-title">5. 分辨率要求</div>
+          <div class="guide-desc">图像分辨率不低于 2048×1536 像素，以确保AI模型能够正确分析。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;margin-top:16px;justify-content:flex-end;">
+    <button class="btn secondary" onclick="location.href=&quot;眼底图像输入.html&quot;">取消</button>
+    <button class="btn primary" onclick="location.href=&quot;眼底图像输入.html&quot;">重新上传</button>
+  </div>
+
 </div>
 </div>
 <script>
@@ -376,11 +473,22 @@ document.addEventListener('DOMContentLoaded', function() {
       item.classList.add('active');
     }
   });
-  // 进度条动画
+  // 折叠面板
+function toggleCollapse(panelId, contentId, headerEl) {
+  var panel = document.getElementById(panelId);
+  var content = document.getElementById(contentId);
+  panel.classList.toggle('open');
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+  } else {
+    content.style.display = 'none';
+  }
+}
+// 进度条动画
   setTimeout(function() {
     var progressBar = document.getElementById('qcProgressFill');
     if (progressBar) {
-      progressBar.style.width = '100%';
+      progressBar.style.width = '68%';
     }
   }, 300);
 });
